@@ -12,7 +12,9 @@
 1. Run frontend development server:
     > npm run dev
 
-> **_NOTE:_**   https://stackoverflow.com/questions/31773546/the-best-way-to-run-npm-install-for-nested-folders
+**_NOTE:_**   Express development server is hosted on port `3000` (not `80`, `443`). Its hostname can be set conditionally within the frontend using Vite env variables `import.meta.env.MODE` or `import.meta.env.DEV`.
+
+**_NOTE:_**   https://stackoverflow.com/questions/31773546/the-best-way-to-run-npm-install-for-nested-folders
 
 ## Production server
 1. Install backend dependencies:
