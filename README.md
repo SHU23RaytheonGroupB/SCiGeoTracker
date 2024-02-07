@@ -7,6 +7,8 @@
     > SET DEBUG=scigeotracker:* & npm start
 1. In another shell, enter frontend directory:
     > cd frontend
+1. Install frontend dependencies:
+    > npm install
 1. Run frontend development server:
     > npm run dev
 
