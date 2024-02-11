@@ -1,9 +1,8 @@
 # SCiGeoTracker
 
-## Single express server
-
+## Running the development server
+1. Install dependencies:
+   > npm install
 1. Run development server:
    > npm run start:dev
-2. In your browser bar enter "localhost:3000/" followed by the relevant page in order to access.
-   3.Stop running server:
-   > ctrl+c will prompt a stop command in terminal
+1. Open in your browser: http://localhost:3000/
