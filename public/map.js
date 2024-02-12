@@ -3,11 +3,18 @@ import { grabAPIdata } from "./product-requests.js";
 let allProducts = [];
 let renderedProducts = [];
 
-let productTypeColours = {
-  SCENE: "#C63CBF",
-  DOCUMENT: "#219BF5",
-  IMAGERY: "#0085EC",
-  VIDEO: "#008907",
+let productFillColours = {
+  SCENE: "#6E6E6E", //GREY
+  DOCUMENT: "#219BF5", //blue
+  IMAGERY: "#0085EC", //slightly darker blue
+  VIDEO: "#008907", //green
+};
+
+let productOutlineColours = {
+  SCENE: "#000000", //BLACK
+  DOCUMENT: "#219BF5", //blue
+  IMAGERY: "#0085EC", //slightly darker blue
+  VIDEO: "#008907", //green
 };
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
@@ -36,10 +43,13 @@ function filterProductsByType() {
   //map.allLayers.forEach(remove)
   //addProductsToMap()
 }
+
+//Draw every product to the screen 
 export async function addProductsToMap() {
   renderedProducts.forEach(renderProductToMap);
 }
 
+//Draw the polygon of the product, then fill the polygon, then outline the polygon
 async function renderProductToMap(product) {
   //Add a data source containing GeoJSON data.
   addPolygon(product.title, product.footprint);
@@ -56,6 +66,7 @@ function addPolygon(title, footprint) {
     },
   });
 }
+
 function fillPolygon(title, productType) {
   map.addLayer({
     id: title + "fill",
@@ -63,7 +74,7 @@ function fillPolygon(title, productType) {
     source: title, // reference the data source
     layout: {},
     paint: {
-      "fill-color": productTypeColours[productType],
+      "fill-color": productFillColours[productType],
       "fill-opacity": 0.2,
     },
   });
@@ -76,56 +87,11 @@ function outlinePolygon(title, productType) {
     source: title,
     layout: {},
     paint: {
-      "line-color": productTypeColours[productType],
-      "line-width": 3,
+      "line-color": productOutlineColours[productType],
+      "line-width": 1,
     },
   });
 }
 
 //-----------CUSTOM POLYGONS---------
 
-//CreateSquarePolygon("1",-6.116, 55.650, -6.108, 55.651, -6.112, 55.695, -6.120, 55.695, -6.116, 55.650);
-//CreateSquarePolygon("2",-6.088, 55.651, -6.08, 55.651, -6.083, 55.696, -6.091, 55.696, -6.088, 55.651);
-
-function CreateSquarePolygon(Name, N1, W1, N2, W2, N3, W3, N4, W4, N5, W5) {
-  map.addSource(Name, {
-    type: "geojson",
-    data: {
-      type: "Feature",
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [N1, W1],
-            [N2, W2],
-            [N3, W3],
-            [N4, W4],
-            [N5, W5],
-          ],
-        ],
-      },
-    },
-  });
-  // Add a new layer to visualize the polygon.
-  map.addLayer({
-    id: Name,
-    type: "fill",
-    source: Name, // reference the data source
-    layout: {},
-    paint: {
-      "fill-color": "#000000",
-      "fill-opacity": 0.2,
-    },
-  });
-  // Add a black outline around the polygon.
-  map.addLayer({
-    id: "outline",
-    type: "line",
-    source: Name,
-    layout: {},
-    paint: {
-      "line-color": "#111111",
-      "line-width": 3,
-    },
-  });
-}
