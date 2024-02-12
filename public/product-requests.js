@@ -27,7 +27,8 @@ export async function grabAPIdata() {
 
   let allProductMetaData = [];
   for (let i = 0; i < productIDs.length; i += 50) {
-    allProductMetaData.push(await getAllProductsMetadata(productIDs.slice(i, i + 50)));
+    let results = await getAllProductsMetadata(productIDs.slice(i, i + 50));
+    results.forEach((r) => allProductMetaData.push(r.product.result));
   }
 
   console.log("PMD:");
