@@ -22,16 +22,18 @@ const tokenService = new TokenService(HOSTNAME, TOKEN_PATH, USERNAME, PASSWORD, 
 const initialSearchParams = '{"size":1, "keywords":""}';
 
 //Functions------------------------------------------------------------------------------------------------------
+export async function grabAPIdata() {
+  const productIDs = await getAllProductIDs();
 
-const productIDs = await getAllProductIDs();
+  let allProductMetaData = [];
+  for (let i = 0; i < productIDs.length; i += 50) {
+    allProductMetaData.push(await getAllProductsMetadata(productIDs.slice(i, i + 50)));
+  }
 
-let allProductMetaData = [];
-for (let i = 0; i < productIDs.length; i += 50) {
-  allProductMetaData.push(await getAllProductsMetadata(productIDs.slice(i, i + 50)));
+  console.log("PMD:");
+  console.log(allProductMetaData);
+  return allProductMetaData;
 }
-
-console.log("PMD:");
-console.log(allProductMetaData);
 
 async function getAllProductIDs() {
   const initialQuery = await searchForProducts(initialSearchParams);
@@ -104,7 +106,7 @@ async function searchForProducts(searchParams) {
   }
 }
 
-async function getProductMetadata(PRODUCT_ID) {
+async function getSingleProductMetadata(PRODUCT_ID) {
   const accessToken = await tokenService.getToken();
 
   const url = `${HOSTNAME}${PRODUCT_PATH}${PRODUCT_ID}`;

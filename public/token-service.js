@@ -1,6 +1,4 @@
 //JobyToDo - Currently Headers & getToken specifics are tailored purely to SCI-discover API not generic grab token method
-//JobyToDo - confirm implementation choice, all OOP as a tokenservice obj should have specific methods? how does this
-//relate to sessionstorage as a potentially single list of variables, not variants that are tied to objects like properties
 //JobyToDo  - secure storage needed for Uname,password,client credentials etc current setup is shoddy
 
 export class TokenService {
