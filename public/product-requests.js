@@ -1,5 +1,7 @@
 import { TokenService } from "./token-service.js";
 
+//JobyToDo - look into redist for caching product metadata on first call.
+
 const HOSTNAME = "https://hallam.sci-toolset.com/";
 const TOKEN_PATH = "api/v1/token";
 const PRODUCT_SEARCH_PATH = "discover/api/v1/products/search";
