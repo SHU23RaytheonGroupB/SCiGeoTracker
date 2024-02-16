@@ -1,7 +1,8 @@
 //JobyToDo - Currently Headers & getToken specifics are tailored purely to SCI-discover API not generic grab token method
 //JobyToDo  - secure storage needed for Uname,password,client credentials etc current setup is shoddy
+var session = require("express-session");
 
-export class TokenService {
+class TokenService {
   constructor(host, tokenPath, username, password, clientID, clientSecret) {
     this.host = host;
     this.tokenPath = tokenPath;
@@ -18,59 +19,27 @@ export class TokenService {
     };
   }
 
-  async getToken() {
-    if (!TokenService.doesSessionExist()) {
-      await this.generateAccessCredentials();
-    } else if (!TokenService.isSessionValid()) {
-      await this.refreshSession();
-    }
-    return sessionStorage.getItem("access_token");
-  }
-
-  async generateAccessCredentials() {
-    const {
-      access_token: accessToken,
-      refresh_token: refreshToken,
-      expires_in: tokenExpiryTime,
-    } = await this.getTokenData();
-
-    const tokenExpiry = TokenService.convertExpiryTime(tokenExpiryTime);
-
-    sessionStorage.setItem("access_token", accessToken);
-    sessionStorage.setItem("refresh_token", refreshToken);
-    sessionStorage.setItem("token_expiry", tokenExpiry);
-
-    console.log(`refresh token is: ${sessionStorage.getItem("refresh_token")}`);
-  }
-
-  static isSessionValid() {
-    const tokenExpiry = parseInt(sessionStorage.getItem("token_expiry"), 10);
+  static isSessionValid(token) {
+    const tokenExpiry = parseInt(token.expires_in, 10);
     return tokenExpiry > Date.now();
   }
 
-  static doesSessionExist() {
-    return typeof sessionStorage.getItem("access_token") == "undefined";
+  static convertExpiryTime(token) {
+    return Date.now() + token.expires_in * 1000 - 10 * 1000; // converting to milliseconds and subtracting 10 seconds
   }
 
-  static convertExpiryTime(tokenExpiryTime) {
-    return Date.now() + tokenExpiryTime * 1000 - 10 * 1000; // converting to milliseconds and subtracting 10 seconds
-  }
-
-  async refreshSession() {
-    const newTokenData = await this.refreshAccessToken(sessionStorage.getItem("refresh_token"));
+  async refreshSession(token) {
+    const newTokenData = await this.refreshAccessToken();
     const { access_token: newAccessToken, expires_in: newTokenExpiryTime } = newTokenData;
 
     const newTokenExpiry = TokenService.convertExpiryTime(newTokenExpiryTime);
-
-    sessionStorage.setItem("access_token", newAccessToken);
-    sessionStorage.setItem("token_expiry", newTokenExpiry);
   }
 
-  async refreshAccessToken(refreshToken) {
+  async refreshAccessToken(token) {
     try {
       const response = await fetch(this.host + this.tokenPath, {
         method: "post",
-        body: `grant_type=refresh_token&refresh_token=${refreshToken}`,
+        body: `grant_type=refresh_token&refresh_token=${token.refresh_token}`,
         headers: this.headers,
       });
       if (!response.ok) {
@@ -84,7 +53,7 @@ export class TokenService {
     }
   }
 
-  async getTokenData() {
+  async generateToken() {
     try {
       const response = await fetch(this.host + this.tokenPath, {
         method: "post",
@@ -96,10 +65,11 @@ export class TokenService {
       }
 
       const data = await response.json();
-      console.log(data);
       return data;
     } catch (error) {
       console.error(error);
     }
   }
 }
+
+module.exports = TokenService;

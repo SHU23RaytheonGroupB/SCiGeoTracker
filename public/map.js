@@ -1,5 +1,3 @@
-import { grabAPIdata } from "./product-requests.js";
-
 let allProducts = [];
 let renderedProducts = [];
 
@@ -30,7 +28,9 @@ const map = new mapboxgl.Map({
 map.on("load", initialiseProducts);
 
 export async function initialiseProducts() {
-  allProducts = await grabAPIdata();
+  await fetch("/api/authToken");
+  const response = await fetch("/api/getProducts");
+  allProducts = await response.json();
   renderedProducts = allProducts;
   await addProductsToMap();
   //filtersPanel.on("change", filterProductsByType);
@@ -44,7 +44,7 @@ function filterProductsByType() {
   //addProductsToMap()
 }
 
-//Draw every product to the screen 
+//Draw every product to the screen
 export async function addProductsToMap() {
   renderedProducts.forEach(renderProductToMap);
 }
@@ -94,4 +94,3 @@ function outlinePolygon(title, productType) {
 }
 
 //-----------CUSTOM POLYGONS---------
-
