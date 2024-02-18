@@ -10,7 +10,6 @@ const PASSWORD = "!H%j50H2";
 const CLIENT_ID = "sci-toolset";
 const CLIENT_SECRET = "st";
 const ts = new TokenService(HOSTNAME, TOKEN_PATH, USERNAME, PASSWORD, CLIENT_ID, CLIENT_SECRET);
-const ps = new ProductService();
 
 async function getAuthToken(req) {
   if (!req.session.token) {
@@ -32,7 +31,8 @@ router.get("/getProducts", async function (req, res, next) {
     return res.status(401).send("Authentication token is missing or invalid.");
   }
   try {
-    const allProductMetaData = await ps.getProducts(accessToken);
+    const ps = new ProductService(accessToken);
+    const allProductMetaData = await ps.getAllProducts();
     res.json(allProductMetaData);
   } catch (error) {
     console.error("Error fetching products:", error);

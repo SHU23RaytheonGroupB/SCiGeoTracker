@@ -13,13 +13,12 @@ const METADATA_JSON = "";
 const initialSearchParams = '{"size":150, "keywords":""}';
 
 class ProductService {
-  constructor() {
-    this.token = null;
+  constructor(accessToken) {
+    this.token = accessToken;
   }
 
   //Functions------------------------------------------------------------------------------------------------------
-  async getProducts(accessToken) {
-    this.token = accessToken;
+  async getAllProducts() {
     const productIDs = await this.getAllProductIDs();
 
     let allProductMetaData = [];
