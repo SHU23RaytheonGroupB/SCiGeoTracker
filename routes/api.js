@@ -14,11 +14,12 @@ const ts = new TokenService(HOSTNAME, TOKEN_PATH, USERNAME, PASSWORD, CLIENT_ID,
 async function getAuthToken(req) {
   if (!req.session.token) {
     req.session.token = await ts.generateToken();
+    req.session.token.expires_in = TokenService.convertExpiryTime(req.session.token);
   } else if (!TokenService.isSessionValid(req.session.token)) {
     console.log("token refresh");
     const refreshedToken = await ts.refreshAccessToken(req.session.token);
+    req.session.token.expires_in = TokenService.convertExpiryTime(refreshedToken);
     req.session.token.access_token = refreshedToken.access_token;
-    req.session.token.expires_in = refreshedToken.expires_in;
   }
   return req.session.token.access_token;
 }
