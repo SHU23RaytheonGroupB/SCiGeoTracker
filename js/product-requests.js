@@ -37,7 +37,7 @@ class ProductService {
           headers: this.headers,
         });
       if (!response.ok) {
-        throw new Error("Could not fetch data");
+        throw new Error("Error fetching products metadata");
       }
       return await response.json();
     } catch (error) {
@@ -57,7 +57,7 @@ class ProductService {
         headers: this.headers,
       });
       if (!response.ok) {
-        throw new Error("Could not fetch data");
+        throw new Error("Error searching products");
       }
       return await response.json();
     } catch (error) {
@@ -73,7 +73,7 @@ class ProductService {
         headers: this.headers,
       });
       if (!response.ok) {
-        throw new Error("Could not get product metadata");
+        throw new Error("Error fetching product metadata");
       }
       return await response.json();
     } catch (error) {
