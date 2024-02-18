@@ -28,23 +28,6 @@ class ProductService {
     return data.results.searchresults.map((item) => item.id);
   }
 
-  async getProducts(productIDs) {
-    try {
-      const response = await fetch(
-        `${API_ORIGIN}/v1/products/getProducts`, {
-          method: "POST",
-          body: JSON.stringify(productIDs),
-          headers: this.headers,
-        });
-      if (!response.ok) {
-        throw new Error("Error fetching products metadata");
-      }
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   async searchProducts(keywords = "", page_size = 150) {
     try {
       const response = await fetch(
@@ -58,6 +41,23 @@ class ProductService {
       });
       if (!response.ok) {
         throw new Error("Error searching products");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getProducts(productIDs) {
+    try {
+      const response = await fetch(
+        `${API_ORIGIN}/v1/products/getProducts`, {
+          method: "POST",
+          body: JSON.stringify(productIDs),
+          headers: this.headers,
+        });
+      if (!response.ok) {
+        throw new Error("Error fetching products metadata");
       }
       return await response.json();
     } catch (error) {
