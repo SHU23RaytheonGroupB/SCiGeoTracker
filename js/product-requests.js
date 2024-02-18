@@ -31,64 +31,53 @@ class ProductService {
   }
 
   async getProducts(productIDs) {
-    const idsJSONArray = JSON.stringify(productIDs);
-    const url = `${API_ORIGIN}/v1/products/getProducts`;
-
     try {
-      const response = await fetch(url, {
-        method: "POST",
-        body: idsJSONArray,
-        headers: this.headers,
-      });
+      const response = await fetch(
+        `${API_ORIGIN}/v1/products/getProducts`, {
+          method: "POST",
+          body: JSON.stringify(productIDs),
+          headers: this.headers,
+        });
       if (!response.ok) {
         throw new Error("Could not fetch data");
       }
-
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       console.error(error);
     }
   }
 
   async searchProducts(keywords = "", page_size = 150) {
-    const url = `${API_ORIGIN}/v1/products/search`;
-    const payload = {
-      keywords: keywords,
-      size: page_size
-    }
-
     try {
-      const response = await fetch(url, {
+      const response = await fetch(
+        `${API_ORIGIN}/v1/products/search`, {
         method: "POST",
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          keywords: keywords,
+          size: page_size
+        }),
         headers: this.headers,
       });
       if (!response.ok) {
         throw new Error("Could not fetch data");
       }
-
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       console.error(error);
     }
   }
 
   async getProduct(productID) {
-    const url = `${API_ORIGIN}/v1/products/${productID}`;
-
     try {
-      const response = await fetch(url, {
+      const response = await fetch(
+        `${API_ORIGIN}/v1/products/${productID}`, {
         method: "GET",
         headers: this.headers,
       });
       if (!response.ok) {
         throw new Error("Could not get product metadata");
       }
-
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       console.error(error);
     }
