@@ -13,6 +13,11 @@ const METADATA_JSON = "";
 class ProductService {
   constructor(accessToken) {
     this.token = accessToken;
+    this.headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.token}`,
+      Accept: "*/*",
+    };
   }
 
   //Functions------------------------------------------------------------------------------------------------------
@@ -34,17 +39,12 @@ class ProductService {
   async getProducts(productIDs) {
     const idsJSONArray = JSON.stringify(productIDs);
     const url = `${API_ORIGIN}/v1/products/getProducts`;
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${this.token}`,
-      Accept: "*/*",
-    };
 
     try {
       const response = await fetch(url, {
         method: "POST",
         body: idsJSONArray,
-        headers: headers,
+        headers: this.headers,
       });
       if (!response.ok) {
         throw new Error("Could not fetch data");
@@ -63,17 +63,12 @@ class ProductService {
       keywords: keywords,
       size: page_size
     }
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${this.token}`,
-      Accept: "*/*",
-    };
 
     try {
       const response = await fetch(url, {
         method: "POST",
         body: JSON.stringify(payload),
-        headers: headers,
+        headers: this.headers,
       });
       if (!response.ok) {
         throw new Error("Could not fetch data");
@@ -88,16 +83,11 @@ class ProductService {
 
   async getProduct(productID) {
     const url = `${API_ORIGIN}/v1/products/${productID}`;
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${this.token}`,
-      Accept: "*/*",
-    };
 
     try {
       const response = await fetch(url, {
         method: "GET",
-        headers: headers,
+        headers: this.headers,
       });
       if (!response.ok) {
         throw new Error("Could not get product metadata");
