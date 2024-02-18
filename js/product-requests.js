@@ -10,8 +10,6 @@ const FILENAME = "";
 const MIME_TYPE_OF_FILE = "";
 const METADATA_JSON = "";
 
-const initialSearchParams = '{"size":150, "keywords":""}';
-
 class ProductService {
   constructor(accessToken) {
     this.token = accessToken;
@@ -28,7 +26,7 @@ class ProductService {
 
   async getAllProductIDs() {
     console.log("getAllproducts called");
-    const data = await this.searchProducts(initialSearchParams);
+    const data = await this.searchProducts();
     // Extract the product IDs from the search results
     return data.results.searchresults.map((item) => item.id);
   }
@@ -59,9 +57,12 @@ class ProductService {
     }
   }
 
-  async searchProducts(searchParams) {
+  async searchProducts(keywords = "", page_size = 150) {
     const url = `${API_ORIGIN}/v1/products/search`;
-    const payload = searchParams;
+    const payload = {
+      keywords: keywords,
+      size: page_size
+    }
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${this.token}`,
@@ -71,7 +72,7 @@ class ProductService {
     try {
       const response = await fetch(url, {
         method: "POST",
-        body: payload,
+        body: JSON.stringify(payload),
         headers: headers,
       });
       if (!response.ok) {
