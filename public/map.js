@@ -46,24 +46,36 @@ function filterProductsByType() {
 
 //Draw every product to the screen
 export async function addProductsToMap() {
-  renderedProducts.forEach(renderProductToMap);
+  let productsByType = {};
+  renderedProducts.forEach((product) => {
+    if (productsByType[product.type] == undefined)
+      productsByType[product.type] = [];
+    productsByType[product.type].push(product);
+  }); 
+  for (const [type, products] of Object.entries(productsByType)) {
+    await addProductsTypeToMap(products, type);
+  }
 }
 
-//Draw the polygon of the product, then fill the polygon, then outline the polygon
-async function renderProductToMap(product) {
-  //Add a data source containing GeoJSON data.
-  addPolygon(product.title, product.footprint);
-  fillPolygon(product.title, product.type);
-  outlinePolygon(product.title, product.type);
+async function addProductsTypeToMap(products, type) {
+  let featureCollection = {
+    type: "FeatureCollection",
+    features: products.map((product) => ({
+      type: "Feature",
+      geometry: product.footprint,
+    }))
+  };
+  addPolygon(type, featureCollection);
+  fillPolygon(type, type);
+  outlinePolygon(type, type);
 }
 
-function addPolygon(title, footprint) {
+function addPolygon(title, data) {
   map.addSource(title, {
     type: "geojson",
-    data: {
-      type: "Feature",
-      geometry: footprint,
-    },
+    data: data,
+    tolerance: 3,
+    // buffer: 512,
   });
 }
 
