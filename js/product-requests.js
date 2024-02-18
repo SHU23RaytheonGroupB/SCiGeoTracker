@@ -3,7 +3,6 @@
 const HOSTNAME = "https://hallam.sci-toolset.com";
 const API_ORIGIN = `${HOSTNAME}/discover/api`;
 
-
 class ProductService {
   constructor(accessToken) {
     this.token = accessToken;
@@ -14,7 +13,6 @@ class ProductService {
     };
   }
 
-  //Functions------------------------------------------------------------------------------------------------------
   async getAllProducts() {
     const productIDs = await this.getAllProductIDs();
     let results = await this.getProducts(productIDs);
@@ -30,12 +28,11 @@ class ProductService {
 
   async searchProducts(keywords = "", page_size = 150) {
     try {
-      const response = await fetch(
-        `${API_ORIGIN}/v1/products/search`, {
+      const response = await fetch(`${API_ORIGIN}/v1/products/search`, {
         method: "POST",
         body: JSON.stringify({
           keywords: keywords,
-          size: page_size
+          size: page_size,
         }),
         headers: this.headers,
       });
@@ -50,12 +47,11 @@ class ProductService {
 
   async getProducts(productIDs) {
     try {
-      const response = await fetch(
-        `${API_ORIGIN}/v1/products/getProducts`, {
-          method: "POST",
-          body: JSON.stringify(productIDs),
-          headers: this.headers,
-        });
+      const response = await fetch(`${API_ORIGIN}/v1/products/getProducts`, {
+        method: "POST",
+        body: JSON.stringify(productIDs),
+        headers: this.headers,
+      });
       if (!response.ok) {
         throw new Error("Error fetching products metadata");
       }
@@ -67,8 +63,7 @@ class ProductService {
 
   async getProduct(productID) {
     try {
-      const response = await fetch(
-        `${API_ORIGIN}/v1/products/${productID}`, {
+      const response = await fetch(`${API_ORIGIN}/v1/products/${productID}`, {
         method: "GET",
         headers: this.headers,
       });
