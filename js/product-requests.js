@@ -3,12 +3,6 @@
 const HOSTNAME = "https://hallam.sci-toolset.com";
 const API_ORIGIN = `${HOSTNAME}/discover/api`;
 
-const PAGINATION_ID = "";
-const PRODUCT_ID = "";
-
-const FILENAME = "";
-const MIME_TYPE_OF_FILE = "";
-const METADATA_JSON = "";
 
 class ProductService {
   constructor(accessToken) {
