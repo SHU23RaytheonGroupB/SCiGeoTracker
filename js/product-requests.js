@@ -1,9 +1,7 @@
 //JobyToDo - look into redis for caching product metadata on first call.
 
-const HOSTNAME = "https://hallam.sci-toolset.com/";
-const PRODUCT_SEARCH_PATH = "discover/api/v1/products/search";
-const PRODUCT_PATH = "discover/api/v1/products/";
-const GET_PRODUCTS_PATH = "discover/api/v1/products/getProducts";
+const ORIGIN = "https://hallam.sci-toolset.com";
+const API_ORIGIN = `${ORIGIN}/api`;
 
 const PAGINATION_ID = "";
 const PRODUCT_ID = "";
@@ -18,6 +16,7 @@ class ProductService {
   constructor() {
     this.token = null;
   }
+
   //Functions------------------------------------------------------------------------------------------------------
   async getProducts(accessToken) {
     this.token = accessToken;
@@ -28,6 +27,7 @@ class ProductService {
     results.forEach((r) => allProductMetaData.push(r.product.result));
     return allProductMetaData;
   }
+
   async getAllProductIDs() {
     console.log("getAllproducts called");
     const data = await this.searchForProducts(initialSearchParams);
@@ -37,19 +37,16 @@ class ProductService {
 
   async getAllProductsMetadata(productIDs) {
     const idsJSONArray = JSON.stringify(productIDs);
-
-    const url = `${HOSTNAME}${GET_PRODUCTS_PATH}`;
-
+    const url = `${API_ORIGIN}/v1/products/getProducts`;
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${this.token}`,
       Accept: "*/*",
-      Host: HOSTNAME,
     };
 
     try {
       const response = await fetch(url, {
-        method: "post",
+        method: "POST",
         body: idsJSONArray,
         headers: headers,
       });
@@ -65,19 +62,17 @@ class ProductService {
   }
 
   async searchForProducts(searchParams) {
-    const url = `${HOSTNAME}${PRODUCT_SEARCH_PATH}`;
-
+    const url = `${API_ORIGIN}/v1/products/search`;
     const payload = searchParams;
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${this.token}`,
       Accept: "*/*",
-      Host: HOSTNAME,
     };
 
     try {
       const response = await fetch(url, {
-        method: "post",
+        method: "POST",
         body: payload,
         headers: headers,
       });
@@ -92,18 +87,17 @@ class ProductService {
     }
   }
 
-  async getSingleProductMetadata(PRODUCT_ID) {
-    const url = `${HOSTNAME}${PRODUCT_PATH}${PRODUCT_ID}`;
+  async getSingleProductMetadata(productID) {
+    const url = `${API_ORIGIN}/v1/products/${productID}`;
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${this.token}`,
       Accept: "*/*",
-      Host: HOSTNAME,
     };
 
     try {
       const response = await fetch(url, {
-        method: "get",
+        method: "GET",
         headers: headers,
       });
       if (!response.ok) {
