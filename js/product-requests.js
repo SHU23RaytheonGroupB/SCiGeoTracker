@@ -17,10 +17,8 @@ class ProductService {
   //Functions------------------------------------------------------------------------------------------------------
   async getAllProducts() {
     const productIDs = await this.getAllProductIDs();
-    let allProductMetaData = [];
     let results = await this.getProducts(productIDs);
-    results.forEach((r) => allProductMetaData.push(r.product.result));
-    return allProductMetaData;
+    return results.map((r) => r.product.result);
   }
 
   async getAllProductIDs() {
