@@ -1,7 +1,7 @@
 //JobyToDo - look into redis for caching product metadata on first call.
 
-const ORIGIN = "https://hallam.sci-toolset.com";
-const API_ORIGIN = `${ORIGIN}/api`;
+const HOSTNAME = "https://hallam.sci-toolset.com";
+const API_ORIGIN = `${HOSTNAME}/discover/api`;
 
 const PAGINATION_ID = "";
 const PRODUCT_ID = "";
