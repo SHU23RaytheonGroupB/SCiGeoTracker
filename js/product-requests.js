@@ -20,21 +20,20 @@ class ProductService {
   //Functions------------------------------------------------------------------------------------------------------
   async getAllProducts() {
     const productIDs = await this.getAllProductIDs();
-
     let allProductMetaData = [];
-    let results = await this.getAllProductsMetadata(productIDs);
+    let results = await this.getProducts(productIDs);
     results.forEach((r) => allProductMetaData.push(r.product.result));
     return allProductMetaData;
   }
 
   async getAllProductIDs() {
     console.log("getAllproducts called");
-    const data = await this.searchForProducts(initialSearchParams);
+    const data = await this.searchProducts(initialSearchParams);
     // Extract the product IDs from the search results
     return data.results.searchresults.map((item) => item.id);
   }
 
-  async getAllProductsMetadata(productIDs) {
+  async getProducts(productIDs) {
     const idsJSONArray = JSON.stringify(productIDs);
     const url = `${API_ORIGIN}/v1/products/getProducts`;
     const headers = {
@@ -60,7 +59,7 @@ class ProductService {
     }
   }
 
-  async searchForProducts(searchParams) {
+  async searchProducts(searchParams) {
     const url = `${API_ORIGIN}/v1/products/search`;
     const payload = searchParams;
     const headers = {
@@ -86,7 +85,7 @@ class ProductService {
     }
   }
 
-  async getSingleProductMetadata(productID) {
+  async getProduct(productID) {
     const url = `${API_ORIGIN}/v1/products/${productID}`;
     const headers = {
       "Content-Type": "application/json",
