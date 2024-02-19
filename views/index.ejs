@@ -7,7 +7,6 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
-
     <style>
       body {
         margin: 0;
@@ -20,12 +19,38 @@
         bottom: 0;
         width: 100%;
       }
+
+      #timeline{
+        border-radius: 20px;
+        opacity: 0.7;
+        background: #949494;
+        box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+      }
+
     </style>
   </head>
 
   <body>
     <div id="map"></div>
     <div id="filtersPanel"></div>
+    
+    <script type="module">
+      import define from "./c711cff230925051@955.js"
+      import {Runtime, Library, Inspector} from "./runtime.js";
+      var timeLineDiv = document.createElement("div");
+      timeLineDiv.id = "timeline";
+      timeLineDiv.style.position = "absolute";
+      
+
+      const runtime = new Runtime();
+      //const main = runtime.module(define, Inspector.into(document.body));
+      const main = runtime.module(define, Inspector.into(document.body.appendChild(timeLineDiv)));
+
+      var test = document.createElement("p"); 
+      test.id = "test";
+      test.innerHTML = "Hello World";
+      document.body.appendChild(test);
+      </script>
   </body>
   <script type="module" src="map.js"></script>
 </html>
