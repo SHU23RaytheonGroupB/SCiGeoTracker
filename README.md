@@ -2,6 +2,7 @@
 # SCiGeoTracker
 
 ## Running the development server
+
 1. Install dependencies:
    > npm install
 1. Run development server:

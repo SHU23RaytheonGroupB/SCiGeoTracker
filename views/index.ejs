@@ -7,33 +7,72 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
-
-      #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-      }
-
-      #timeline{
-        border-radius: 20px;
-        opacity: 0.7;
-        background: #949494;
-        box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-      }
-
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
 
-  <body>
-    <div id="map"></div>
-    <div id="filtersPanel"></div>
-    
+  <body class="m-0 p-0 text-neutral-300">
+    <div class="absolute top-0 left-0 z-10 m-2 flex flex-row gap-2">
+      <div class="w-8 h-8 rounded-lg bg-neutral-950/50 ring-1 ring-neutral-800 #ring-inset #border #border-neutral-800 shadow-lg">
+      </div>
+
+      <div class="w-40">
+        <div>
+          <button type="button" class="inline-flex w-full gap-x-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg
+          bg-neutral-950/50 hover:bg-neutral-900 ring-1 ring-neutral-800 #ring-inset shadow-lg #shadow-sm" id="layer-menu-button" aria-expanded="true" aria-haspopup="true">
+            Frames
+            <svg class="ml-auto #-mr-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      
+        <!--
+          Dropdown menu, show/hide based on menu state.
+      
+          Entering: "transition ease-out duration-100"
+            From: "transform opacity-0 scale-95"
+            To: "transform opacity-100 scale-100"
+          Leaving: "transition ease-in duration-75"
+            From: "transform opacity-100 scale-100"
+            To: "transform opacity-0 scale-95"
+        -->
+        <div class="z-20 mt-2 rounded-md overflow-hidden
+        bg-neutral-950/50 ring-1 ring-neutral-800 #ring-inset #ring-opacity-5 focus:outline-none shadow-lg" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+          <div class="#py-1" role="none">
+            <!-- Active: "bg-neutral-900 text-neutral-200", Not Active: "text-neutral-100" -->
+            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="frames-item">Frames</a>
+            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="choropleth-item">Choropleth</a>
+            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="isarithmic-item">Isarithmic</a>
+            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="dot-density-item">Dot Density</a>
+            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="frame-overlaps-item">Frame Overlaps</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="absolute top-0 right-0 z-10 m-2 flex flex-col gap-2">
+      <div id="search-container" class="flex flex-row gap-2">
+        <input type="text" name="price" id="price" class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm w-64
+        bg-neutral-950/50 ring-1 ring-neutral-800 #ring-inset shadow-lg
+        #ring-1 #ring-inset #ring-neutral-300 placeholder:text-neutral-400 #focus:ring-2 #focus:ring-inset #focus:ring-neutral-600
+        focus:ring-0" placeholder="Search">
+        <div class="w-8 h-8 rounded-lg bg-neutral-950/50 ring-1 ring-neutral-800 #ring-inset #border #border-neutral-800 shadow-lg">
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-0 right-0 z-10 m-2 flex flex-row gap-2">
+      <div id="coords-container" class="py-2 px-6 #w-20 #h-10 rounded-md bg-neutral-900/80 text-xs font-mono text-center">
+        <p id="coords">-1.000, 52.000</p>
+        <p id="scale">
+          10km
+        </p>
+      </div>
+    </div>
+
+    <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
+
     <script type="module">
       import define from "./c711cff230925051@955.js"
       import {Runtime, Library, Inspector} from "./runtime.js";
