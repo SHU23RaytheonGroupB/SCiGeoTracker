@@ -15,20 +15,50 @@ let productOutlineColours = {
   VIDEO: "#008907", //green
 };
 
+const minZoom = 4;
+const maxZoom = 12;
+
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 const map = new mapboxgl.Map({
   container: "map", // container ID
   style: "mapbox://styles/mapbox/dark-v11", // style URL
   center: [-5, 55], // starting position
   zoom: 5, // starting zoom
+  minZoom: minZoom,
+  maxZoom: maxZoom,
 });
 
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
-map.on("load", initialiseProducts);
+map.on("load", () => {
+  renderOverlaysMove();
+  renderOverlaysZoom();
+  initialiseProducts();
+});
+
+
+const coordEle = document.querySelector("#coords");
+const zoomScrollEle = document.querySelector("#zoom-scroll-button");
+
+function renderOverlaysMove() {
+  const {lng, lat} = map.getCenter();
+  coordEle.textContent = `${lng.toFixed(3)}, ${lat.toFixed(3)}`;
+}
+
+function renderOverlaysZoom() {
+  const zoomPercentage = (map.getZoom() - minZoom) / (maxZoom - minZoom) * 100;
+  zoomScrollEle.style.top = `${100 - zoomPercentage}%`;
+}
+
+map.on("move", (ev) => {
+  renderOverlaysMove();
+})
+
+map.on("zoom", (ev) => {
+  renderOverlaysZoom();
+})
 
 export async function initialiseProducts() {
-  // await fetch("/api/authToken");
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
   renderedProducts = allProducts;
