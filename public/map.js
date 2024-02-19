@@ -25,7 +25,22 @@ const map = new mapboxgl.Map({
 
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
-map.on("load", initialiseProducts);
+map.on("load", () => {
+  renderOverlays();
+  initialiseProducts();
+});
+
+
+const coordEle = document.querySelector("#coords");
+
+function renderOverlays() {
+  const {lng, lat} = map.getCenter();
+  coordEle.textContent = `${lng.toFixed(3)}, ${lat.toFixed(3)}`;
+}
+
+map.on("move", (ev) => {
+  renderOverlays();
+})
 
 export async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
