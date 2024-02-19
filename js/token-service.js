@@ -1,6 +1,4 @@
-//JobyToDo - Currently Headers & getToken specifics are tailored purely to SCI-discover API not generic grab token method
 //JobyToDo  - secure storage needed for Uname,password,client credentials etc current setup is shoddy
-var session = require("express-session");
 
 class TokenService {
   constructor(host, tokenPath, username, password, clientID, clientSecret) {
@@ -28,13 +26,6 @@ class TokenService {
     return Date.now() + token.expires_in * 1000 - 10 * 1000; // converting to milliseconds and subtracting 10 seconds
   }
 
-  async refreshSession(token) {
-    const newTokenData = await this.refreshAccessToken();
-    const { access_token: newAccessToken, expires_in: newTokenExpiryTime } = newTokenData;
-
-    const newTokenExpiry = TokenService.convertExpiryTime(newTokenExpiryTime);
-  }
-
   async refreshAccessToken(token) {
     try {
       const response = await fetch(this.host + this.tokenPath, {
@@ -45,9 +36,7 @@ class TokenService {
       if (!response.ok) {
         throw new Error("Could not fetch refresh token");
       }
-
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       console.error(error);
     }
@@ -63,9 +52,7 @@ class TokenService {
       if (!response.ok) {
         throw new Error("Could not fetch access token");
       }
-
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
       console.error(error);
     }
