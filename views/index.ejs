@@ -71,15 +71,22 @@
       </div>
     </div>
 
+    <style>
+      #timeline{
+        border-radius: 20px;
+        opacity: 0.7;
+        background: #00000078;
+        box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+      }
+    </style>
+
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
 
     <script type="module">
       import define from "./c711cff230925051@955.js"
       import {Runtime, Library, Inspector} from "./runtime.js";
       var timeLineDiv = document.createElement("div");
-      timeLineDiv.id = "timeline";
-      timeLineDiv.style.position = "absolute";
-      
+      timeLineDiv.id = "timeline";        
 
       const runtime = new Runtime();
       //const main = runtime.module(define, Inspector.into(document.body));
