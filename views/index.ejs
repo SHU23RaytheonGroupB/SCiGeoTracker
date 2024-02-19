@@ -63,6 +63,7 @@
           <div class="#py-1" role="none">
             <!-- Active: "bg-neutral-900 text-neutral-200", Not Active: "text-neutral-100" -->
             <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="frames-item">Frames</a>
+            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="heatmap-item">Heatmap</a>
             <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="choropleth-item">Choropleth</a>
             <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="isarithmic-item">Isarithmic</a>
             <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="dot-density-item">Dot Density</a>
@@ -73,7 +74,7 @@
       </div>
     </div>
 
-    <div class="absolute top-0 right-0 z-10 m-2 flex flex-col gap-2">
+    <div class="absolute top-0 right-0 z-10 m-2 flex flex-col gap-4">
       <div id="search-container" class="flex flex-row gap-1.5">
         <input type="text" name="price" id="price" class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm w-64
         bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm
@@ -83,6 +84,27 @@
         bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
           <img class="h-4 w-4" src="icons8-search-90.png"/>
         </button>
+      </div>
+
+      <div id="zoom-container" class="ml-auto">
+        <div class="flex flex-col">
+          <button type="button" id="zoom-in-button" class="z-20 rounded-lg p-1.5
+          bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
+            <img class="h-3 w-3" src="icons8-plus-90.png"/>
+          </button>
+          <div class="h-44 relative">
+            <div class="absolute w-full h-full py-3">
+              <div id="zoom-scroll-button" class="relative w-full h-2 rounded-md -mt-1
+            bg-neutral-800 ring-1 ring-neutral-700"></div>
+            </div>
+            <div class="w-1 h-full mx-auto bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800">
+            </div>
+          </div>
+          <button type="button" id="zoom-out-button" class="z-20 rounded-lg p-1.5
+          bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
+            <img class="h-3 w-3" src="icons8-minus-90.png"/>
+          </button>
+        </div>
       </div>
     </div>
 
