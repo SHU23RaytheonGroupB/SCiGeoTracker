@@ -72,29 +72,74 @@
       </div>
     </div>
 
+    <div id="timeline-container" class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg">
+    </div>
+
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
 
-    <script type="module">
-      import define from "./c711cff230925051@955.js"
-      import {Runtime, Library, Inspector} from "./runtime.js";
-      var timeLineDiv = document.createElement("div");
-      timeLineDiv.id = "timeline";
-      
-      timeLineDiv.className = "absolute mx-auto my-2 w-3/4 bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg";
-
-      const runtime = new Runtime();
-      //const main = runtime.module(define, Inspector.into(document.body));
-      const main = runtime.module(define, Inspector.into(document.body.appendChild(timeLineDiv)));  
-
-      var count = document.getElementsByClassName("observablehq").length;
-      for (var i = 0; i < count; i++) {
-        if (i == 1){
-          i++;
-        }
-        document.getElementsByClassName("observablehq")[i].style.display = "none";
+    <style type="text/css">
+      .timeline-axis {
+        --daily-gridline-color: rgb(194, 199, 200);
+        --yearly-gridline-color: rgb(81, 93, 93);
+        --yearly-tick-color: rgb(81, 93, 93);
+        --yearly-label-color: rgb(60, 79, 81);
+        --daily-tick-color: rgb(161, 173, 173);
+        --daily-label-color: rgb(60, 79, 81);
+        --weekly-tick-color: rgb(161, 173, 173);
+        --weekly-label-color: rgb(60, 79, 81);
       }
+    
+      .timeline-axis line {
+        shape-rendering: geometricPrecision;
+        stroke-width: 0.5;
+      }
+    
+      .timeline-axis .yearly line {
+        stroke: var(--yearly-tick-color);
+      }
+    
+      .timeline-axis .yearly text {
+        color: var(--yearly-label-color);
+      }
+    
+      .timeline-axis .daily line {
+        stroke: var(--daily-tick-color);
+      }
+    
+      .timeline-axis .daily text {
+        color: var(--daily-label-color);
+      }
+    
+      .timeline-axis .weekly line {
+        stroke: var(--weekly-tick-color);
+      }
+    
+      .timeline-axis .weekly text {
+        color: var(--weekly-label-color);
+      }
+    
+      .timeline-axis .grid line {
+        stroke: var(--daily-gridline-color);
+      }
+    
+      .timeline-axis .yearlyGrid line {
+        stroke: var(--yearly-gridline-color);
+      }
+    </style>
+    <script type="module">
+      import Timeline from "./zoomable-timeline-with-items.js"
+      const from = new Date().setFullYear(new Date().getFullYear() - 1);
+      const until = new Date().setFullYear(new Date().getFullYear() + 1);
+      const myData = Array.from({ length: 500 }, (x, i) => ({
+        id: i,
+        start: new Date(
+          new Date().getTime() + Math.random() * 100000000000 - 50000000000
+        )
+      }));
+      const timeline = Timeline(myData, { from, until });
+      document.querySelector("#timeline-container").appendChild(timeline.element);
+    </script>
 
-      </script>
   </body>
   <script type="module" src="map.js"></script>
 </html>

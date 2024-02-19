@@ -1,35 +1,17 @@
-const START_DATE = new Date(1558231200000);
-const END_DATE = new Date(1593914400000);
+// ATTRIBUTION: Julien Colot
+// https://observablehq.com/@jcolot/zoomable-timeline-with-items@955
 
-function _timeline(Timeline,myData,oneYearAgo,oneYearFromNow){return(
-Timeline(myData, {
-  from: oneYearAgo,
-  until: oneYearFromNow
-})
-)}
 
-function _4(timeline){return(
-timeline.element
-)}
-
-function _oneYearAgo(){return(
-START_DATE
-)}
-
-function _oneYearFromNow(){return(
-END_DATE
-)}
-
-function _Timeline(d3,width){return(
-function Timeline(data, options) {
+export default function Timeline(data, options) {
   const axis = {};
   const nodes = {};
   let _data = data;
 
-  const { from, until, margin, height, onClickItem, onZoomEnd, zoomFilter } = {
-    from: START_DATE,
-    until: END_DATE,
+  const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
+    from: new Date().setFullYear(new Date().getFullYear() + 1),
+    until: new Date().setFullYear(new Date().getFullYear() + 1),
     margin: { top: 80, right: 20, bottom: 20, left: 20 },
+    width: 800,
     height: 200,
     onClickItem: () => {},
     onZoomEnd: () => {},
@@ -38,7 +20,7 @@ function Timeline(data, options) {
   };
 
   const MS_PER_HOUR = 60 * 60 * 1000;
-  //const MS_PER_SECOND = 10000;
+  const MS_PER_SECOND = 1000;
   const MS_PER_DAY = 24 * MS_PER_HOUR;
   const MS_PER_YEAR = 365.24 * MS_PER_DAY; // include leap year
 
@@ -81,8 +63,8 @@ function Timeline(data, options) {
             const startOfTheYear =
               d.getUTCMonth() === 0 && d.getUTCDate() === 1;
             const format = startOfTheYear ? "%Y – %B" : "%B";
-            console.log(d);
 
+            return d3.utcFormat(format)(d);
           }
         ]
       ],
@@ -254,7 +236,7 @@ function Timeline(data, options) {
           const ai = a.index;
           if (radius2 - epsilon > (X[ai] - x) ** 2 + (Y[ai] - y) ** 2)
             return true;
-          a = a.next;;
+          a = a.next;
         }
         return false;
       };
@@ -303,7 +285,7 @@ function Timeline(data, options) {
               .on("click", onClickItem)
               .style("stroke", "white")
               .style("stroke-width", 1)
-              .style("fill", "blue")
+              .style("fill", "red")
               .style("cursor", "pointer")
               .attr("r", 4)
               .attr("cx", (d, i) => X[i])
@@ -342,13 +324,6 @@ function Timeline(data, options) {
       ])
       .on("zoom", ({ transform }) => {
         scaleX = transform.rescaleX(originalScaleX);
-        //console.log(scaleX.domain());
-        /*(2) [Sat Nov 25 2023 17:24:40 GMT+0000 (Greenwich Mean Time), Sat Jun 22 2024 16:36:08 GMT+0100 (British Summer Time)]
-        0:Sat Nov 25 2023 17:24:40 GMT+0000 (Greenwich Mean Time) {}
-        1:Sat Jun 22 2024 16:36:08 GMT+0100 (British Summer Time) {}
-        length:2
-       [[Prototype]]:Array(0)*/
-       //document.getElementById("test").innerHTML = scaleX.domain();
         bind(_data);
         element.value = {
           start: scaleX.domain()[0],
@@ -373,53 +348,3 @@ function Timeline(data, options) {
 
   return setup();
 }
-)}
-
-// function _8(htl){return(
-// htl.html`<h2>Items</h2>`
-// )}
-
-async function _myData(){
-  const response = await fetch("/api/getProducts");
-  const allProducts = await response.json();
-
-  console.log(allProducts);
-
-  var maxDate = allProducts[0].objectstartdate;
-  var minDate = allProducts[0].objectstartdate;
-
-  for (let i = 0; i < allProducts.length; i++) {
-    if (allProducts[i].objectstartdate > maxDate && allProducts[i].objectstartdate != null) {
-      maxDate = allProducts[i].objectstartdate;
-    }
-    if (allProducts[i].objectstartdate < minDate && allProducts[i].objectstartdate != null) {
-      minDate = allProducts[i].objectstartdate;
-    }
-  }
-
-  console.log("maxDate: ", maxDate);
-  console.log("minDate: ", minDate);
-  return(
-Array.from({ length: allProducts.length }, (x, i) => ({
-  id: i,
-  start: new Date(
-    new Date(allProducts[i].objectstartdate)
-  )
-}))
-)}
-
-export default function define(runtime, observer) {
-  const main = runtime.module();
-  //main.variable(observer()).define(["md"], _1);
-  //main.variable(observer("viewof years")).define("viewof years", ["Inputs"], _years);
-  //main.variable(observer("years")).define("years", ["Generators", "viewof years"], (G, _) => G.input(_));
-  main.variable(observer("timeline")).define("timeline", ["Timeline","myData","oneYearAgo","oneYearFromNow"], _timeline);
-  main.variable(observer()).define(["timeline"], _4);
-  main.variable(observer("oneYearAgo")).define("oneYearAgo", _oneYearAgo);
-  main.variable(observer("oneYearFromNow")).define("oneYearFromNow", _oneYearFromNow);
-  main.variable(observer("Timeline")).define("Timeline", ["d3","width"], _Timeline);
-  //main.variable(observer()).define(["htl"], _8);
-  main.variable(observer("myData")).define("myData", _myData);
-  //main.variable(observer()).define(["html"], _10);
-  return main;
-} 
