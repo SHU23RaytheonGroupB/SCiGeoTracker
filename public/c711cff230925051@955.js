@@ -1,10 +1,5 @@
-function _1(md){return(
-md`# Zoomable Timeline with Items`
-)}
-
-function _years(Inputs){return(
-Inputs.range([1, 20], { value: 10, step: 1, label: "Years" })
-)}
+const START_DATE = new Date(1558231200000);
+const END_DATE = new Date(1593914400000);
 
 function _timeline(Timeline,myData,oneYearAgo,oneYearFromNow){return(
 Timeline(myData, {
@@ -18,11 +13,11 @@ timeline.element
 )}
 
 function _oneYearAgo(){return(
-new Date().setFullYear(new Date().getFullYear() - 1)
+START_DATE
 )}
 
 function _oneYearFromNow(){return(
-new Date().setFullYear(new Date().getFullYear() + 1)
+END_DATE
 )}
 
 function _Timeline(d3,width){return(
@@ -32,8 +27,8 @@ function Timeline(data, options) {
   let _data = data;
 
   const { from, until, margin, height, onClickItem, onZoomEnd, zoomFilter } = {
-    from: new Date().setFullYear(new Date().getFullYear() + 1),
-    until: new Date().setFullYear(new Date().getFullYear() + 1),
+    from: START_DATE,
+    until: END_DATE,
     margin: { top: 80, right: 20, bottom: 20, left: 20 },
     height: 200,
     onClickItem: () => {},
@@ -353,7 +348,7 @@ function Timeline(data, options) {
         1:Sat Jun 22 2024 16:36:08 GMT+0100 (British Summer Time) {}
         length:2
        [[Prototype]]:Array(0)*/
-       document.getElementById("test").innerHTML = scaleX.domain();
+       //document.getElementById("test").innerHTML = scaleX.domain();
         bind(_data);
         element.value = {
           start: scaleX.domain()[0],
@@ -380,71 +375,37 @@ function Timeline(data, options) {
 }
 )}
 
-function _8(htl){return(
-htl.html`<h2>Items</h2>`
-)}
+// function _8(htl){return(
+// htl.html`<h2>Items</h2>`
+// )}
 
-function _myData(){return(
-Array.from({ length: 500 }, (x, i) => ({
+async function _myData(){
+  const response = await fetch("/api/getProducts");
+  const allProducts = await response.json();
+
+  console.log(allProducts);
+
+  var maxDate = allProducts[0].objectstartdate;
+  var minDate = allProducts[0].objectstartdate;
+
+  for (let i = 0; i < allProducts.length; i++) {
+    if (allProducts[i].objectstartdate > maxDate && allProducts[i].objectstartdate != null) {
+      maxDate = allProducts[i].objectstartdate;
+    }
+    if (allProducts[i].objectstartdate < minDate && allProducts[i].objectstartdate != null) {
+      minDate = allProducts[i].objectstartdate;
+    }
+  }
+
+  console.log("maxDate: ", maxDate);
+  console.log("minDate: ", minDate);
+  return(
+Array.from({ length: allProducts.length }, (x, i) => ({
   id: i,
   start: new Date(
-    new Date().getTime() + Math.random() * 100000000000 - 50000000000
+    new Date(allProducts[i].objectstartdate)
   )
 }))
-)}
-
-function _10(html){return(
-html`
-<style type="text/css">
-  .timeline-axis {
-    --daily-gridline-color: rgb(194, 199, 200);
-    --yearly-gridline-color: rgb(81, 93, 93);
-    --yearly-tick-color: rgb(81, 93, 93);
-    --yearly-label-color: rgb(60, 79, 81);
-    --daily-tick-color: rgb(161, 173, 173);
-    --daily-label-color: rgb(60, 79, 81);
-    --weekly-tick-color: rgb(161, 173, 173);
-    --weekly-label-color: rgb(60, 79, 81);
-  }
-
-  .timeline-axis line {
-    shape-rendering: geometricPrecision;
-    stroke-width: 0.5;
-  }
-
-  .timeline-axis .yearly line {
-    stroke: var(--yearly-tick-color);
-  }
-
-  .timeline-axis .yearly text {
-    color: var(--yearly-label-color);
-  }
-
-  .timeline-axis .daily line {
-    stroke: var(--daily-tick-color);
-  }
-
-  .timeline-axis .daily text {
-    color: var(--daily-label-color);
-  }
-
-  .timeline-axis .weekly line {
-    stroke: var(--weekly-tick-color);
-  }
-
-  .timeline-axis .weekly text {
-    color: var(--weekly-label-color);
-  }
-
-  .timeline-axis .grid line {
-    stroke: var(--daily-gridline-color);
-  }
-
-  .timeline-axis .yearlyGrid line {
-    stroke: var(--yearly-gridline-color);
-  }
-</style>
-`
 )}
 
 export default function define(runtime, observer) {
@@ -461,4 +422,4 @@ export default function define(runtime, observer) {
   main.variable(observer("myData")).define("myData", _myData);
   //main.variable(observer()).define(["html"], _10);
   return main;
-}
+} 
