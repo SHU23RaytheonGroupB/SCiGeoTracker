@@ -43,7 +43,9 @@ router.get("/getProducts", async function (req, res, next) {
       const allProductMetaData = await ps.getAllProducts();
       cache.set("allProducts", allProductMetaData);
       res.json(allProductMetaData);
-    } res.json(cache.get("allProducts"));
+    } else {
+      res.json(cache.get("allProducts"));
+    }
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).send("Error fetching products.");

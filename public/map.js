@@ -28,7 +28,6 @@ const map = new mapboxgl.Map({
 map.on("load", initialiseProducts);
 
 export async function initialiseProducts() {
-  // await fetch("/api/authToken");
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
   renderedProducts = allProducts;
