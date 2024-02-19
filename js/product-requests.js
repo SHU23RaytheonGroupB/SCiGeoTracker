@@ -11,7 +11,6 @@ class ProductService {
     };
   }
 
-  //Functions------------------------------------------------------------------------------------------------------
   async getAllProducts() {
     const productIDs = await this.getAllProductIDs();
     let results = await this.getProducts(productIDs);
