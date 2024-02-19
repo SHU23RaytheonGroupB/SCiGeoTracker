@@ -46,8 +46,8 @@ function renderOverlaysMove() {
 }
 
 function renderOverlaysZoom() {
-  const zoomPercentage = 100 - (((map.getZoom() - minZoom) / (maxZoom - minZoom)) * 100);
-  zoomScrollEle.style.top = `${zoomPercentage}%`;
+  const zoomPercentage = (map.getZoom() - minZoom) / (maxZoom - minZoom) * 100;
+  zoomScrollEle.style.top = `${100 - zoomPercentage}%`;
 }
 
 map.on("move", (ev) => {
