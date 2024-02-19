@@ -1,5 +1,3 @@
-//JobyToDo - look into redis for caching product metadata on first call.
-
 const HOSTNAME = "https://hallam.sci-toolset.com";
 const API_ORIGIN = `${HOSTNAME}/discover/api`;
 
@@ -20,7 +18,6 @@ class ProductService {
   }
 
   async getAllProductIDs() {
-    console.log("getAllproducts called");
     const data = await this.searchProducts();
     // Extract the product IDs from the search results
     return data.results.searchresults.map((item) => item.id);
