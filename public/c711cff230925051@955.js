@@ -458,7 +458,7 @@ export default function define(runtime, observer) {
   main.variable(observer("oneYearFromNow")).define("oneYearFromNow", _oneYearFromNow);
   main.variable(observer("Timeline")).define("Timeline", ["d3","width"], _Timeline);
   //main.variable(observer()).define(["htl"], _8);
-  //main.variable(observer("myData")).define("myData", _myData);
+  main.variable(observer("myData")).define("myData", _myData);
   //main.variable(observer()).define(["html"], _10);
   return main;
 }
