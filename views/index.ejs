@@ -172,6 +172,37 @@
       </div>
     </div>
 
+    <div id="saved-areas-container" class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm
+    bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto">
+      <div class="flex flex-row gap-2 px-1">
+        <h2 class="text-neutral-300 grow font-bold">Saved Areas</h2>
+        <button type="button" id="saved-areas-close-button" class="ml-auto">
+          <img class="h-3 w-3" src="icons8-close-90.png"/>
+        </button>
+      </div>
+      <div class="my-2 px-1 flex flex-col">
+        <input type="text" name="saved-areas-search" id="saved-areas-search" class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2
+        bg-neutral-600/50 ring-1 ring-neutral-500/50 #ring-inset shadow-sm
+        placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-600/80" placeholder="Search">
+        <div id="saved-areas-list-container" class="h-52">
+          <div class="px-3 py-1.5 rounded-md
+          bg-neutral-800 ring-1 ring-neutral-600/50">
+            Test
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-row gap-2 text-xs text-neutral-400">
+        <button type="button" id="saved-areas-info-view-button" class="px-4 py-1 w-full rounded-md overflow-hidden
+        bg-neutral-800 ring-1 ring-neutral-600/50">
+          Import GeoJSON
+        </button>
+        <button type="button" id="saved-areas-info-view-button" class="px-4 py-1 w-full rounded-md overflow-hidden
+        bg-neutral-800 ring-1 ring-neutral-600/50">
+          Export GeoJSON
+        </button>
+      </div>
+    </div>
+
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
   </body>
   <script type="module" src="map.js"></script>
