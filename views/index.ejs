@@ -14,34 +14,44 @@
   <body class="m-0 p-0 text-neutral-300 fill-neutral-500">
     <div class="absolute top-0 left-0 z-10 m-2 flex flex-row gap-2">
       <div id="tray" class="flex flex-col gap-2">
-        <div class="flex flex-col overflow-hidden text-sm font-semibold rounded-lg
-        bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm">
+        <div
+          class="flex flex-col overflow-hidden text-sm font-semibold rounded-lg bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm"
+        >
           <!-- <button type="button" id="button" class="p-2 hover:bg-neutral-900">
             <svg class="h-5 w-5 rotate-45" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
             </svg>
           </button> -->
           <button type="button" id="move-button" class="p-1.5 hover:bg-neutral-500/10 bg-neutral-800">
-            <img class="h-6 w-6" src="icons8-move-90.png"/>
+            <img class="h-6 w-6" src="icons8-move-90.png" />
           </button>
           <button type="button" id="rectangle-button" class="p-1.5 hover:bg-neutral-500/10">
-            <img class="h-6 w-6" src="icons8-rectangle-90.png"/>
+            <img class="h-6 w-6" src="icons8-rectangle-90.png" />
           </button>
           <button type="button" id="polygon-button" class="p-1.5 hover:bg-neutral-500/10">
-            <img class="h-6 w-6" src="icons8-radar-plot-90.png"/>
+            <img class="h-6 w-6" src="icons8-radar-plot-90.png" />
           </button>
         </div>
-        <button type="button" id="filter-button" class="rounded-lg p-1.5
-        bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
-          <img class="h-6 w-6" src="icons8-filter-90.png"/>
+        <button
+          type="button"
+          id="filter-button"
+          class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+        >
+          <img class="h-6 w-6" src="icons8-filter-90.png" />
         </button>
-        <button type="button" id="folder-button" class="rounded-lg p-1.5
-        bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
-          <img class="h-6 w-6" src="icons8-folder-90.png"/>
+        <button
+          type="button"
+          id="folder-button"
+          class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+        >
+          <img class="h-6 w-6" src="icons8-folder-90.png" />
         </button>
-        <button type="button" id="histogram-button" class="rounded-lg p-1.5
-        bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
-          <img class="h-6 w-6" src="icons8-futures-90.png"/>
+        <button
+          type="button"
+          id="histogram-button"
+          class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+        >
+          <img class="h-6 w-6" src="icons8-futures-90.png" />
         </button>
       </div>
 
@@ -54,13 +64,18 @@
               <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
             </svg>
           </button> -->
-          <button type="button" class="inline-flex w-full gap-x-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg
-          bg-neutral-950/50 hover:bg-neutral-900 ring-1 ring-neutral-700/50 #ring-inset shadow-sm" id="layer-menu-button" aria-expanded="true" aria-haspopup="true">
+          <button
+            type="button"
+            class="inline-flex w-full gap-x-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg bg-neutral-950/50 hover:bg-neutral-900 ring-1 ring-neutral-700/50 #ring-inset shadow-sm"
+            id="layer-menu-button"
+            aria-expanded="true"
+            aria-haspopup="true"
+          >
             Frames
-            <img class="h-4 w-4 ml-auto my-auto" src="icons8-dropdown-stroke-1px-90.png"/>
+            <img class="h-4 w-4 ml-auto my-auto" src="/images/icons8-dropdown-stroke-1px-90.png" />
           </button>
         </div>
-      
+
         <!--
           Dropdown menu, show/hide based on menu state.
       
@@ -71,89 +86,150 @@
             From: "transform opacity-100 scale-100"
             To: "transform opacity-0 scale-95"
         -->
-        <div class="z-20 mt-2 rounded-md overflow-hidden
-        bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #ring-opacity-5 focus:outline-none shadow-sm" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+        <div
+          class="z-20 mt-2 rounded-md overflow-hidden bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #ring-opacity-5 focus:outline-none shadow-sm"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabindex="-1"
+        >
           <div class="#py-1" role="none">
             <!-- Active: "bg-neutral-900 text-neutral-200", Not Active: "text-neutral-100" -->
-            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="frames-item">Frames</a>
-            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="heatmap-item">Heatmap</a>
-            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="choropleth-item">Choropleth</a>
-            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="isarithmic-item">Isarithmic</a>
-            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="dot-density-item">Dot Density</a>
-            <a href="#" class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm" role="menuitem" tabindex="-1" id="frame-overlaps-item">Frame Overlaps</a>
+            <a
+              href="#"
+              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              id="frames-item"
+              >Frames</a
+            >
+            <a
+              href="#"
+              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              id="heatmap-item"
+              >Heatmap</a
+            >
+            <a
+              href="#"
+              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              id="choropleth-item"
+              >Choropleth</a
+            >
+            <a
+              href="#"
+              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              id="isarithmic-item"
+              >Isarithmic</a
+            >
+            <a
+              href="#"
+              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              id="dot-density-item"
+              >Dot Density</a
+            >
+            <a
+              href="#"
+              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              role="menuitem"
+              tabindex="-1"
+              id="frame-overlaps-item"
+              >Frame Overlaps</a
+            >
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="absolute top-0 right-0 z-10 m-2 flex flex-col gap-4">
       <div id="search-container" class="flex flex-row gap-1.5">
-        <input type="text" name="price" id="price" class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm w-64
-        bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm
-        placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-950/80" placeholder="Search">
-        <button type="button" id="button" class="rounded-lg p-2
-        bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
-          <img class="h-4 w-4" src="icons8-search-90.png"/>
+        <input
+          type="text"
+          name="price"
+          id="price"
+          class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-950/80"
+          placeholder="Search"
+        />
+        <button
+          type="button"
+          id="button"
+          class="rounded-lg p-2 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+        >
+          <img class="h-4 w-4" src="icons8-search-90.png" />
         </button>
       </div>
 
       <div id="zoom-container" class="ml-auto">
         <div class="flex flex-col">
-          <button type="button" id="zoom-in-button" class="z-20 rounded-lg p-1.5
-          bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
-            <img class="h-3 w-3" src="icons8-plus-90.png"/>
+          <button
+            type="button"
+            id="zoom-in-button"
+            class="z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+          >
+            <img class="h-3 w-3" src="/images/icons8-plus-90.png" />
           </button>
           <div class="h-44 relative">
             <div class="absolute w-full h-full py-3">
-              <div id="zoom-scroll-button" class="relative w-full h-2 rounded-md -mt-1
-            bg-neutral-800 ring-1 ring-neutral-700"></div>
+              <div
+                id="zoom-scroll-button"
+                class="relative w-full h-2 rounded-md -mt-1 bg-neutral-800 ring-1 ring-neutral-700"
+              ></div>
             </div>
-            <div class="w-1 h-full mx-auto bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800">
-            </div>
+            <div
+              class="w-1 h-full mx-auto bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800"
+            ></div>
           </div>
-          <button type="button" id="zoom-out-button" class="z-20 rounded-lg p-1.5
-          bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm">
-            <img class="h-3 w-3" src="icons8-minus-90.png"/>
+          <button
+            type="button"
+            id="zoom-out-button"
+            class="z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+          >
+            <img class="h-3 w-3" src="/images/icons8-minus-90.png" />
           </button>
         </div>
       </div>
     </div>
 
     <div class="absolute bottom-0 right-0 z-10 m-2 flex flex-row gap-2">
-      <div id="coords-container" class="py-1 px-6 #w-20 #h-10 rounded-sm bg-neutral-900/80 text-[9px] font-mono text-center">
-        <p id="coords" class="font-medium">
-          -.000, -.000
-        </p>
-        <p id="scale" class="font-normal">
-          10km
-        </p>
+      <div
+        id="coords-container"
+        class="py-1 px-6 #w-20 #h-10 rounded-sm bg-neutral-900/80 text-[9px] font-mono text-center"
+      >
+        <p id="coords" class="font-medium">-.000, -.000</p>
+        <p id="scale" class="font-normal">10km</p>
       </div>
     </div>
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
 
     <script type="module">
-      import define from "/timeline.js"
-      import {Runtime, Library, Inspector} from "./runtime.js";
+      import define from "/timeline.js";
+      import { Runtime, Library, Inspector } from "./runtime.js";
       var timeLineDiv = document.createElement("div");
       timeLineDiv.id = "timeline";
-      
-      timeLineDiv.className = "absolute mx-auto my-2 w-3/4 bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg";
+
+      timeLineDiv.className =
+        "absolute mx-auto my-2 w-3/4 bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg";
 
       const runtime = new Runtime();
       //const main = runtime.module(define, Inspector.into(document.body));
-      const main = runtime.module(define, Inspector.into(document.body.appendChild(timeLineDiv)));  
+      const main = runtime.module(define, Inspector.into(document.body.appendChild(timeLineDiv)));
 
       var count = document.getElementsByClassName("observablehq").length;
       for (var i = 0; i < count; i++) {
-        if (i == 1){
+        if (i == 1) {
           i++;
         }
         document.getElementsByClassName("observablehq")[i].style.display = "none";
       }
-
-      </script>
+    </script>
   </body>
-  <script type="module" src="map.js"></script>
+  <script type="module" src="./javascripts/map.js"></script>
 </html>
