@@ -2,7 +2,7 @@ let allProducts = [];
 let renderedProducts = [];
 
 let productFillColours = {
-  SCENE: "##A2A2A2", //GREY
+  SCENE: "#A2A2A2", //GREY
   DOCUMENT: "#219BF5", //blue
   IMAGERY: "#0085EC", //slightly darker blue
   VIDEO: "#008907", //green
@@ -294,11 +294,11 @@ function updateArea(e) { //USED FOR DRAW POLYGON
     const Uncovered_area = 603.13;
     const Coverage_percentage = (Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100); //area as a % to 2 d.p.
     const Mission_count = 100; 
-    answer.innerHTML = `<p style="font-size: 13px; margin: 2px;">Total Area: <strong>${rounded_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 13px; margin: 2px;">Covered Area: <strong>${Covered_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 13px; margin: 2px;">Uncovered Area: <strong>${Uncovered_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 13px; margin: 2px;">Coverage %: <strong>${Coverage_percentage}</strong>%</p>`;
-    answer.innerHTML += `<p style="font-size: 13px; margin: 2px;">Total missions: <strong>${Mission_count}</strong></p>`;
+    answer.innerHTML = `<p style="font-size: 11px; color: black; margin: 0px;">Total Area: <strong>${rounded_area}</strong> Km²</p>`;
+    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Covered Area: <strong>${Covered_area}</strong> Km²</p>`;
+    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Uncovered Area: <strong>${Uncovered_area}</strong> Km²</p>`;
+    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Coverage %: <strong>${Coverage_percentage}</strong>%</p>`;
+    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Total missions: <strong>${Mission_count}</strong></p>`;
   } else {
     answer.innerHTML = '';
     //if (e.type !== 'draw.delete')
