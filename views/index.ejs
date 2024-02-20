@@ -8,7 +8,11 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"></script>
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css" type="text/css">
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css"
+      type="text/css"
+    />
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -26,13 +30,13 @@
             </svg>
           </button> -->
           <button type="button" id="move-button" class="p-1.5 hover:bg-neutral-500/10 bg-neutral-800">
-            <img class="h-6 w-6" src="icons8-move-90.png" />
+            <img class="h-6 w-6" src="/images/icons8-move-90.png" />
           </button>
           <button type="button" id="rectangle-button" class="p-1.5 hover:bg-neutral-500/10">
-            <img class="h-6 w-6" src="icons8-rectangle-90.png" />
+            <img class="h-6 w-6" src="/images/icons8-rectangle-90.png" />
           </button>
           <button type="button" id="polygon-button" class="p-1.5 hover:bg-neutral-500/10">
-            <img class="h-6 w-6" src="icons8-radar-plot-90.png" />
+            <img class="h-6 w-6" src="/images/icons8-radar-plot-90.png" />
           </button>
         </div>
         <button
@@ -40,21 +44,21 @@
           id="filter-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="icons8-filter-90.png" />
+          <img class="h-6 w-6" src="/images/icons8-filter-90.png" />
         </button>
         <button
           type="button"
           id="folder-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="icons8-folder-90.png" />
+          <img class="h-6 w-6" src="/images/icons8-folder-90.png" />
         </button>
         <button
           type="button"
           id="histogram-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="icons8-futures-90.png" />
+          <img class="h-6 w-6" src="/images/icons8-futures-90.png" />
         </button>
       </div>
 
@@ -165,7 +169,7 @@
           id="button"
           class="rounded-lg p-2 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-4 w-4" src="icons8-search-90.png" />
+          <img class="h-4 w-4" src="/images/icons8-search-90.png" />
         </button>
       </div>
 
@@ -211,13 +215,25 @@
     </div>
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
-    <div id="areaSelectionPanel" style = " height: 100px; width: 200px; position: absolute; bottom: 40px; left: 10px; background-color: rgba(255, 255, 255, 0.9); padding: 10px; text-align: center ">
+    <div
+      id="areaSelectionPanel"
+      style="
+        height: 100px;
+        width: 200px;
+        position: absolute;
+        bottom: 40px;
+        left: 10px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        text-align: center;
+      "
+    >
       <p id="TotalArea"></p>
     </div>
 
     <script type="module">
-      import define from "/timeline.js";
-      import { Runtime, Library, Inspector } from "./runtime.js";
+      import define from "/javascripts/timeline.js";
+      import { Runtime, Library, Inspector } from "./javascripts/runtime.js";
       var timeLineDiv = document.createElement("div");
       timeLineDiv.id = "timeline";
 
