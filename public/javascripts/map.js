@@ -213,6 +213,8 @@ export async function addProductsToMap() {
   addFramesLayers("product-polygons");
   // HEATMAP LAYER
   //addHeatmapLayer("product-points");
+  // DOT LAYER
+  //addDotLayer("product-points");
 }
 
 function addSource(title, data) {
@@ -329,6 +331,24 @@ function updateArea(e) {
     //if (e.type !== 'draw.delete')
     //alert('Click the map to draw a polygon.');
   }
+}
+
+function addDotLayer(title){
+  map.addLayer({
+    id: `${title}-circle`,
+    type: 'circle',
+    source: title,
+    paint: {
+      'circle-color': '#FF0000',
+      'circle-radius': {
+        'base': 1.75,
+        'stops': [
+          [12, 2],
+          [32, 180]
+        ]
+      },
+    }
+  });
 }
 
 //-----------CUSTOM POLYGONS---------
