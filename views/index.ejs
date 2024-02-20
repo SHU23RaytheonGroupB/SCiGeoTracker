@@ -261,7 +261,7 @@
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Saved Areas</h2>
         <button type="button" id="saved-areas-close-button" class="ml-auto">
-          <img class="h-3 w-3" src="icons8-close-90.png"/>
+          <img class="h-3 w-3" src="images/icons8-close-90.png"/>
         </button>
       </div>
       <div class="my-2 px-1 flex flex-col">
@@ -269,9 +269,18 @@
         bg-neutral-600/50 ring-1 ring-neutral-500/50 #ring-inset shadow-sm
         placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-600/80" placeholder="Search">
         <div id="saved-areas-list-container" class="h-52">
-          <div class="px-3 py-1.5 rounded-md
-          bg-neutral-800 ring-1 ring-neutral-600/50">
-            Test
+          <div class="p-1 rounded-md
+          bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1">
+            <span class="grow my-auto ml-2">Test</span>
+            <button type="button" #id="saved-area-view-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
+              <img class="h-4 w-4" src="images/icons8-map-90.png"/>
+            </button>
+            <button type="button" #id="saved-area-edit-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
+              <img class="h-4 w-4" src="images/icons8-edit-90.png"/>
+            </button>
+            <button type="button" #id="saved-area-delete-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
+              <img class="h-4 w-4" src="images/icons8-delete-90.png"/>
+            </button>
           </div>
         </div>
       </div>
@@ -288,21 +297,6 @@
     </div>
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
-    <div
-      id="areaSelectionPanel"
-      style="
-        height: 100px;
-        width: 200px;
-        position: absolute;
-        bottom: 40px;
-        left: 10px;
-        background-color: rgba(255, 255, 255, 0.9);
-        padding: 10px;
-        text-align: center;
-      "
-    >
-      <p id="TotalArea"></p>
-    </div>
 
     <script type="module">
       import define from "/javascripts/timeline.js";
