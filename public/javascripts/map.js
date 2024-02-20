@@ -1,5 +1,4 @@
 let allProducts = [];
-let renderedProducts = [];
 
 let productFillColours = {
   SCENE: "#6E6E6E", //GREY
@@ -60,7 +59,6 @@ map.on("zoom", (ev) => {
 export async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
-  renderedProducts = allProducts;
   await addProductsToMap();
   //filtersPanel.on("change", filterProductsByType);
 }
@@ -75,42 +73,49 @@ function filterProductsByType() {
 
 //Draw every product to the screen
 export async function addProductsToMap() {
-  let productsByType = {};
-  renderedProducts.forEach((product) => {
-    if (productsByType[product.type] == undefined) productsByType[product.type] = [];
-    productsByType[product.type].push(product);
-  });
-  for (const [type, products] of Object.entries(productsByType)) {
-    await addProductsTypeToMap(products, type);
-    // FRAMES
-    fillPolygon(`${type}-polygons`, type);
-    outlinePolygon(`${type}-polygons`, type);
-    // HEATMAP
-    addHeatmapLayer(`${type}-points`, type);
-  }
-}
-
-async function addProductsTypeToMap(products, type) {
   //Define polygon & point mapbox sources
   let polygonFeatureCollection = {
     type: "FeatureCollection",
-    features: products.map((product) => ({
+    features: allProducts.map((product) => ({
       type: "Feature",
       geometry: product.footprint,
+      attributes: {
+        id: product.identifier,
+        type: product.type,
+        title: product.title,
+        mission_id: product.missionid,
+        date_created:	product.datecreated,
+        date_start: product.objectstartdate,
+        date_end: product.objectenddate,
+      },
     })),
   };
   let pointFeatureCollection = {
     type: "FeatureCollection",
-    features: products.map((product) => ({
+    features: allProducts.map((product) => ({
       type: "Feature",
       geometry: {
         type: "Point",
         coordinates: product.centre != null ? product.centre.split(",").reverse() : [],
       },
+      attributes: {
+        id: product.identifier,
+        type: product.type,
+        title: product.title,
+        mission_id: product.missionid,
+        date_created:	product.datecreated,
+        date_start: product.objectstartdate,
+        date_end: product.objectenddate,
+      },
     })),
   };
-  addSource(`${type}-polygons`, polygonFeatureCollection);
-  addSource(`${type}-points`, pointFeatureCollection);
+  // SOURCES
+  addSource("product-polygons", polygonFeatureCollection);
+  addSource("product-points", pointFeatureCollection);
+  // FRAMES LAYER
+  addFramesLayers("product-polygons");
+  // HEATMAP LAYER
+  addHeatmapLayer("product-points");
 }
 
 function addSource(title, data) {
@@ -122,101 +127,51 @@ function addSource(title, data) {
   });
 }
 
-function fillPolygon(title, productType) {
+function addFramesLayers(title) {
   map.addLayer({
-    id: title + "fill",
+    id: `${title}-frames-fill`,
     type: "fill",
-    source: title, // reference the data source
+    source: title,
     layout: {},
     paint: {
-      "fill-color": productFillColours[productType],
+      "fill-color": productFillColours["SCENE"],
       "fill-opacity": 0.2,
     },
   });
-}
-
-function outlinePolygon(title, productType) {
   map.addLayer({
-    id: title + "outline",
+    id: `${title}-frames-outline`,
     type: "line",
     source: title,
     layout: {},
     paint: {
-      "line-color": productOutlineColours[productType],
+      "line-color": productOutlineColours["SCENE"],
       "line-width": 1,
     },
   });
-}
+} 
+
+
+async function circleLinkZoom(d) {
+  
+  renderedProducts.forEach(product => {
+    if(product.identifier === d){
+      map.flyTo({
+        center: product.centre.split(",").reverse(),
+        zoom: 12,
+        essential: true 
+    })
+    }
+  })
+};
+
+export {circleLinkZoom};
+
 
 function addHeatmapLayer(title, productType) {
   map.addLayer({
     id: `${title}-heatmap`,
     type: "heatmap",
     source: title,
-    // maxzoom: 9,
-    // paint: {
-    //   // Increase the heatmap weight based on frequency and property magnitude
-    //   'heatmap-weight': [
-    //       'interpolate',
-    //       ['linear'],
-    //       ['get', 'mag'],
-    //       0,
-    //       0,
-    //       6,
-    //       1
-    //   ],
-    //   // Increase the heatmap color weight weight by zoom level
-    //   // heatmap-intensity is a multiplier on top of heatmap-weight
-    //   'heatmap-intensity': [
-    //       'interpolate',
-    //       ['linear'],
-    //       ['zoom'],
-    //       0,
-    //       1,
-    //       9,
-    //       3
-    //   ],
-    //   // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
-    //   // Begin color ramp at 0-stop with a 0-transparancy color
-    //   // to create a blur-like effect.
-    //   'heatmap-color': [
-    //       'interpolate',
-    //       ['linear'],
-    //       ['heatmap-density'],
-    //       0,
-    //       'rgba(33,102,172,0)',
-    //       0.2,
-    //       'rgb(103,169,207)',
-    //       0.4,
-    //       'rgb(209,229,240)',
-    //       0.6,
-    //       'rgb(253,219,199)',
-    //       0.8,
-    //       'rgb(239,138,98)',
-    //       1,
-    //       'rgb(178,24,43)'
-    //   ],
-    //   // Adjust the heatmap radius by zoom level
-    //   'heatmap-radius': [
-    //       'interpolate',
-    //       ['linear'],
-    //       ['zoom'],
-    //       0,
-    //       2,
-    //       9,
-    //       20
-    //   ],
-    //   // // Transition from heatmap to circle layer by zoom level
-    //   // 'heatmap-opacity': [
-    //   //     'interpolate',
-    //   //     ['linear'],
-    //   //     ['zoom'],
-    //   //     7,
-    //   //     1,
-    //   //     9,
-    //   //     0
-    //   // ]
-    // }
   });
 }
 

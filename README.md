@@ -1,4 +1,5 @@
-# SCiGeoTracker
+
+observablehq--inspect# SCiGeoTracker
 
 ## Running the development server
 
