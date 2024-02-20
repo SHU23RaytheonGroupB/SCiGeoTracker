@@ -36,27 +36,26 @@ map.on("load", () => {
   initialiseProducts();
 });
 
-
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
 
 function renderOverlaysMove() {
-  const {lng, lat} = map.getCenter();
+  const { lng, lat } = map.getCenter();
   coordEle.textContent = `${lng.toFixed(3)}, ${lat.toFixed(3)}`;
 }
 
 function renderOverlaysZoom() {
-  const zoomPercentage = (map.getZoom() - minZoom) / (maxZoom - minZoom) * 100;
+  const zoomPercentage = ((map.getZoom() - minZoom) / (maxZoom - minZoom)) * 100;
   zoomScrollEle.style.top = `${100 - zoomPercentage}%`;
 }
 
 map.on("move", (ev) => {
   renderOverlaysMove();
-})
+});
 
 map.on("zoom", (ev) => {
   renderOverlaysZoom();
-})
+});
 
 export async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
@@ -78,10 +77,9 @@ function filterProductsByType() {
 export async function addProductsToMap() {
   let productsByType = {};
   renderedProducts.forEach((product) => {
-    if (productsByType[product.type] == undefined)
-      productsByType[product.type] = [];
+    if (productsByType[product.type] == undefined) productsByType[product.type] = [];
     productsByType[product.type].push(product);
-  }); 
+  });
   for (const [type, products] of Object.entries(productsByType)) {
     await addProductsTypeToMap(products, type);
     // FRAMES
@@ -93,12 +91,13 @@ export async function addProductsToMap() {
 }
 
 async function addProductsTypeToMap(products, type) {
+  //Define polygon & point mapbox sources
   let polygonFeatureCollection = {
     type: "FeatureCollection",
     features: products.map((product) => ({
       type: "Feature",
       geometry: product.footprint,
-    }))
+    })),
   };
   let pointFeatureCollection = {
     type: "FeatureCollection",
@@ -108,7 +107,7 @@ async function addProductsTypeToMap(products, type) {
         type: "Point",
         coordinates: product.centre != null ? product.centre.split(",").reverse() : [],
       },
-    }))
+    })),
   };
   addSource(`${type}-polygons`, polygonFeatureCollection);
   addSource(`${type}-points`, pointFeatureCollection);
@@ -218,10 +217,7 @@ function addHeatmapLayer(title, productType) {
     //   //     0
     //   // ]
     // }
-  })
-   
-
-
+  });
 }
 
 //-----------CUSTOM POLYGONS---------
