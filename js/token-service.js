@@ -1,5 +1,4 @@
 //JobyToDo  - secure storage needed for Uname,password,client credentials etc current setup is shoddy
-var session = require("express-session");
 
 class TokenService {
   constructor(host, tokenPath, username, password, clientID, clientSecret) {
