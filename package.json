@@ -1,23 +1,26 @@
 {
-    "name": "scigeotracker",
-    "version": "0.0.0",
-    "private": true,
-    "scripts": {
-        "start": "node ./bin/www",
-        "start:dev": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 DEBUG=scigeotracker:* nodemon ./bin/www",
-        "debug": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 DEBUG=scigeotracker:* nodemon --inspect ./bin/www"
-    },
-    "dependencies": {
-        "cookie-parser": "~1.4.4",
-        "debug": "~2.6.9",
-        "ejs": "^3.1.9",
-        "express": "^4.18.2",
-        "http-errors": "~1.6.3",
-        "morgan": "~1.9.1",
-        "node-cache": "^5.1.2"
-    },
-    "devDependencies": {
-        "cross-env": "^7.0.3",
-        "nodemon": "^3.0.3"
-    }
+  "name": "scigeotracker",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "start:dev": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 DEBUG=scigeotracker:* nodemon ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.0.3"
+  },
+  "description": "1. Install dependencies:\r    > npm install\r 1. Run development server:\r    > npm run start:dev\r 1. Open in your browser: http://localhost:3000/",
+  "main": "app.js",
+  "author": "",
+  "license": "ISC"
 }

@@ -146,7 +146,26 @@ function outlinePolygon(title, productType) {
       "line-width": 1,
     },
   });
-}
+} 
+
+
+async function circleLinkZoom(d) {
+  
+  renderedProducts.forEach(product => {
+    if(product.identifier === d){
+      map.flyTo({
+        center: product.centre.split(",").reverse(),
+        zoom: 12,
+        essential: true 
+    })
+    }
+  })
+};
+
+
+
+export {circleLinkZoom};
+
 
 function addHeatmapLayer(title, productType) {
   map.addLayer({

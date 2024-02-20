@@ -8,6 +8,7 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   </head>
 
   <body class="m-0 p-0 text-neutral-300 fill-neutral-500">
@@ -131,6 +132,28 @@
     </div>
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
+
+    <script type="module">
+      import define from "/timeline.js"
+      import {Runtime, Library, Inspector} from "./runtime.js";
+      var timeLineDiv = document.createElement("div");
+      timeLineDiv.id = "timeline";
+      
+      timeLineDiv.className = "absolute mx-auto my-2 w-3/4 bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg";
+
+      const runtime = new Runtime();
+      //const main = runtime.module(define, Inspector.into(document.body));
+      const main = runtime.module(define, Inspector.into(document.body.appendChild(timeLineDiv)));  
+
+      var count = document.getElementsByClassName("observablehq").length;
+      for (var i = 0; i < count; i++) {
+        if (i == 1){
+          i++;
+        }
+        document.getElementsByClassName("observablehq")[i].style.display = "none";
+      }
+
+      </script>
   </body>
   <script type="module" src="map.js"></script>
 </html>
