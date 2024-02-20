@@ -130,6 +130,48 @@
       </div>
     </div>
 
+    <div id="area-selection-info-container" class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm
+    bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 right-20">
+      <div class="flex flex-row gap-2 px-1">
+        <h2 class="text-neutral-300 grow font-bold">Area Selection</h2>
+        <button type="button" id="area-selection-info-close-button" class="ml-auto">
+          <img class="h-3 w-3" src="icons8-close-90.png"/>
+        </button>
+      </div>
+      <div class="my-2 px-1">
+        <table class="table-auto border-separate border-spacing-y-1.5 w-full">
+          <tbody>
+            <tr>
+              <td class="font-light text-neutral-400">Total area</td>
+              <td id="total-area" class="font-medium text-right text-neutral-200">1,006.40mi²</td>
+            </tr>
+            <tr>
+              <td class="font-light text-neutral-400">Covered area</td>
+              <td id="covered-area" class="font-medium text-right text-neutral-200">403.27mi²</td>
+            </tr>
+            <tr>
+              <td class="font-light text-neutral-400">Uncovered area</td>
+              <td id="uncovered-area" class="font-medium text-right text-neutral-200">603.13mi²</td>
+            </tr>
+            <tr>
+              <td class="font-light text-neutral-400">Coverage %</td>
+              <td id="uncovered-area" class="font-medium text-right text-neutral-200">40.07%</td>
+            </tr>
+            <tr>
+              <td class="font-light text-neutral-400">Total missions</td>
+              <td id="uncovered-area" class="font-medium text-right text-neutral-200">1,703</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <button type="button" id="area-selection-info-close-button" class="px-4 py-1 w-full rounded-md overflow-hidden
+        bg-neutral-800 ring-1 ring-neutral-600/50">
+          Close
+        </button>
+      </div>
+    </div>
+
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
   </body>
   <script type="module" src="map.js"></script>
