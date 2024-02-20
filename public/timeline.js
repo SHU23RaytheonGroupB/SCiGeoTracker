@@ -1,3 +1,5 @@
+const MAPBOX = require("./map.js");
+
 const START_DATE = new Date(1558231200000);
 const END_DATE = new Date(1593914400000);
 
@@ -72,7 +74,7 @@ function Timeline(data, options) {
   axis["yearly"] = (parentNode, density) => {
     const densityMap = [
       [0.0005, [d3.utcHour, "%B %-d, %Y %H:%M"]],
-      [0.05, [d3.utcDay, "%B %-d, %Y"]],
+      [0.05, [d3. utcDay, "%B %-d, %Y"]],
       [
         3,
         [
@@ -81,7 +83,7 @@ function Timeline(data, options) {
             const startOfTheYear =
               d.getUTCMonth() === 0 && d.getUTCDate() === 1;
             const format = startOfTheYear ? "%Y – %B" : "%B";
-            console.log(d);
+            //console.log(d);
 
           }
         ]
@@ -304,7 +306,12 @@ function Timeline(data, options) {
               .style("stroke", "white")
               .style("stroke-width", 1)
               .style("fill", "blue")
+              .style("fill-opacity", 0.5)
               .style("cursor", "pointer")
+              .on("click", function (event, d) {
+                MAPBOX.circleLinkZoom(d);
+                console.log("clicked", d.id);
+              })
               .attr("r", 4)
               .attr("cx", (d, i) => X[i])
               .attr("cy", (d, i) => Y[i] + 120)

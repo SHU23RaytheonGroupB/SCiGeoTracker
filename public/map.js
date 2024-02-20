@@ -93,4 +93,14 @@ function outlinePolygon(title, productType) {
   });
 }
 
+
+function circleLinkZoom(d) {
+  console.log(d);
+}
+
+
+
+module.exports = circleLinkZoom;
+
+
 //-----------CUSTOM POLYGONS---------
