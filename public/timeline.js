@@ -1,4 +1,4 @@
-const MAPBOX = require("./map.js");
+import { circleLinkZoom } from "./map.js";
 
 const START_DATE = new Date(1558231200000);
 const END_DATE = new Date(1593914400000);
@@ -309,8 +309,8 @@ function Timeline(data, options) {
               .style("fill-opacity", 0.5)
               .style("cursor", "pointer")
               .on("click", function (event, d) {
-                MAPBOX.circleLinkZoom(d);
-                console.log("clicked", d.id);
+                circleLinkZoom(d.id);
+                //console.log("clicked", d.id);
               })
               .attr("r", 4)
               .attr("cx", (d, i) => X[i])
@@ -408,7 +408,7 @@ async function _myData(){
   console.log("minDate: ", minDate);
   return(
 Array.from({ length: allProducts.length }, (x, i) => ({
-  id: i,
+  id: allProducts[i].identifier,
   start: new Date(
     new Date(allProducts[i].objectstartdate)
   )

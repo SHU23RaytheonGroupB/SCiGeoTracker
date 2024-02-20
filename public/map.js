@@ -91,16 +91,28 @@ function outlinePolygon(title, productType) {
       "line-width": 1,
     },
   });
-}
+} 
 
 
-function circleLinkZoom(d) {
+async function circleLinkZoom(d) {
   console.log(d);
-}
+  const response = await fetch("/api/getProducts");
+  const allProducts = await response.json();
+  
+  allProducts.forEach(product => {
+    if(product.identifier === d){
+      map.flyTo({
+        center: product.centre.split(",").reverse(),
+        zoom: 12,
+        essential: true
+    })
+    }
+  })
+};
 
 
 
-module.exports = circleLinkZoom;
+export {circleLinkZoom};
 
 
 //-----------CUSTOM POLYGONS---------
