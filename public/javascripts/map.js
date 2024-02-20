@@ -18,10 +18,20 @@ const CursorMode = {
   Polygon: "Polygon",
 }
 
+const LayerMode = {
+  Frames: "Frames",
+  Heatmap: "Heatmap",
+  Choropleth: "Choropleth",
+  Isarithmic: "Isarithmic",
+  DotDensity: "Dot Density",
+  FrameOverlaps: "Frame Overlaps",
+};
+
 const minZoom = 4;
 const maxZoom = 12;
 
-let cursorMode = CursorMode.Move;
+let cursorMode;
+let layerMode;
 let allProducts = [];
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
@@ -397,3 +407,67 @@ moveButtonEle.onclick = selectMoveCursor;
 rectangleButtonEle.onclick = selectRectangleCursor;
 polygonButtonEle.onclick = selectPolygonCursor;
 selectMoveCursor();
+
+
+const layerMenuButtonEle = document.querySelector("#layer-menu-button");
+const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
+const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text");
+let layerMenuOpen = false;
+const toggleLayerMenu = () => {
+  layerMenuOpen = !layerMenuOpen;
+  if (layerMenuOpen) {
+    layerMenuItemsContainerEle.style.display = null;
+    layerMenuItemsContainerEle.focus();
+
+  } else {
+    layerMenuItemsContainerEle.style.display = "none";
+  }
+};
+layerMenuButtonEle.onclick = toggleLayerMenu;
+layerMenuItemsContainerEle.focusout = () => {
+  toggleLayerMenu();
+};
+
+const framesMode = () => {
+  layerMode = LayerMode.Frames;
+  layerMenuButtonTextEle.textContent = layerMode;
+  toggleLayerMenu();
+};
+
+const heatmapMode = () => {
+  layerMode = LayerMode.Heatmap;
+  layerMenuButtonTextEle.textContent = layerMode;
+  toggleLayerMenu();
+};
+
+const choroplethMode = () => {
+  layerMode = LayerMode.Choropleth;
+  layerMenuButtonTextEle.textContent = layerMode;
+  toggleLayerMenu();
+};
+
+const isarithmicMode = () => {
+  layerMode = LayerMode.Isarithmic;
+  layerMenuButtonTextEle.textContent = layerMode;
+  toggleLayerMenu();
+};
+
+const dotDensityMode = () => {
+  layerMode = LayerMode.DotDensity;
+  layerMenuButtonTextEle.textContent = layerMode;
+  toggleLayerMenu();
+};
+
+const frameOverlapsMode = () => {
+  layerMode = LayerMode.FrameOverlaps;
+  layerMenuButtonTextEle.textContent = layerMode;
+  toggleLayerMenu();
+};
+
+document.querySelector("#frames-item").onclick = framesMode;
+document.querySelector("#heatmap-item").onclick = heatmapMode;
+document.querySelector("#choropleth-item").onclick = choroplethMode;
+document.querySelector("#isarithmic-item").onclick = isarithmicMode;
+document.querySelector("#dot-density-item").onclick = dotDensityMode;
+document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
+framesMode();

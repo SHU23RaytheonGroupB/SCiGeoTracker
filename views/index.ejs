@@ -19,7 +19,7 @@
   </head>
 
   <body class="m-0 p-0 text-neutral-300 fill-neutral-500">
-    <div class="absolute top-0 left-0 z-10 m-2 flex flex-row gap-2">
+    <div class="absolute top-0 left-0 z-20 m-2 flex flex-row gap-2">
       <div id="tray" class="flex flex-col gap-2">
         <div
           class="flex flex-col overflow-hidden text-sm font-semibold rounded-lg bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm"
@@ -30,13 +30,13 @@
             </svg>
           </button> -->
           <button type="button" alt="Drag and move map tool" id="move-button" class="p-1.5 hover:bg-neutral-500/10" >
-            <img class="h-6 w-6" src="/images/icons8-move-90.png" alt="Drag and move map tool"/>
+            <img class="h-6 w-6" src="images/icons8-move-90.png" alt="Drag and move map tool"/>
           </button>
           <button type="button" alt="Draw custom rectangle tool" id="rectangle-button" class="p-1.5 hover:bg-neutral-500/10">
-            <img class="h-6 w-6" src="/images/icons8-rectangle-90.png" alt="Draw custom rectangle tool"/>
+            <img class="h-6 w-6" src="images/icons8-rectangle-90.png" alt="Draw custom rectangle tool"/>
           </button>
           <button type="button" alt="Draw custom polygon tool" id="polygon-button" class="p-1.5 hover:bg-neutral-500/10">
-            <img class="h-6 w-6" src="/images/icons8-radar-plot-90.png" alt="Draw custom polygon tool"/>
+            <img class="h-6 w-6" src="images/icons8-radar-plot-90.png" alt="Draw custom polygon tool"/>
           </button>
         </div>
         <button
@@ -45,7 +45,7 @@
           id="filter-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="/images/icons8-filter-90.png" alt="Filter map tool"/>
+          <img class="h-6 w-6" src="images/icons8-filter-90.png" alt="Filter map tool"/>
         </button>
         <button
           type="button"
@@ -53,7 +53,7 @@
           id="folder-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="/images/icons8-folder-90.png" alt="Saved areas folder"/>
+          <img class="h-6 w-6" src="images/icons8-folder-90.png" alt="Saved areas folder"/>
         </button>
         <button
           type="button"
@@ -61,7 +61,7 @@
           id="histogram-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="/images/icons8-futures-90.png" alt="Display histogram"/>
+          <img class="h-6 w-6" src="images/icons8-futures-90.png" alt="Display histogram"/>
         </button>
       </div>
 
@@ -82,8 +82,8 @@
             aria-expanded="true"
             aria-haspopup="true"
           >
-            Frames
-            <img class="h-4 w-4 ml-auto my-auto" src="/images/icons8-dropdown-stroke-1px-90.png" alt="Dropdown list for different filters"/>
+            <span id="layer-menu-button-text"></span>
+            <img class="h-4 w-4 ml-auto my-auto" src="images/icons8-dropdown-stroke-1px-90.png" alt="Dropdown list for different filters"/>
           </button>
         </div>
 
@@ -98,11 +98,13 @@
             To: "transform opacity-0 scale-95"
         -->
         <div
+          id="layer-menu-items-container"
           class="z-20 mt-2 rounded-md overflow-hidden bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #ring-opacity-5 focus:outline-none shadow-sm"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
           tabindex="-1"
+          style="display: none;"
         >
           <div class="#py-1" role="none">
             <!-- Active: "bg-neutral-900 text-neutral-200", Not Active: "text-neutral-100" -->
@@ -174,7 +176,7 @@
           id="button"
           class="rounded-lg p-2 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-4 w-4" src="/images/icons8-search-90.png" alt="Search by placename"/>
+          <img class="h-4 w-4" src="images/icons8-search-90.png" alt="Search by placename"/>
         </button>
       </div>
 
@@ -186,7 +188,7 @@
             id="zoom-in-button"
             class="z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
           >
-            <img class="h-3 w-3" src="/images/icons8-plus-90.png" alt="Increase zoom"/>
+            <img class="h-3 w-3" src="images/icons8-plus-90.png" alt="Increase zoom"/>
           </button>
           <div class="h-44 relative">
             <div class="absolute w-full h-full py-3">
@@ -205,7 +207,7 @@
             id="zoom-out-button"
             class="z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
           >
-            <img class="h-3 w-3" src="/images/icons8-minus-90.png" alt="Decrease zoom"/>
+            <img class="h-3 w-3" src="images/icons8-minus-90.png" alt="Decrease zoom"/>
           </button>
         </div>
       </div>
@@ -226,7 +228,7 @@
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Area Selection</h2>
         <button type="button" id="area-selection-info-close-button" class="ml-auto">
-          <img class="h-3 w-3" src="icons8-close-90.png"/>
+          <img class="h-3 w-3" src="images/icons8-close-90.png"/>
         </button>
       </div>
       <div class="my-2 px-1">
