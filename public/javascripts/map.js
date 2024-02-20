@@ -413,55 +413,57 @@ const layerMenuButtonEle = document.querySelector("#layer-menu-button");
 const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
 const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text");
 let layerMenuOpen = false;
-const toggleLayerMenu = () => {
-  layerMenuOpen = !layerMenuOpen;
-  if (layerMenuOpen) {
-    layerMenuItemsContainerEle.style.display = null;
-    layerMenuItemsContainerEle.focus();
-
-  } else {
-    layerMenuItemsContainerEle.style.display = "none";
-  }
+const openLayerMenu = () => {
+  layerMenuOpen = true;
+  layerMenuItemsContainerEle.style.display = null;
+  layerMenuItemsContainerEle.focus();
 };
-layerMenuButtonEle.onclick = toggleLayerMenu;
+const closeLayerMenu = () => {
+  layerMenuOpen = false;
+  layerMenuItemsContainerEle.style.display = "none";
+};
+layerMenuButtonEle.onclick = () => {
+  if (!layerMenuOpen) openLayerMenu();
+  else closeLayerMenu();
+};
 layerMenuItemsContainerEle.focusout = () => {
-  toggleLayerMenu();
+  closeLayerMenu();
 };
 
 const framesMode = () => {
   layerMode = LayerMode.Frames;
   layerMenuButtonTextEle.textContent = layerMode;
-  toggleLayerMenu();
+  closeLayerMenu();
 };
 
 const heatmapMode = () => {
   layerMode = LayerMode.Heatmap;
   layerMenuButtonTextEle.textContent = layerMode;
-  toggleLayerMenu();
+  closeLayerMenu();
 };
 
 const choroplethMode = () => {
   layerMode = LayerMode.Choropleth;
   layerMenuButtonTextEle.textContent = layerMode;
-  toggleLayerMenu();
+  closeLayerMenu();
 };
 
 const isarithmicMode = () => {
   layerMode = LayerMode.Isarithmic;
   layerMenuButtonTextEle.textContent = layerMode;
-  toggleLayerMenu();
+  closeLayerMenu();
 };
 
 const dotDensityMode = () => {
   layerMode = LayerMode.DotDensity;
   layerMenuButtonTextEle.textContent = layerMode;
-  toggleLayerMenu();
+  closeLayerMenu();
 };
 
 const frameOverlapsMode = () => {
   layerMode = LayerMode.FrameOverlaps;
   layerMenuButtonTextEle.textContent = layerMode;
-  toggleLayerMenu();
+  closeLayerMenu();
 };
 
 document.querySelector("#frames-item").onclick = framesMode;
@@ -471,3 +473,22 @@ document.querySelector("#isarithmic-item").onclick = isarithmicMode;
 document.querySelector("#dot-density-item").onclick = dotDensityMode;
 document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
 framesMode();
+
+
+let savedAreasOpen = false;
+const openSavedAreas = () => {
+  savedAreasOpen = true;
+  savedAreasContainerEle.style.display = null;
+  savedAreasContainerEle.focus();
+};
+const closeSavedAreas = () => {
+  savedAreasOpen = false;
+  savedAreasContainerEle.style.display = "none";
+};
+
+const savedAreasContainerEle = document.querySelector("#saved-areas-container");
+document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
+document.querySelector("#folder-button").onclick = () => {
+  if (!savedAreasOpen) openSavedAreas();
+  else closeSavedAreas();
+};
