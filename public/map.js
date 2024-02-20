@@ -99,6 +99,7 @@ function addPolygon(title, footprint) {
 }
 
 function fillPolygon(title, productType) {
+  console.log(productType);
   map.addLayer({
     id: title + "fill",
     type: "fill",
@@ -126,6 +127,39 @@ function outlinePolygon(title, productType) {
 
 function updateArea(e) { //USED FOR DRAW POLYGON 
   const data = draw.getAll();
+  let polyCoordinates = [];
+  let polyCoordinatesLat = [];
+  let polyCoordinatesLog = [];
+  for (let i = 0; i < data.features[0].geometry.coordinates[0].length; i++) {
+    polyCoordinates.push(data.features[0].geometry.coordinates[0][i]); 
+    polyCoordinatesLog.push(data.features[0].geometry.coordinates[0][i][1]); 
+    polyCoordinatesLat.push(data.features[0].geometry.coordinates[0][i][0]); 
+  }
+  //bounding box is (Latt, Long) and has a padding of (±0.8 and ±0.9)
+  let boundingBox = [[Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) + 0.5],[Math.min(...polyCoordinatesLat) - 0.8 ,Math.max(...polyCoordinatesLog) + 0.5],[Math.max(...polyCoordinatesLat) + 0.8 ,Math.max(...polyCoordinatesLog) + 0.5],[Math.max(...polyCoordinatesLat) + 0.8 ,Math.min(...polyCoordinatesLog) - 0.5],[Math.min(...polyCoordinatesLat) - 0.8 ,Math.min(...polyCoordinatesLog) - 0.5]]
+  // map.addSource('title', {
+  //   'type': "geojson",
+  //   'data' : {
+  //     'type': "Feature",
+  //     'geometry': {
+  //       'type': 'Polygon',
+  //       'coordinates': [
+  //         boundingBox
+  //       ]
+  //     }
+  //   },
+  // });
+  // map.addLayer({
+  //   id: 'title' + "fill",
+  //   type: "fill",
+  //   source: "title", // reference the data source
+  //   layout: {},
+  //   paint: {
+  //     "fill-color": "#FF0000",
+  //     "fill-opacity": 0.7,
+  //   },
+  // });
+  // outlinePolygon("title", 'IMAGERY');
   const answer = document.getElementById('areaSelectionPanel');
   if (data.features.length > 0) {
     const area = turf.area(data) / 1000; //divide by 1000 to get square km
@@ -141,8 +175,8 @@ function updateArea(e) { //USED FOR DRAW POLYGON
     answer.innerHTML += `<p style="font-size: 13px; margin: 2px;">Total missions: <strong>${Mission_count}</strong></p>`;
   } else {
     answer.innerHTML = '';
-    if (e.type !== 'draw.delete')
-      alert('Click the map to draw a polygon.');
+    //if (e.type !== 'draw.delete')
+      //alert('Click the map to draw a polygon.');
   }
 }
 

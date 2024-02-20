@@ -5,6 +5,8 @@
     "scripts": {
         "start": "node ./bin/www",
         "start:dev": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 DEBUG=scigeotracker:* nodemon ./bin/www"
+        
+
     },
     "dependencies": {
         "cookie-parser": "~1.4.4",
