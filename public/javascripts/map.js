@@ -1,5 +1,3 @@
-let allProducts = [];
-
 let productFillColours = {
   SCENE: "#A2A2A2", //GREY
   DOCUMENT: "#219BF5", //blue
@@ -14,8 +12,17 @@ let productOutlineColours = {
   VIDEO: "#008907", //green
 };
 
+const CursorMode = {
+  Move: "Move",
+  Rectangle: "Rectangle",
+  Polygon: "Polygon",
+}
+
 const minZoom = 4;
 const maxZoom = 12;
+
+let cursorMode = CursorMode.Move;
+let allProducts = [];
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 const map = new mapboxgl.Map({
@@ -352,3 +359,41 @@ function addDotLayer(title){
 }
 
 //-----------CUSTOM POLYGONS---------
+
+
+
+// BUTTON FUNCTIONALITY
+
+const moveButtonEle = document.querySelector("#move-button");
+const rectangleButtonEle = document.querySelector("#rectangle-button");
+const polygonButtonEle = document.querySelector("#polygon-button");
+const cursorSelectedClasses = ["bg-neutral-800", "hover:bg-neutral-500/30"];
+
+function deselectAllCursors() {
+  moveButtonEle.classList.remove(...cursorSelectedClasses);
+  rectangleButtonEle.classList.remove(...cursorSelectedClasses);
+  polygonButtonEle.classList.remove(...cursorSelectedClasses);
+}
+
+const selectMoveCursor = () => {
+  cursorMode = CursorMode.Move;
+  deselectAllCursors();
+  moveButtonEle.classList.add(...cursorSelectedClasses);
+}
+
+const selectRectangleCursor = () => {
+  cursorMode = CursorMode.Rectangle;
+  deselectAllCursors();
+  rectangleButtonEle.classList.add(...cursorSelectedClasses);
+}
+
+const selectPolygonCursor = () => {
+  cursorMode = CursorMode.Polygon;
+  deselectAllCursors();
+  polygonButtonEle.classList.add(...cursorSelectedClasses);
+}
+
+moveButtonEle.onclick = selectMoveCursor;
+rectangleButtonEle.onclick = selectRectangleCursor;
+polygonButtonEle.onclick = selectPolygonCursor;
+selectMoveCursor();
