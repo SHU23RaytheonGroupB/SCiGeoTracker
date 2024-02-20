@@ -1,6 +1,4 @@
 let allProducts = [];
-let renderedProducts = [];
-let heatFeatureCollections = [];
 
 let productFillColours = {
   SCENE: "#6E6E6E", //GREY
@@ -61,7 +59,6 @@ map.on("zoom", (ev) => {
 export async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
-  renderedProducts = allProducts;
   await addProductsToMap();
   //filtersPanel.on("change", filterProductsByType);
 }
@@ -76,42 +73,49 @@ function filterProductsByType() {
 
 //Draw every product to the screen
 export async function addProductsToMap() {
-  let productsByType = {};
-  renderedProducts.forEach((product) => {
-    if (productsByType[product.type] == undefined) productsByType[product.type] = [];
-    productsByType[product.type].push(product);
-  });
-  for (const [type, products] of Object.entries(productsByType)) {
-    await addProductsTypeToMap(products, type);
-    // FRAMES
-    fillPolygon(`${type}-polygons`, type);
-    outlinePolygon(`${type}-polygons`, type);
-    // HEATMAP
-    addHeatmapLayer(`${type}-points`, type);
-  }
-}
-
-async function addProductsTypeToMap(products, type) {
   //Define polygon & point mapbox sources
   let polygonFeatureCollection = {
     type: "FeatureCollection",
-    features: products.map((product) => ({
+    features: allProducts.map((product) => ({
       type: "Feature",
       geometry: product.footprint,
+      attributes: {
+        id: product.identifier,
+        type: product.type,
+        title: product.title,
+        mission_id: product.missionid,
+        date_created:	product.datecreated,
+        date_start: product.objectstartdate,
+        date_end: product.objectenddate,
+      },
     })),
   };
   let pointFeatureCollection = {
     type: "FeatureCollection",
-    features: products.map((product) => ({
+    features: allProducts.map((product) => ({
       type: "Feature",
       geometry: {
         type: "Point",
         coordinates: product.centre != null ? product.centre.split(",").reverse() : [],
       },
+      attributes: {
+        id: product.identifier,
+        type: product.type,
+        title: product.title,
+        mission_id: product.missionid,
+        date_created:	product.datecreated,
+        date_start: product.objectstartdate,
+        date_end: product.objectenddate,
+      },
     })),
   };
-  addSource(`${type}-polygons`, polygonFeatureCollection);
-  addSource(`${type}-points`, pointFeatureCollection);
+  // SOURCES
+  addSource("product-polygons", polygonFeatureCollection);
+  addSource("product-points", pointFeatureCollection);
+  // FRAMES LAYER
+  addFramesLayers("product-polygons");
+  // HEATMAP LAYER
+  addHeatmapLayer("product-points");
 }
 
 function addSource(title, data) {
@@ -123,27 +127,24 @@ function addSource(title, data) {
   });
 }
 
-function fillPolygon(title, productType) {
+function addFramesLayers(title) {
   map.addLayer({
-    id: title + "fill",
+    id: `${title}-frames-fill`,
     type: "fill",
-    source: title, // reference the data source
+    source: title,
     layout: {},
     paint: {
-      "fill-color": productFillColours[productType],
+      "fill-color": productFillColours["SCENE"],
       "fill-opacity": 0.2,
     },
   });
-}
-
-function outlinePolygon(title, productType) {
   map.addLayer({
-    id: title + "outline",
+    id: `${title}-frames-outline`,
     type: "line",
     source: title,
     layout: {},
     paint: {
-      "line-color": productOutlineColours[productType],
+      "line-color": productOutlineColours["SCENE"],
       "line-width": 1,
     },
   });
@@ -154,7 +155,6 @@ function addHeatmapLayer(title, productType) {
     id: `${title}-heatmap`,
     type: "heatmap",
     source: title,
-
   });
 }
 
