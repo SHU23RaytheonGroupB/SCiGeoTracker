@@ -95,16 +95,13 @@ function outlinePolygon(title, productType) {
 
 
 async function circleLinkZoom(d) {
-  console.log(d);
-  const response = await fetch("/api/getProducts");
-  const allProducts = await response.json();
   
-  allProducts.forEach(product => {
+  renderedProducts.forEach(product => {
     if(product.identifier === d){
       map.flyTo({
         center: product.centre.split(",").reverse(),
         zoom: 12,
-        essential: true
+        essential: true 
     })
     }
   })
