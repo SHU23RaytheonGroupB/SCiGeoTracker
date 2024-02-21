@@ -226,8 +226,8 @@ async function addProductsToMap() {
     })),
   };
 
-  const boundariesByRegion = await getGeojsonFile("../boundaries/UK-regions-wgs84.json");
-  const boundariesByCountry = await getGeojsonFile("../boundaries/UK_by_country.json");
+  const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
+  const boundariesByCountry = await getGeojsonFile("../boundaries/UK-by-country.json");
   const UKlandBorder = await getGeojsonFile("../boundaries/UK-land-border.json");
 
   async function getGeojsonFile(fileLocation) {
