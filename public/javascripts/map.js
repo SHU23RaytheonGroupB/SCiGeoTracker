@@ -1,5 +1,3 @@
-let allProducts = [];
-
 let productFillColours = {
   SCENE: "#A2A2A2", //GREY
   DOCUMENT: "#219BF5", //blue
@@ -14,8 +12,27 @@ let productOutlineColours = {
   VIDEO: "#008907", //green
 };
 
+const CursorMode = {
+  Move: "Move",
+  Rectangle: "Rectangle",
+  Polygon: "Polygon",
+};
+
+const LayerMode = {
+  Frames: "Frames",
+  Heatmap: "Heatmap",
+  Choropleth: "Choropleth",
+  Isarithmic: "Isarithmic",
+  DotDensity: "Dot Density",
+  FrameOverlaps: "Frame Overlaps",
+};
+
 const minZoom = 4;
 const maxZoom = 12;
+
+let cursorMode;
+let layerMode;
+let allProducts = [];
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 const map = new mapboxgl.Map({
@@ -236,6 +253,8 @@ async function addProductsToMap() {
   //addHeatmapLayer("product-points");
   //CHLOROPLETH LAYER
   addChloroplethLayer("country-boundaries");
+  // DOT LAYER
+  //addDotLayer("product-points");
 }
 
 function addSource(title, data) {
@@ -363,4 +382,141 @@ function updateArea(e) {
   }
 }
 
+function addDotLayer(title) {
+  map.addLayer({
+    id: `${title}-circle`,
+    type: "circle",
+    source: title,
+    paint: {
+      "circle-color": "#FF0000",
+      "circle-radius": {
+        base: 1.75,
+        stops: [
+          [12, 2],
+          [32, 180],
+        ],
+      },
+    },
+  });
+}
+
 //-----------CUSTOM POLYGONS---------
+
+// BUTTON FUNCTIONALITY
+
+const moveButtonEle = document.querySelector("#move-button");
+const rectangleButtonEle = document.querySelector("#rectangle-button");
+const polygonButtonEle = document.querySelector("#polygon-button");
+const cursorSelectedClasses = ["bg-neutral-800", "hover:bg-neutral-500/30"];
+
+function deselectAllCursors() {
+  moveButtonEle.classList.remove(...cursorSelectedClasses);
+  rectangleButtonEle.classList.remove(...cursorSelectedClasses);
+  polygonButtonEle.classList.remove(...cursorSelectedClasses);
+}
+
+const selectMoveCursor = () => {
+  cursorMode = CursorMode.Move;
+  deselectAllCursors();
+  moveButtonEle.classList.add(...cursorSelectedClasses);
+};
+
+const selectRectangleCursor = () => {
+  cursorMode = CursorMode.Rectangle;
+  deselectAllCursors();
+  rectangleButtonEle.classList.add(...cursorSelectedClasses);
+};
+
+const selectPolygonCursor = () => {
+  cursorMode = CursorMode.Polygon;
+  deselectAllCursors();
+  polygonButtonEle.classList.add(...cursorSelectedClasses);
+};
+
+moveButtonEle.onclick = selectMoveCursor;
+rectangleButtonEle.onclick = selectRectangleCursor;
+polygonButtonEle.onclick = selectPolygonCursor;
+selectMoveCursor();
+
+const layerMenuButtonEle = document.querySelector("#layer-menu-button");
+const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
+const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text");
+let layerMenuOpen = false;
+const openLayerMenu = () => {
+  layerMenuOpen = true;
+  layerMenuItemsContainerEle.style.display = null;
+  layerMenuItemsContainerEle.focus();
+};
+const closeLayerMenu = () => {
+  layerMenuOpen = false;
+  layerMenuItemsContainerEle.style.display = "none";
+};
+layerMenuButtonEle.onclick = () => {
+  if (!layerMenuOpen) openLayerMenu();
+  else closeLayerMenu();
+};
+layerMenuItemsContainerEle.focusout = () => {
+  closeLayerMenu();
+};
+
+const framesMode = () => {
+  layerMode = LayerMode.Frames;
+  layerMenuButtonTextEle.textContent = layerMode;
+  closeLayerMenu();
+};
+
+const heatmapMode = () => {
+  layerMode = LayerMode.Heatmap;
+  layerMenuButtonTextEle.textContent = layerMode;
+  closeLayerMenu();
+};
+
+const choroplethMode = () => {
+  layerMode = LayerMode.Choropleth;
+  layerMenuButtonTextEle.textContent = layerMode;
+  closeLayerMenu();
+};
+
+const isarithmicMode = () => {
+  layerMode = LayerMode.Isarithmic;
+  layerMenuButtonTextEle.textContent = layerMode;
+  closeLayerMenu();
+};
+
+const dotDensityMode = () => {
+  layerMode = LayerMode.DotDensity;
+  layerMenuButtonTextEle.textContent = layerMode;
+  closeLayerMenu();
+};
+
+const frameOverlapsMode = () => {
+  layerMode = LayerMode.FrameOverlaps;
+  layerMenuButtonTextEle.textContent = layerMode;
+  closeLayerMenu();
+};
+
+document.querySelector("#frames-item").onclick = framesMode;
+document.querySelector("#heatmap-item").onclick = heatmapMode;
+document.querySelector("#choropleth-item").onclick = choroplethMode;
+document.querySelector("#isarithmic-item").onclick = isarithmicMode;
+document.querySelector("#dot-density-item").onclick = dotDensityMode;
+document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
+framesMode();
+
+let savedAreasOpen = false;
+const openSavedAreas = () => {
+  savedAreasOpen = true;
+  savedAreasContainerEle.style.display = null;
+  savedAreasContainerEle.focus();
+};
+const closeSavedAreas = () => {
+  savedAreasOpen = false;
+  savedAreasContainerEle.style.display = "none";
+};
+
+const savedAreasContainerEle = document.querySelector("#saved-areas-container");
+document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
+document.querySelector("#folder-button").onclick = () => {
+  if (!savedAreasOpen) openSavedAreas();
+  else closeSavedAreas();
+};
