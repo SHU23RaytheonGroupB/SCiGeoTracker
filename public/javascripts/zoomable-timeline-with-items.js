@@ -315,7 +315,7 @@ export default function Timeline(data, options) {
               .append("title")
               .text((d) => d.id),
           (update) =>
-            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130)
+            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130),
         );
 
       const density =
