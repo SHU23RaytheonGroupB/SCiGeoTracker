@@ -20,7 +20,7 @@ const CursorMode = {
 
 const LayerMode = {
   Frames: "Frames",
-  Heat  : "Heatmap",
+  Heatmap: "Heatmap",
   Choropleth: "Choropleth",
   Isarithmic: "Isarithmic",
   DotDensity: "Dot Density",
