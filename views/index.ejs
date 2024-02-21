@@ -19,7 +19,6 @@
   </head>
 
   <body class="m-0 p-0 text-neutral-300 fill-neutral-500">
-    <% console.log("show me filenames"+filenames.i); %>
     <div class="absolute top-0 left-0 z-10 m-2 flex flex-row gap-2">
       <div id="tray" class="flex flex-col gap-2">
         <div
@@ -308,7 +307,7 @@
         />
         <div id="saved-areas-list-container" class="h-52">
           <ul id="polygonList" class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-            <li class="text-white"><% console.log("show me filenames"+filenames.i); %></li>
+            <li class="text-white">show me <%= filenames %></li>
             <script type="module">
               // var file = sessionStorage.getItem("/localPolygons/file1.txt");
               // console.log(file);
