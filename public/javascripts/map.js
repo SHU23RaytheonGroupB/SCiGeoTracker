@@ -20,7 +20,7 @@ const CursorMode = {
 
 const LayerMode = {
   Frames: "Frames",
-  Heat  : "Heatmap",
+  Heat: "Heatmap",
   Choropleth: "Choropleth",
   Isarithmic: "Isarithmic",
   DotDensity: "Dot Density",
@@ -363,7 +363,7 @@ function updateArea(e) {
   }
 }
 
-function addDotLayer(title){
+function addDotLayer(title) {
   map.addLayer({
     id: `${title}-circle`,
     type: 'circle',
@@ -506,4 +506,4 @@ document.querySelector("#folder-button").onclick = () => {
   else closeSavedAreas();
 };
 
-export {map as map};
+export { map as map };

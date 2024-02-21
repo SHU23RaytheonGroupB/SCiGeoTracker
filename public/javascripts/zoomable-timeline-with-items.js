@@ -3,10 +3,12 @@
 
 import { circleLinkZoom } from "./map.js";
 
-export default function Timeline(map, options) {
+export function Timeline(map_, options) {
   const axis = {};
   const nodes = {};
-  let myData = map;
+  let myData = map_.getSource("product-polygons");
+
+  console.log("myData", myData);
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
     from: new Date().setFullYear(new Date().getFullYear() + 1),
@@ -20,7 +22,7 @@ export default function Timeline(map, options) {
     ...options
   };
 
-  
+
 
   const MS_PER_HOUR = 60 * 60 * 1000;
   const MS_PER_SECOND = 1000;
@@ -274,13 +276,13 @@ export default function Timeline(map, options) {
       return Y;
     };
 
-    const bind = (data) => {
-      const I = d3.range(data.length);
-      const X = data.map((d) => scaleX(d.start));
+    const bind = (myData) => {
+      const I = d3.range(myData.length);
+      const X = myData.map((d) => scaleX(d.start));
       const Y = dodge(X, radius * 2 + padding);
       const items = svg
         .selectAll("circle")
-        .data(data)
+        .data(myData)
         .join(
           (enter) =>
             enter
