@@ -16,7 +16,7 @@ const CursorMode = {
   Move: "Move",
   Rectangle: "Rectangle",
   Polygon: "Polygon",
-}
+};
 
 const LayerMode = {
   Frames: "Frames",
@@ -170,10 +170,11 @@ map.on("zoom", (ev) => {
   renderOverlaysZoom();
 });
 
-export async function initialiseProducts() {
+async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
   await addProductsToMap();
+
   //filtersPanel.on("change", filterProductsByType);
   framesMode();
 }
@@ -187,7 +188,7 @@ function filterProductsByType() {
 }
 
 //Draw every product to the screen
-export async function addProductsToMap() {
+async function addProductsToMap() {
   //Define polygon & point mapbox sources
   let polygonFeatureCollection = {
     type: "FeatureCollection",
@@ -224,15 +225,34 @@ export async function addProductsToMap() {
       },
     })),
   };
+
+  const boundariesByRegion = await getGeojsonFile("../boundaries/UK-regions-wgs84.json");
+  const boundariesByCountry = await getGeojsonFile("../boundaries/UK_by_country.json");
+  const UKlandBorder = await getGeojsonFile("../boundaries/UK-land-border.json");
+
+  async function getGeojsonFile(fileLocation) {
+    const response = await fetch(fileLocation);
+    if (!response.ok) {
+      throw new Error(`Error getting ${fileLocation} file`);
+    }
+    return await response.json();
+  }
   // SOURCES
   addSource("product-polygons", polygonFeatureCollection);
   addSource("product-points", pointFeatureCollection);
+  addSource("country-boundaries", boundariesByCountry);
+  addSource("region-boundaries", boundariesByCountry);
+  addSource("uk-land-border", UKlandBorder);
   // FRAMES LAYER
   addFramesLayers("product-polygons");
   // HEATMAP LAYER
-  addHeatmapLayer("product-points");
+  //addHeatmapLayer("product-points");
+  //CHLOROPLETH LAYER
+  //addChloroplethLayer("country-boundaries", "region-boundaries");
   // DOT LAYER
-  addDotLayer("product-points");
+  //addDotLayer("product-points");
+  //BORDER LAYER - TEMP
+  addBorderLayer("uk-land-border");
 }
 
 function addSource(title, data) {
@@ -267,8 +287,78 @@ function addFramesLayers(title) {
   });
 }
 
-async function circleLinkZoom(d) {
-  console.log(d);
+
+function addHeatmapLayer(title, productType) {
+  map.addLayer({
+    id: `${title}-heatmap`,
+    type: "heatmap",
+    source: title,
+  });
+}
+
+function addChloroplethLayer(countryPolygons, regionPolygons) {
+  // map.addLayer({
+  //   id: `${countryPolygons}-chloropleth`,
+  //   type: "fill",
+  //   source: countryPolygons,
+  //   layout: {},
+  //   paint: {
+  //     "fill-color": [
+  //       "interpolate",
+  //       ["linear"],
+  //       ["get", "density"], // assign product count property within geojson to use instead of density
+  //     ],
+  //     "fill-opacity": 0.75,
+  //   },
+  // });
+
+  map.addLayer({
+    id: `${regionPolygons}-chloropleth`,
+    type: "fill",
+    source: regionPolygons,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours["DOCUMENT"],
+      "fill-opacity": 0.2,
+    },
+  });
+}
+
+function addBorderLayer(title) {
+  map.addLayer({
+    id: `${title}-border`,
+    type: "fill",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours["DOCUMENT"],
+      "fill-opacity": 0.2,
+    },
+  });
+}
+
+function chloroLegend() {
+  const legend = document.getElementById("legend");
+
+  layers.forEach((chloroLayer, i) => {
+    const color = colors[i];
+    const item = document.createElement("div");
+    const key = document.createElement("span");
+    key.className = "legend-key";
+    key.style.backgroundColor = color;
+
+    const value = document.createElement("span");
+    value.innerHTML = `${chloroLayer}`;
+    item.appendChild(key);
+    item.appendChild(value);
+    legend.appendChild(item);
+  });
+}
+export async function circleLinkZoom(d) {
   allProducts.forEach((product) => {
     if (product.identifier === d) {
       console.log("true");
@@ -278,16 +368,6 @@ async function circleLinkZoom(d) {
         essential: true,
       });
     }
-  });
-}
-
-export { circleLinkZoom };
-
-function addHeatmapLayer(title, productType) {
-  map.addLayer({
-    id: `${title}-heatmap`,
-    type: "heatmap",
-    source: title,
   });
 }
 
@@ -355,27 +435,25 @@ function updateArea(e) {
   }
 }
 
-function addDotLayer(title){
+function addDotLayer(title) {
   map.addLayer({
     id: `${title}-dot-density`,
     type: 'circle',
     source: title,
     paint: {
-      'circle-color': '#FF0000',
-      'circle-radius': {
-        'base': 1.75,
-        'stops': [
+      "circle-color": "#FF0000",
+      "circle-radius": {
+        base: 1.75,
+        stops: [
           [12, 2],
-          [32, 180]
-        ]
+          [32, 180],
+        ],
       },
-    }
+    },
   });
 }
 
 //-----------CUSTOM POLYGONS---------
-
-
 
 // BUTTON FUNCTIONALITY
 
@@ -394,25 +472,24 @@ const selectMoveCursor = () => {
   cursorMode = CursorMode.Move;
   deselectAllCursors();
   moveButtonEle.classList.add(...cursorSelectedClasses);
-}
+};
 
 const selectRectangleCursor = () => {
   cursorMode = CursorMode.Rectangle;
   deselectAllCursors();
   rectangleButtonEle.classList.add(...cursorSelectedClasses);
-}
+};
 
 const selectPolygonCursor = () => {
   cursorMode = CursorMode.Polygon;
   deselectAllCursors();
   polygonButtonEle.classList.add(...cursorSelectedClasses);
-}
+};
 
 moveButtonEle.onclick = selectMoveCursor;
 rectangleButtonEle.onclick = selectRectangleCursor;
 polygonButtonEle.onclick = selectPolygonCursor;
 selectMoveCursor();
-
 
 const layerMenuButtonEle = document.querySelector("#layer-menu-button");
 const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
@@ -494,7 +571,6 @@ document.querySelector("#choropleth-item").onclick = choroplethMode;
 document.querySelector("#isarithmic-item").onclick = isarithmicMode;
 document.querySelector("#dot-density-item").onclick = dotDensityMode;
 document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
-
 
 let savedAreasOpen = false;
 const openSavedAreas = () => {
