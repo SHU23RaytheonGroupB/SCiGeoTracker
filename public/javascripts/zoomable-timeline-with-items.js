@@ -3,27 +3,10 @@
 
 import { circleLinkZoom } from "./map.js";
 
-const START_DATE = new Date(1558231200000);
-const END_DATE = new Date(1593914400000);
-
-const from = START_DATE;
-      const until = END_DATE;
-      const response = await fetch("/api/getProducts");
-      const allProducts = await response.json();
-
-      const myData = Array.from({ length: allProducts.length}, (x, i) => ({
-        id: allProducts[i].identifier,
-        start: new Date(
-          new Date(allProducts[i].objectstartdate)
-        )
-      }));
-      const timeline = Timeline(myData, { from, until });
-document.querySelector("#timeline-container").appendChild(timeline.element);
-
-export default function Timeline(data, options) {
+export function Timeline(map, options) {
   const axis = {};
   const nodes = {};
-  let _data = data;
+  let _map = map;
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
     from: new Date().setFullYear(new Date().getFullYear() + 1),
@@ -331,7 +314,7 @@ export default function Timeline(data, options) {
       return { start: scaleX.domain()[0], end: scaleX.domain()[1] };
     };
 
-    const items = bind(data);
+    const items = bind(map);
 
     const zoom = d3
       .zoom()
@@ -346,7 +329,7 @@ export default function Timeline(data, options) {
       ])
       .on("zoom", ({ transform }) => {
         scaleX = transform.rescaleX(originalScaleX);
-        bind(_data);
+        bind(_map);
         element.value = {
           start: scaleX.domain()[0],
           end: scaleX.domain()[1]
@@ -356,8 +339,8 @@ export default function Timeline(data, options) {
     svg.call(zoom);
 
     const update = (data) => {
-      _data = data;
-      bind(_data);
+      _map = data;
+      bind(_map);
     };
 
     return {

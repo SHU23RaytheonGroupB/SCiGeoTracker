@@ -35,7 +35,7 @@ let layerMode;
 let allProducts = [];
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
-const map = new mapboxgl.Map({
+const map_ = new mapboxgl.Map({
   container: "map", // container ID
   style: "mapbox://styles/mapbox/dark-v11", // style URL
   center: [-5, 55], // starting position
@@ -136,37 +136,48 @@ const draw = new MapboxDraw({
   ],
 });
 
+import { Timeline } from "./zoomable-timeline-with-items.js";
+
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
-map.on("load", () => {
+map_.on("load", () => {
   renderOverlaysMove();
   renderOverlaysZoom();
   initialiseProducts();
+
+  const START_DATE = new Date(1558231200000);
+  const END_DATE = new Date(1593914400000);
+
+  const from = START_DATE;
+  const until = END_DATE;
+  const timeline = Timeline(map_, { from, until });
+  document.querySelector("#timeline-container").appendChild(timeline.element);
+
 });
 
-map.addControl(draw);
-map.on("draw.create", updateArea);
-map.on("draw.delete", updateArea);
-map.on("draw.update", updateArea);
+map_.addControl(draw);
+map_.on("draw.create", updateArea);
+map_.on("draw.delete", updateArea);
+map_.on("draw.update", updateArea);
 
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
 
 function renderOverlaysMove() {
-  const { lng, lat } = map.getCenter();
+  const { lng, lat } = map_.getCenter();
   coordEle.textContent = `${lng.toFixed(3)}, ${lat.toFixed(3)}`;
 }
 
 function renderOverlaysZoom() {
-  const zoomPercentage = ((map.getZoom() - minZoom) / (maxZoom - minZoom)) * 100;
+  const zoomPercentage = ((map_.getZoom() - minZoom) / (maxZoom - minZoom)) * 100;
   zoomScrollEle.style.top = `${100 - zoomPercentage}%`;
 }
 
-map.on("move", (ev) => {
+map_.on("move", (ev) => {
   renderOverlaysMove();
 });
 
-map.on("zoom", (ev) => {
+map_.on("zoom", (ev) => {
   renderOverlaysZoom();
 });
 
@@ -235,7 +246,7 @@ export async function addProductsToMap() {
 }
 
 function addSource(title, data) {
-  map.addSource(title, {
+  map_.addSource(title, {
     type: "geojson",
     data: data,
     tolerance: 3,
@@ -244,7 +255,7 @@ function addSource(title, data) {
 }
 
 function addFramesLayers(title) {
-  map.addLayer({
+  map_.addLayer({
     id: `${title}-frames-fill`,
     type: "fill",
     source: title,
@@ -254,7 +265,7 @@ function addFramesLayers(title) {
       "fill-opacity": 0.2,
     },
   });
-  map.addLayer({
+  map_.addLayer({
     id: `${title}-frames-outline`,
     type: "line",
     source: title,
@@ -271,7 +282,7 @@ async function circleLinkZoom(d) {
   allProducts.forEach((product) => {
     if (product.identifier === d) {
       console.log("true");
-      map.flyTo({
+      map_.flyTo({
         center: product.centre.split(",").reverse(),
         zoom: 12,
         essential: true,
@@ -283,7 +294,7 @@ async function circleLinkZoom(d) {
 export { circleLinkZoom };
 
 function addHeatmapLayer(title, productType) {
-  map.addLayer({
+  map_.addLayer({
     id: `${title}-heatmap`,
     type: "heatmap",
     source: title,
@@ -353,7 +364,7 @@ function updateArea(e) {
 }
 
 function addDotLayer(title){
-  map.addLayer({
+  map_.addLayer({
     id: `${title}-circle`,
     type: 'circle',
     source: title,
@@ -494,3 +505,5 @@ document.querySelector("#folder-button").onclick = () => {
   if (!savedAreasOpen) openSavedAreas();
   else closeSavedAreas();
 };
+
+export {map_ as map};
