@@ -148,6 +148,7 @@ map.addControl(draw);
 map.on("draw.create", updateArea);
 map.on("draw.delete", updateArea);
 map.on("draw.update", updateArea);
+map.on("draw.selectionchange", updateArea);
 
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
@@ -592,7 +593,7 @@ document.querySelector("#folder-button").onclick = () => {
 
 
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
-areaSelectionInfoCloseButtonEle.onclick = draw.trash;
+areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
 
 
 document.querySelector("#zoom-in-button").onclick = () => map.zoomIn();
