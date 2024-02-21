@@ -1,11 +1,13 @@
-import {fs} from 'fs';
+const fs = require("fs");
 
-export default function saveTo()
-{
-    console.log("HERE");
-    const dir = 'public/localPolygons';
-    fs.readdir(dir, (err, files) => {
-    
+function saveTo() {
+  console.log("HERE");
+  const dir = "./localPolygons";
+  let count = 1;
+  fs.readdir(dir, (err, files) => {
     console.log(files);
-});
+  });
+  return count;
 }
+
+module.exports = saveTo;
