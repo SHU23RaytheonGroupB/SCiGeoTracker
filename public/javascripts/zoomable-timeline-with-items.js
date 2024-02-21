@@ -1,6 +1,24 @@
 // ATTRIBUTION: Julien Colot
 // https://observablehq.com/@jcolot/zoomable-timeline-with-items@955
 
+import { circleLinkZoom } from "./map.js";
+
+const START_DATE = new Date(1558231200000);
+const END_DATE = new Date(1593914400000);
+
+const from = START_DATE;
+      const until = END_DATE;
+      const response = await fetch("/api/getProducts");
+      const allProducts = await response.json();
+
+      const myData = Array.from({ length: allProducts.length}, (x, i) => ({
+        id: allProducts[i].identifier,
+        start: new Date(
+          new Date(allProducts[i].objectstartdate)
+        )
+      }));
+      const timeline = Timeline(myData, { from, until });
+document.querySelector("#timeline-container").appendChild(timeline.element);
 
 export default function Timeline(data, options) {
   const axis = {};
@@ -287,6 +305,10 @@ export default function Timeline(data, options) {
               .style("stroke-width", 1)
               .style("fill", "red")
               .style("cursor", "pointer")
+              .on("click", function (event, d) {
+                circleLinkZoom(d.id);
+                //console.log("clicked", d.id);
+              })
               .attr("r", 4)
               .attr("cx", (d, i) => X[i])
               .attr("cy", (d, i) => Y[i] + 120)
