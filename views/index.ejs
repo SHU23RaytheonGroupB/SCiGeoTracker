@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Sci-GeoTracker</title>
-    
+
     <meta name="viewport" content="initial-scale=1,maximum-scale=5,user-scalable=yes" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
@@ -29,14 +29,29 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
             </svg>
           </button> -->
-          <button type="button" alt="Drag and move map tool" id="move-button" class="p-1.5 hover:bg-neutral-500/10 bg-neutral-800" >
-            <img class="h-6 w-6" src="/images/icons8-move-90.png" alt="Drag and move map tool"/>
+          <button
+            type="button"
+            alt="Drag and move map tool"
+            id="move-button"
+            class="p-1.5 hover:bg-neutral-500/10 bg-neutral-800"
+          >
+            <img class="h-6 w-6" src="/images/icons8-move-90.png" alt="Drag and move map tool" />
           </button>
-          <button type="button" alt="Draw custom rectangle tool" id="rectangle-button" class="p-1.5 hover:bg-neutral-500/10">
-            <img class="h-6 w-6" src="/images/icons8-rectangle-90.png" alt="Draw custom rectangle tool"/>
+          <button
+            type="button"
+            alt="Draw custom rectangle tool"
+            id="rectangle-button"
+            class="p-1.5 hover:bg-neutral-500/10"
+          >
+            <img class="h-6 w-6" src="/images/icons8-rectangle-90.png" alt="Draw custom rectangle tool" />
           </button>
-          <button type="button" alt="Draw custom polygon tool" id="polygon-button" class="p-1.5 hover:bg-neutral-500/10">
-            <img class="h-6 w-6" src="/images/icons8-radar-plot-90.png" alt="Draw custom polygon tool"/>
+          <button
+            type="button"
+            alt="Draw custom polygon tool"
+            id="polygon-button"
+            class="p-1.5 hover:bg-neutral-500/10"
+          >
+            <img class="h-6 w-6" src="/images/icons8-radar-plot-90.png" alt="Draw custom polygon tool" />
           </button>
         </div>
         <button
@@ -45,7 +60,7 @@
           id="filter-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="/images/icons8-filter-90.png" alt="Filter map tool"/>
+          <img class="h-6 w-6" src="/images/icons8-filter-90.png" alt="Filter map tool" />
         </button>
         <button
           type="button"
@@ -53,7 +68,7 @@
           id="folder-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="/images/icons8-folder-90.png" alt="Saved areas folder"/>
+          <img class="h-6 w-6" src="/images/icons8-folder-90.png" alt="Saved areas folder" />
         </button>
         <button
           type="button"
@@ -61,7 +76,7 @@
           id="histogram-button"
           class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-6 w-6" src="/images/icons8-futures-90.png" alt="Display histogram"/>
+          <img class="h-6 w-6" src="/images/icons8-futures-90.png" alt="Display histogram" />
         </button>
       </div>
 
@@ -83,7 +98,11 @@
             aria-haspopup="true"
           >
             Frames
-            <img class="h-4 w-4 ml-auto my-auto" src="/images/icons8-dropdown-stroke-1px-90.png" alt="Dropdown list for different filters"/>
+            <img
+              class="h-4 w-4 ml-auto my-auto"
+              src="/images/icons8-dropdown-stroke-1px-90.png"
+              alt="Dropdown list for different filters"
+            />
           </button>
         </div>
 
@@ -174,7 +193,7 @@
           id="button"
           class="rounded-lg p-2 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
-          <img class="h-4 w-4" src="/images/icons8-search-90.png" alt="Search by placename"/>
+          <img class="h-4 w-4" src="/images/icons8-search-90.png" alt="Search by placename" />
         </button>
       </div>
 
@@ -186,7 +205,7 @@
             id="zoom-in-button"
             class="z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
           >
-            <img class="h-3 w-3" src="/images/icons8-plus-90.png" alt="Increase zoom"/>
+            <img class="h-3 w-3" src="/images/icons8-plus-90.png" alt="Increase zoom" />
           </button>
           <div class="h-44 relative">
             <div class="absolute w-full h-full py-3">
@@ -205,7 +224,7 @@
             id="zoom-out-button"
             class="z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
           >
-            <img class="h-3 w-3" src="/images/icons8-minus-90.png" alt="Decrease zoom"/>
+            <img class="h-3 w-3" src="/images/icons8-minus-90.png" alt="Decrease zoom" />
           </button>
         </div>
       </div>
@@ -221,12 +240,14 @@
       </div>
     </div>
 
-    <div id="area-selection-info-container" class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm
-    bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 right-20">
+    <div
+      id="area-selection-info-container"
+      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 right-20"
+    >
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Area Selection</h2>
         <button type="button" id="area-selection-info-close-button" class="ml-auto">
-          <img class="h-3 w-3" src="icons8-close-90.png"/>
+          <img class="h-3 w-3" src="icons8-close-90.png" />
         </button>
       </div>
       <div class="my-2 px-1">
@@ -256,30 +277,37 @@
         </table>
       </div>
       <div>
-        <button type="button" id="area-selection-info-view-button" class="px-4 py-1 w-full rounded-md overflow-hidden
-        bg-neutral-800 ring-1 ring-neutral-600/50">
+        <button
+          type="button"
+          id="area-selection-info-view-button"
+          class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+        >
           View
         </button>
       </div>
     </div>
 
-    <div id="saved-areas-container" class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm
-    bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto">
+    <div
+      id="saved-areas-container"
+      class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto"
+    >
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Saved Areas</h2>
         <button type="button" id="saved-areas-close-button" class="ml-auto">
-          <img class="h-3 w-3" src="images/icons8-close-90.png"/>
+          <img class="h-3 w-3" src="images/icons8-close-90.png" />
         </button>
       </div>
       <div class="my-2 px-1 flex flex-col">
-        <input type="text" name="saved-areas-search" id="saved-areas-search" class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2
-        bg-neutral-600/50 ring-1 ring-neutral-500/50 #ring-inset shadow-sm
-        placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-600/80" placeholder="Search">
+        <input
+          type="text"
+          name="saved-areas-search"
+          id="saved-areas-search"
+          class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2 bg-neutral-600/50 ring-1 ring-neutral-500/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-600/80"
+          placeholder="Search"
+        />
         <div id="saved-areas-list-container" class="h-52">
           <ul id="polygonList" class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-            
-            <script type="module">
-              import saveTo from "/javascripts/savePolysToSession.js";
+            <script type="module" src="./javascripts/savePolysToSession.js">
               saveTo();
 
                 // var file = sessionStorage.getItem("/localPolygons/file1.txt");
@@ -295,16 +323,21 @@
               // }
             </script>
           </ul>
-          
         </div>
       </div>
       <div class="flex flex-row gap-2 text-xs text-neutral-400">
-        <button type="button" id="saved-areas-info-view-button" class="px-4 py-1 w-full rounded-md overflow-hidden
-        bg-neutral-800 ring-1 ring-neutral-600/50">
+        <button
+          type="button"
+          id="saved-areas-info-view-button"
+          class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+        >
           Import GeoJSON
         </button>
-        <button type="button" id="saved-areas-info-view-button" class="px-4 py-1 w-full rounded-md overflow-hidden
-        bg-neutral-800 ring-1 ring-neutral-600/50">
+        <button
+          type="button"
+          id="saved-areas-info-view-button"
+          class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+        >
           Export GeoJSON
         </button>
       </div>
