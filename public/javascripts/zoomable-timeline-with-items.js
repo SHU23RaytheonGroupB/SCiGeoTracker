@@ -324,8 +324,7 @@ export function Timeline(map_, options) {
               .append("title")
               .text((d) => d.title),
           (update) =>
-            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130).attr("r", rescaleX),
-            console.log(xsize, rescaleX)
+            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130),
         );
 
       const density =
