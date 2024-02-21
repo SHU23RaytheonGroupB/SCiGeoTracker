@@ -175,6 +175,7 @@ export async function initialiseProducts() {
   allProducts = await response.json();
   await addProductsToMap();
   //filtersPanel.on("change", filterProductsByType);
+  framesMode();
 }
 
 function filterProductsByType() {
@@ -229,9 +230,9 @@ export async function addProductsToMap() {
   // FRAMES LAYER
   addFramesLayers("product-polygons");
   // HEATMAP LAYER
-  //addHeatmapLayer("product-points");
+  addHeatmapLayer("product-points");
   // DOT LAYER
-  //addDotLayer("product-points");
+  addDotLayer("product-points");
 }
 
 function addSource(title, data) {
@@ -354,7 +355,7 @@ function updateArea(e) {
 
 function addDotLayer(title){
   map.addLayer({
-    id: `${title}-circle`,
+    id: `${title}-dot-density`,
     type: 'circle',
     source: title,
     paint: {
@@ -432,40 +433,57 @@ layerMenuItemsContainerEle.focusout = () => {
   closeLayerMenu();
 };
 
+const hideAllLayers = () => {
+  map.setLayoutProperty("product-polygons-frames-fill", "visibility", "none");
+  map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
+  map.setLayoutProperty("product-points-heatmap", "visibility", "none");
+  map.setLayoutProperty("product-points-dot-density", "visibility", "none");
+}
+
 const framesMode = () => {
   layerMode = LayerMode.Frames;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
+  hideAllLayers();
+  map.setLayoutProperty("product-polygons-frames-fill", "visibility", "visible");
+  map.setLayoutProperty("product-polygons-frames-outline", "visibility", "visible");
 };
 
 const heatmapMode = () => {
   layerMode = LayerMode.Heatmap;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
+  hideAllLayers();
+  map.setLayoutProperty("product-points-heatmap", "visibility", "visible");
 };
 
 const choroplethMode = () => {
   layerMode = LayerMode.Choropleth;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
+  hideAllLayers();
 };
 
 const isarithmicMode = () => {
   layerMode = LayerMode.Isarithmic;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
+  hideAllLayers();
 };
 
 const dotDensityMode = () => {
   layerMode = LayerMode.DotDensity;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
+  hideAllLayers();
+  map.setLayoutProperty("product-points-dot-density", "visibility", "visible");
 };
 
 const frameOverlapsMode = () => {
   layerMode = LayerMode.FrameOverlaps;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
+  hideAllLayers();
 };
 
 document.querySelector("#frames-item").onclick = framesMode;
@@ -474,7 +492,6 @@ document.querySelector("#choropleth-item").onclick = choroplethMode;
 document.querySelector("#isarithmic-item").onclick = isarithmicMode;
 document.querySelector("#dot-density-item").onclick = dotDensityMode;
 document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
-framesMode();
 
 
 let savedAreasOpen = false;
