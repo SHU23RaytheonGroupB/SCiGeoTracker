@@ -236,11 +236,8 @@
         <p id="scale" class="font-normal">10km</p>
       </div>
     </div>
-
-    <div
-      id="area-selection-info-container"
-      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 right-20"
-    >
+    <div id="area-selection-info-container" class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm
+    bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 right-20" style="display: none">
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Area Selection</h2>
         <button type="button" id="area-selection-info-close-button" class="ml-auto">
@@ -252,23 +249,23 @@
           <tbody>
             <tr>
               <td class="font-light text-neutral-400">Total area</td>
-              <td id="total-area" class="font-medium text-right text-neutral-200">1,006.40mi²</td>
+              <td id="area-selection-total-area" class="font-medium text-right text-neutral-200">mi²</td>
             </tr>
             <tr>
               <td class="font-light text-neutral-400">Covered area</td>
-              <td id="covered-area" class="font-medium text-right text-neutral-200">403.27mi²</td>
+              <td id="area-selection-covered-area" class="font-medium text-right text-neutral-200">mi²</td>
             </tr>
             <tr>
               <td class="font-light text-neutral-400">Uncovered area</td>
-              <td id="uncovered-area" class="font-medium text-right text-neutral-200">603.13mi²</td>
+              <td id="area-selection-uncovered-area" class="font-medium text-right text-neutral-200">mi²</td>
             </tr>
             <tr>
               <td class="font-light text-neutral-400">Coverage %</td>
-              <td id="uncovered-area" class="font-medium text-right text-neutral-200">40.07%</td>
+              <td id="area-selection-coverage-percentage" class="font-medium text-right text-neutral-200">%</td>
             </tr>
             <tr>
               <td class="font-light text-neutral-400">Total missions</td>
-              <td id="uncovered-area" class="font-medium text-right text-neutral-200">1,703</td>
+              <td id="area-selection-total-missions" class="font-medium text-right text-neutral-200"></td>
             </tr>
           </tbody>
         </table>
@@ -348,28 +345,62 @@
       </div>
     </div>
 
+    <div id="timeline-container" class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg">
+    </div>
+
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
 
-    <script type="module">
-      import define from "/javascripts/timeline.js";
-      import { Runtime, Library, Inspector } from "./javascripts/runtime.js";
-      var timeLineDiv = document.createElement("div");
-      timeLineDiv.id = "timeline";
-
-      timeLineDiv.className =
-        "absolute mx-auto my-2 w-3/4 bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg";
-
-      const runtime = new Runtime();
-      //const main = runtime.module(define, Inspector.into(document.body));
-      const main = runtime.module(define, Inspector.into(document.body.appendChild(timeLineDiv)));
-
-      var count = document.getElementsByClassName("observablehq").length;
-      for (var i = 0; i < count; i++) {
-        if (i == 1) {
-          i++;
-        }
-        document.getElementsByClassName("observablehq")[i].style.display = "none";
+    <style type="text/css">
+      .timeline-axis {
+        --daily-gridline-color: rgb(194, 199, 200);
+        --yearly-gridline-color: rgb(81, 93, 93);
+        --yearly-tick-color: rgb(81, 93, 93);
+        --yearly-label-color: rgb(60, 79, 81);
+        --daily-tick-color: rgb(161, 173, 173);
+        --daily-label-color: rgb(60, 79, 81);
+        --weekly-tick-color: rgb(161, 173, 173);
+        --weekly-label-color: rgb(60, 79, 81);
       }
+    
+      .timeline-axis line {
+        shape-rendering: geometricPrecision;
+        stroke-width: 0.5;
+      }
+    
+      .timeline-axis .yearly line {
+        stroke: var(--yearly-tick-color);
+      }
+    
+      .timeline-axis .yearly text {
+        color: var(--yearly-label-color);
+      }
+    
+      .timeline-axis .daily line {
+        stroke: var(--daily-tick-color);
+      }
+    
+      .timeline-axis .daily text {
+        color: var(--daily-label-color);
+      }
+    
+      .timeline-axis .weekly line {
+        stroke: var(--weekly-tick-color);
+      }
+    
+      .timeline-axis .weekly text {
+        color: var(--weekly-label-color);
+      }
+    
+      .timeline-axis .grid line {
+        stroke: var(--daily-gridline-color);
+      }
+    
+      .timeline-axis .yearlyGrid line {
+        stroke: var(--yearly-gridline-color);
+      }
+    </style>
+    <script type="module">
+      import Timeline from "./javascripts/zoomable-timeline-with-items.js"  
     </script>
   </body>
   <script type="module" src="./javascripts/map.js"></script>
