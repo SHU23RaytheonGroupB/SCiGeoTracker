@@ -42,6 +42,7 @@ const map = new mapboxgl.Map({
   zoom: 5, // starting zoom
   minZoom: minZoom,
   maxZoom: maxZoom,
+  attributionControl: false,
 });
 
 const draw = new MapboxDraw({
