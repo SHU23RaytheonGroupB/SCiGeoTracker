@@ -282,7 +282,7 @@ function updateArea(e) {
   }
   //bounding box is (Latt, Long) and has a padding of (±0.8 and ±0.9)
   let boundingBox = [
-    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) + 0.5],
+    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
     [Math.min(...polyCoordinatesLat) - 0.8, Math.max(...polyCoordinatesLog) + 0.5],
     [Math.max(...polyCoordinatesLat) + 0.8, Math.max(...polyCoordinatesLog) + 0.5],
     [Math.max(...polyCoordinatesLat) + 0.8, Math.min(...polyCoordinatesLog) - 0.5],
@@ -310,7 +310,8 @@ function updateArea(e) {
   //     "fill-opacity": 0.7,
   //   },
   // });
-  // outlinePolygon("title", 'IMAGERY');
+  console.log(boundingBox);
+  let containedMissions = missionsWithinPoly(allProducts, boundingBox);
   const answer = document.getElementById("areaSelectionPanel");
   if (data.features.length > 0) {
     const area = turf.area(data) / 1000; //divide by 1000 to get square km
@@ -329,6 +330,29 @@ function updateArea(e) {
     //if (e.type !== 'draw.delete')
     //alert('Click the map to draw a polygon.');
   }
+}
+
+function missionsWithinPoly(allMissons, imppolygon) {
+  let containedMissions = [];
+  var polygon = turf.polygon([imppolygon], { name: 'poly1'});
+
+  for (let i = 0; i < allMissons.length; i++) {
+    if (allMissons[i].centre != null) {
+      const coordinatesArray = allMissons[i].centre.split(",");
+      var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]); 
+      if (turf.inside(point, polygon)) {
+        //console.log("in" + i)
+        containedMissions.push(allMissons[i]);
+
+      } else {
+        //console.log("out")
+      }
+    } else {
+      //console.log("null")
+    }
+  }
+
+  return containedMissions;
 }
 
 //-----------CUSTOM POLYGONS---------
