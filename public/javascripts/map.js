@@ -403,9 +403,6 @@ function calculateMissionCoverage(allMissons, polygon) {
     fcMissions.push(feature);
   }
 
-  console.log(fcMissions);
-
-  
   map.addSource('test1', {
     'type': 'geojson',
     'data': {
@@ -428,7 +425,6 @@ function calculateMissionCoverage(allMissons, polygon) {
   var fcMissionsWithinPoly = [];
 
   for (let i = 0; i < fcMissions.length; i++) {
-    //console.log(fcMissions[i]);
     var intersection = turf.intersect(turf.polygon(fcMissions[i].geometry.coordinates), turfpolygon);
     if (intersection) {
         var feature = {
@@ -439,11 +435,9 @@ function calculateMissionCoverage(allMissons, polygon) {
             'coordinates': [intersection.geometry.coordinates[0]]
           }
         };
-        //console.log(feature);
         fcMissionsWithinPoly.push(feature);
     }
   }
-  console.log(fcMissionsWithinPoly);
 
   map.addSource('test2', {
       'type': 'geojson',
@@ -464,10 +458,97 @@ function calculateMissionCoverage(allMissons, polygon) {
       },
   });
 
-  for (let i = 0; i < fcMissions.length; i++) {
-    
 
+  var fcMissionIntersects = [];
+
+  for (let i = 0; i < fcMissions.length; i++) {
+    for (let k = i + 1; k < fcMissions.length; k++) {
+      var intersection = turf.intersect(turf.polygon(fcMissions[i].geometry.coordinates), turf.polygon(fcMissions[k].geometry.coordinates));
+      if (intersection) {
+        var feature = {
+          'type': 'Feature',
+          'properties': { 'name': i },
+          'geometry': {
+            'type': 'Polygon',
+            'coordinates': [intersection.geometry.coordinates[0]]
+          }
+        };
+        fcMissionIntersects.push(feature);
+      }
+    }
   }
 
-  return 0;
+  map.addSource('test3', {
+    'type': 'geojson',
+    'data': {
+        'type': 'FeatureCollection',
+        'features': fcMissionIntersects
+    }
+  });
+
+  map.addLayer({
+      id: 'test3' + "fill",
+      type: "fill",
+      source: "test3", // reference the data source
+      layout: {},
+      paint: {
+          "fill-color": "#0000FF",
+          "fill-opacity": 0.7,
+      },
+  });
+
+  var fcMissionIntersectsWithinPoly = [];
+
+  for (let i = 0; i < fcMissionIntersects.length; i++) {
+    var intersection = turf.intersect(turf.polygon(fcMissionIntersects[i].geometry.coordinates), turfpolygon);
+    console.log(intersection);
+    
+    if (intersection) {
+      var feature = {
+        'type': 'Feature',
+        'properties': { 'name': i },
+        'geometry': {
+          'type': 'Polygon',
+          'coordinates': [intersection.geometry.coordinates[0]]
+        }
+      };
+      fcMissionIntersectsWithinPoly.push(feature);
+    }
+  }
+
+  map.addSource('test4', {
+    'type': 'geojson',
+    'data': {
+        'type': 'FeatureCollection',
+        'features': fcMissionIntersectsWithinPoly
+    }
+  });
+
+  map.addLayer({
+      id: 'test4' + "fill",
+      type: "fill",
+      source: "test4", // reference the data source
+      layout: {},
+      paint: {
+          "fill-color": "#FFFFFF",
+          "fill-opacity": 0.7,
+      },
+  });
+
+  var areaCoveredWithOverlaps = 0;
+  for (let i = 0; i < fcMissionsWithinPoly.length; i++) {
+    areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
+  }
+
+  var areaCoveredByOverlaps = 0;
+  for (let i = 0; i < fcMissionIntersectsWithinPoly.length; i++) {
+    areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionIntersectsWithinPoly[i].geometry.coordinates));
+  }
+
+  var area = areaCoveredWithOverlaps - areaCoveredByOverlaps; //currently in m^2
+  area /= 1000; //divide by 1000 to get square km
+  var rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
+
+  console.log(rounded_area);
+  return rounded_area;
 }
