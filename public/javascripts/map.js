@@ -140,10 +140,10 @@ import { Timeline } from "./zoomable-timeline-with-items.js";
 
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
-map.on("load", () => {
+map.on("load", async () => {
   renderOverlaysMove();
   renderOverlaysZoom();
-  initialiseProducts();
+  await initialiseProducts();
 
   const START_DATE = new Date(1558231200000);
   const END_DATE = new Date(1593914400000);
