@@ -144,7 +144,7 @@ map.on("load", async () => {
   renderOverlaysMove();
   renderOverlaysZoom();
   await initialiseProducts();
-
+  
   const START_DATE = new Date(1558231200000);
   const END_DATE = new Date(1593914400000);
 

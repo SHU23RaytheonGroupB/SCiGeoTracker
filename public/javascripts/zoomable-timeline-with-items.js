@@ -6,9 +6,16 @@ import { circleLinkZoom } from "./map.js";
 export function Timeline(map_, options) {
   const axis = {};
   const nodes = {};
-  let myData = map_.getSource("product-polygons");
+  let myData = map_.getSource("product-polygons")._data.features;
 
   console.log("myData", myData);
+
+  myData = Array.from({ length: myData.length }, (x, i) => ({
+    title: myData[i].attributes.title,
+    id: myData[i].attributes.id,
+    start: new Date(myData[i].attributes.date_start),
+    end: new Date(myData[i].attributes.date_end)
+  }));  
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
     from: new Date().setFullYear(new Date().getFullYear() + 1),
@@ -38,13 +45,17 @@ export function Timeline(map_, options) {
 
   const originalScaleX = scaleX.copy();
 
+  let xsize = 0;
+
   const density = Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
 
   const zoomScaleExtent = [1, Math.round(MS_PER_YEAR * 10)];
+  console.log("zoomScaleExtent", zoomScaleExtent);
 
   const findDensityConfig = (myData, value) => {
     for (const [limit, config] of myData) {
       if (value < limit) {
+        xsize = value;
         return config;
       }
     }
@@ -224,6 +235,9 @@ export function Timeline(map_, options) {
     });
 
     const radius = 4;
+
+    //letradius = (1/xsize)*10;
+
     const padding = 1;
 
     // Given an array of x-values and a separation radius, returns an array of y-values.
@@ -280,6 +294,14 @@ export function Timeline(map_, options) {
       const I = d3.range(myData.length);
       const X = myData.map((d) => scaleX(d.start));
       const Y = dodge(X, radius * 2 + padding);
+      //const Y = dodge(X, radius * 2 + padding*(1/xsize)*10);
+      //let rescaleX = (50/(Math.log(xsize) - 20));
+      //let rescaleX = (1/xsize)*100;
+      let rescaleX = 4;
+      if(xsize < 0.08005333333333334){
+        rescaleX = 14;
+      }
+      //rescaleX = 4;
       const items = svg
         .selectAll("circle")
         .data(myData)
@@ -297,12 +319,13 @@ export function Timeline(map_, options) {
                 //console.log("clicked", d.id);
               })
               .attr("r", 4)
-              .attr("cx", (d, i) => X[i])
+              .attr("cx", (d, i) => X[i]) 
               .attr("cy", (d, i) => Y[i] + 120)
               .append("title")
-              .text((d) => d.id),
+              .text((d) => d.title),
           (update) =>
-            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130)
+            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130).attr("r", rescaleX),
+            console.log(xsize, rescaleX)
         );
 
       const density =
@@ -333,7 +356,7 @@ export function Timeline(map_, options) {
       ])
       .on("zoom", ({ transform }) => {
         scaleX = transform.rescaleX(originalScaleX);
-        bind(_map);
+        bind(myData);
         element.value = {
           start: scaleX.domain()[0],
           end: scaleX.domain()[1]
@@ -343,8 +366,8 @@ export function Timeline(map_, options) {
     svg.call(zoom);
 
     const update = (data) => {
-      _map = data;
-      bind(_map);
+      mapData = data;
+      bind(myData);
     };
 
     return {
