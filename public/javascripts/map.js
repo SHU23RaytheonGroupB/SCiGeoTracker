@@ -288,63 +288,65 @@ function addHeatmapLayer(title, productType) {
   });
 }
 
+const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
+
 function updateArea(e) {
   //USED FOR DRAW POLYGON
   const data = draw.getAll();
-  let polyCoordinates = [];
-  let polyCoordinatesLat = [];
-  let polyCoordinatesLog = [];
-  for (let i = 0; i < data.features[0].geometry.coordinates[0].length; i++) {
-    polyCoordinates.push(data.features[0].geometry.coordinates[0][i]);
-    polyCoordinatesLog.push(data.features[0].geometry.coordinates[0][i][1]);
-    polyCoordinatesLat.push(data.features[0].geometry.coordinates[0][i][0]);
-  }
-  //bounding box is (Latt, Long) and has a padding of (±0.8 and ±0.9)
-  let boundingBox = [
-    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) + 0.5],
-    [Math.min(...polyCoordinatesLat) - 0.8, Math.max(...polyCoordinatesLog) + 0.5],
-    [Math.max(...polyCoordinatesLat) + 0.8, Math.max(...polyCoordinatesLog) + 0.5],
-    [Math.max(...polyCoordinatesLat) + 0.8, Math.min(...polyCoordinatesLog) - 0.5],
-    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
-  ];
-  // map.addSource('title', {
-  //   'type': "geojson",
-  //   'data' : {
-  //     'type': "Feature",
-  //     'geometry': {
-  //       'type': 'Polygon',
-  //       'coordinates': [
-  //         boundingBox
-  //       ]
-  //     }
-  //   },
-  // });
-  // map.addLayer({
-  //   id: 'title' + "fill",
-  //   type: "fill",
-  //   source: "title", // reference the data source
-  //   layout: {},
-  //   paint: {
-  //     "fill-color": "#FF0000",
-  //     "fill-opacity": 0.7,
-  //   },
-  // });
-  // outlinePolygon("title", 'IMAGERY');
-  const answer = document.getElementById("areaSelectionPanel");
-  if (data.features.length > 0) {
+  if (data.features.length > 0 && data.features[0].geometry.coordinates.length > 0) {
+    let polyCoordinates = [];
+    let polyCoordinatesLat = [];
+    let polyCoordinatesLog = [];
+    for (let i = 0; i < data.features[0].geometry.coordinates[0].length; i++) {
+      polyCoordinates.push(data.features[0].geometry.coordinates[0][i]);
+      polyCoordinatesLog.push(data.features[0].geometry.coordinates[0][i][1]);
+      polyCoordinatesLat.push(data.features[0].geometry.coordinates[0][i][0]);
+    }
+    //bounding box is (Latt, Long) and has a padding of (±0.8 and ±0.9)
+    let boundingBox = [
+      [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) + 0.5],
+      [Math.min(...polyCoordinatesLat) - 0.8, Math.max(...polyCoordinatesLog) + 0.5],
+      [Math.max(...polyCoordinatesLat) + 0.8, Math.max(...polyCoordinatesLog) + 0.5],
+      [Math.max(...polyCoordinatesLat) + 0.8, Math.min(...polyCoordinatesLog) - 0.5],
+      [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
+    ];
+    // map.addSource('title', {
+    //   'type': "geojson",
+    //   'data' : {
+    //     'type': "Feature",
+    //     'geometry': {
+    //       'type': 'Polygon',
+    //       'coordinates': [
+    //         boundingBox
+    //       ]
+    //     }
+    //   },
+    // });
+    // map.addLayer({
+    //   id: 'title' + "fill",
+    //   type: "fill",
+    //   source: "title", // reference the data source
+    //   layout: {},
+    //   paint: {
+    //     "fill-color": "#FF0000",
+    //     "fill-opacity": 0.7,
+    //   },
+    // });
+    // outlinePolygon("title", 'IMAGERY');
     const area = turf.area(data) / 1000; //divide by 1000 to get square km
-    const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-    const Covered_area = 403.27;
-    const Uncovered_area = 603.13;
-    const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
-    const Mission_count = 100;
-    answer.innerHTML = `<p style="font-size: 11px; color: black; margin: 0px;">Total Area: <strong>${rounded_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Covered Area: <strong>${Covered_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Uncovered Area: <strong>${Uncovered_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Coverage %: <strong>${Coverage_percentage}</strong>%</p>`;
-    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Total missions: <strong>${Mission_count}</strong></p>`;
+    const roundedArea = Math.round(area * 100) / 100; //convert area to 2 d.p.
+    const coveredArea = 403.27;
+    const uncoveredArea = 603.13;
+    const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
+    const missionCount = 100;
+    areaSelectionInfoContainerEle.style.display = null;
+    document.querySelector("#area-selection-total-area").textContent = `${roundedArea.toLocaleString()}mi²`;
+    document.querySelector("#area-selection-covered-area").textContent = `${coveredArea.toLocaleString()}mi²`;
+    document.querySelector("#area-selection-uncovered-area").textContent = `${uncoveredArea.toLocaleString()}mi²`;
+    document.querySelector("#area-selection-coverage-percentage").textContent = `${coveragePercentage.toLocaleString()}%`;
+    document.querySelector("#area-selection-total-missions").textContent = `${missionCount.toLocaleString()}`;
   } else {
-    answer.innerHTML = "";
+    areaSelectionInfoContainerEle.style.display = "none";
     //if (e.type !== 'draw.delete')
     //alert('Click the map to draw a polygon.');
   }
@@ -492,3 +494,7 @@ document.querySelector("#folder-button").onclick = () => {
   if (!savedAreasOpen) openSavedAreas();
   else closeSavedAreas();
 };
+
+
+const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
+areaSelectionInfoCloseButtonEle.onclick = draw.trash;
