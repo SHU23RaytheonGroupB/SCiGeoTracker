@@ -310,8 +310,9 @@ function updateArea(e) {
   //     "fill-opacity": 0.7,
   //   },
   // });
-  console.log(boundingBox);
-  let containedMissions = missionsWithinPoly(allProducts, boundingBox);
+  //console.log(boundingBox);
+  let containedMissions = missionsWithinPolygon(missionsWithinBoundingBox(allProducts, boundingBox), polyCoordinates);
+
   const answer = document.getElementById("areaSelectionPanel");
   if (data.features.length > 0) {
     const area = turf.area(data) / 1000; //divide by 1000 to get square km
@@ -332,27 +333,47 @@ function updateArea(e) {
   }
 }
 
-function missionsWithinPoly(allMissons, imppolygon) {
+function missionsWithinBoundingBox(allMissons, polygon) { 
   let containedMissions = [];
-  var polygon = turf.polygon([imppolygon], { name: 'poly1'});
+  var turfpolygon = turf.polygon([polygon], { name: 'poly1'});
 
   for (let i = 0; i < allMissons.length; i++) {
-    if (allMissons[i].centre != null) {
+    if (allMissons[i].centre != null) { // temporarly missions without a center cannot be added to 
       const coordinatesArray = allMissons[i].centre.split(",");
       var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]); 
-      if (turf.inside(point, polygon)) {
-        //console.log("in" + i)
+      if (turf.inside(point, turfpolygon)) {
         containedMissions.push(allMissons[i]);
-
-      } else {
-        //console.log("out")
       }
-    } else {
-      //console.log("null")
     }
   }
-
   return containedMissions;
 }
 
-//-----------CUSTOM POLYGONS---------
+function missionsWithinPolygon(boundingBoxMissions, polygon) {
+  console.log(boundingBoxMissions);
+  let containedMissions = [];
+  var turfpolygon = turf.polygon([polygon], { name: 'poly1'});
+
+  for (let i = 0; i < boundingBoxMissions.length; i++) {
+    if (boundingBoxMissions[i].centre != null) {
+      const coordinatesArray = boundingBoxMissions[i].centre.split(",");
+      var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]); 
+      if (turf.inside(point, turfpolygon)) {
+        containedMissions.push(boundingBoxMissions[i]);
+        continue;
+      }
+    }
+    //console.log(boundingBoxMissions[i].footprint.coordinates[0].length);
+    for (let k = 0; k < boundingBoxMissions[i].footprint.coordinates[0].length; k++) {
+      var point = turf.point(boundingBoxMissions[i].footprint.coordinates[0][k], boundingBoxMissions[i].footprint.coordinates[0][k]); 
+      console.log(boundingBoxMissions[i].footprint.coordinates[0][k][0] + ", " + boundingBoxMissions[i].footprint.coordinates[0][k][0]);
+      if (turf.inside(point, turfpolygon)) {
+        containedMissions.push(boundingBoxMissions[i]);
+        break;
+      }
+    }
+  }
+  console.log(containedMissions);
+
+  return containedMissions;
+}
