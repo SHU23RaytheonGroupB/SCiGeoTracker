@@ -153,10 +153,11 @@ map.on("zoom", (ev) => {
   renderOverlaysZoom();
 });
 
-export async function initialiseProducts() {
+async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
   await addProductsToMap();
+
   //filtersPanel.on("change", filterProductsByType);
 }
 
@@ -169,7 +170,7 @@ function filterProductsByType() {
 }
 
 //Draw every product to the screen
-export async function addProductsToMap() {
+async function addProductsToMap() {
   //Define polygon & point mapbox sources
   let polygonFeatureCollection = {
     type: "FeatureCollection",
@@ -206,13 +207,35 @@ export async function addProductsToMap() {
       },
     })),
   };
+
+  const boundariesByRegion = await getRegionalBoundaries();
+  const boundariesByCountry = await getCountryBoundaries();
+
+  async function getCountryBoundaries() {
+    const response = await fetch("../boundaries/UK_by_country.json");
+    if (!response.ok) {
+      throw new Error("Error getting country boundaries file");
+    }
+    return await response.json();
+  }
+
+  async function getRegionalBoundaries() {
+    const response = await fetch("../boundaries/UK_by_region.json");
+    if (!response.ok) {
+      throw new Error("Error getting regional boundaries file");
+    }
+    return await response.json();
+  }
   // SOURCES
   addSource("product-polygons", polygonFeatureCollection);
   addSource("product-points", pointFeatureCollection);
+  addSource("country-boundaries", boundariesByCountry);
   // FRAMES LAYER
   addFramesLayers("product-polygons");
   // HEATMAP LAYER
   //addHeatmapLayer("product-points");
+  //CHLOROPLETH LAYER
+  addChloroplethLayer("country-boundaries");
 }
 
 function addSource(title, data) {
@@ -247,7 +270,26 @@ function addFramesLayers(title) {
   });
 }
 
-async function circleLinkZoom(d) {
+function addHeatmapLayer(title, productType) {
+  map.addLayer({
+    id: `${title}-heatmap`,
+    type: "heatmap",
+    source: title,
+  });
+}
+
+function addChloroplethLayer(title) {
+  map.addLayer({
+    id: `${title}-chloropleth`,
+    type: "fill",
+    source: title,
+    paint: {
+      "fill-color": productFillColours["SCENE"],
+      "fill-opacity": 0.2,
+    },
+  });
+}
+export async function circleLinkZoom(d) {
   allProducts.forEach((product) => {
     if (product.identifier === d) {
       map.flyTo({
@@ -256,16 +298,6 @@ async function circleLinkZoom(d) {
         essential: true,
       });
     }
-  });
-}
-
-export { circleLinkZoom };
-
-function addHeatmapLayer(title, productType) {
-  map.addLayer({
-    id: `${title}-heatmap`,
-    type: "heatmap",
-    source: title,
   });
 }
 
