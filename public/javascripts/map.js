@@ -593,3 +593,7 @@ document.querySelector("#folder-button").onclick = () => {
 
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
 areaSelectionInfoCloseButtonEle.onclick = draw.trash;
+
+
+document.querySelector("#zoom-in-button").onclick = () => map.zoomIn();
+document.querySelector("#zoom-out-button").onclick = () => map.zoomOut();
