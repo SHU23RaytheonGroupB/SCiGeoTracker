@@ -317,10 +317,11 @@ function updateArea(e) {
   if (data.features.length > 0) {
     const area = turf.area(data) / 1000; //divide by 1000 to get square km
     const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-    const Covered_area = 403.27;
-    const Uncovered_area = 603.13;
+    const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinates);
+    const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
     const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
-    const Mission_count = 100;
+    const Mission_count = containedMissions.length;
+    //tempory way to display values
     answer.innerHTML = `<p style="font-size: 11px; color: black; margin: 0px;">Total Area: <strong>${rounded_area}</strong> Km²</p>`;
     answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Covered Area: <strong>${Covered_area}</strong> Km²</p>`;
     answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Uncovered Area: <strong>${Uncovered_area}</strong> Km²</p>`;
@@ -350,7 +351,7 @@ function missionsWithinBoundingBox(allMissons, polygon) {
 }
 
 function missionsWithinPolygon(boundingBoxMissions, polygon) {
-  console.log(boundingBoxMissions);
+  //console.log(boundingBoxMissions);
   let containedMissions = [];
   var turfpolygon = turf.polygon([polygon], { name: 'poly1'});
 
@@ -366,14 +367,107 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
     //console.log(boundingBoxMissions[i].footprint.coordinates[0].length);
     for (let k = 0; k < boundingBoxMissions[i].footprint.coordinates[0].length; k++) {
       var point = turf.point(boundingBoxMissions[i].footprint.coordinates[0][k], boundingBoxMissions[i].footprint.coordinates[0][k]); 
-      console.log(boundingBoxMissions[i].footprint.coordinates[0][k][0] + ", " + boundingBoxMissions[i].footprint.coordinates[0][k][0]);
+      //console.log(boundingBoxMissions[i].footprint.coordinates[0][k][0] + ", " + boundingBoxMissions[i].footprint.coordinates[0][k][0]);
       if (turf.inside(point, turfpolygon)) {
         containedMissions.push(boundingBoxMissions[i]);
         break;
       }
     }
   }
-  console.log(containedMissions);
+  //console.log(containedMissions);
 
   return containedMissions;
+}
+
+function calculateMissionCoverage(allMissons, polygon) {
+  if (allMissons.length == 0) {
+    return 0;
+  }
+  //console.log(allMissons);
+  var polygonMissions = [];
+  for (let i = 0; i < allMissons.length; i++) {
+    polygonMissions.push(allMissons[i].footprint.coordinates[0]);
+  }
+
+  var fcMissions = [];
+
+  for (let i = 0; i < polygonMissions.length; i++) {
+    var feature = {
+      'type': 'Feature',
+      'properties': { 'name': i },
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': [polygonMissions[i]]
+      }
+    };
+    fcMissions.push(feature);
+  }
+
+  console.log(fcMissions);
+
+  
+  map.addSource('test1', {
+    'type': 'geojson',
+    'data': {
+      'type': 'FeatureCollection',
+      'features': fcMissions
+    }
+  });
+  map.addLayer({
+    id: 'test1' + "fill",
+    type: "fill",
+    source: "test1", // reference the data source
+    layout: {},
+    paint: {
+      "fill-color": "#00FF00",
+      "fill-opacity": 0.7,
+    },
+  });
+
+  var turfpolygon = turf.polygon([polygon]);
+  var fcMissionsWithinPoly = [];
+
+  for (let i = 0; i < fcMissions.length; i++) {
+    //console.log(fcMissions[i]);
+    var intersection = turf.intersect(turf.polygon(fcMissions[i].geometry.coordinates), turfpolygon);
+    if (intersection) {
+        var feature = {
+          'type': 'Feature',
+          'properties': { 'name': i },
+          'geometry': {
+            'type': 'Polygon',
+            'coordinates': [intersection.geometry.coordinates[0]]
+          }
+        };
+        //console.log(feature);
+        fcMissionsWithinPoly.push(feature);
+    }
+  }
+  console.log(fcMissionsWithinPoly);
+
+  map.addSource('test2', {
+      'type': 'geojson',
+      'data': {
+          'type': 'FeatureCollection',
+          'features': fcMissionsWithinPoly
+      }
+  });
+
+  map.addLayer({
+      id: 'test2' + "fill",
+      type: "fill",
+      source: "test2", // reference the data source
+      layout: {},
+      paint: {
+          "fill-color": "#FF0000",
+          "fill-opacity": 0.7,
+      },
+  });
+
+  for (let i = 0; i < fcMissions.length; i++) {
+    
+
+  }
+
+  return 0;
 }
