@@ -225,21 +225,14 @@ async function addProductsToMap() {
     })),
   };
 
-  const boundariesByRegion = await getRegionalBoundaries();
-  const boundariesByCountry = await getCountryBoundaries();
+  const boundariesByRegion = await getGeojsonFile("../boundaries/UK-regions-wgs84.json");
+  const boundariesByCountry = await getGeojsonFile("../boundaries/UK_by_country.json");
+  const UKlandBorder = await getGeojsonFile("../boundaries/UK-land-border.json");
 
-  async function getCountryBoundaries() {
-    const response = await fetch("../boundaries/UK_by_country.json");
+  async function getGeojsonFile(fileLocation) {
+    const response = await fetch(fileLocation);
     if (!response.ok) {
-      throw new Error("Error getting country boundaries file");
-    }
-    return await response.json();
-  }
-
-  async function getRegionalBoundaries() {
-    const response = await fetch("../boundaries/UK_by_region.json");
-    if (!response.ok) {
-      throw new Error("Error getting regional boundaries file");
+      throw new Error(`Error getting ${fileLocation} file`);
     }
     return await response.json();
   }
@@ -247,14 +240,18 @@ async function addProductsToMap() {
   addSource("product-polygons", polygonFeatureCollection);
   addSource("product-points", pointFeatureCollection);
   addSource("country-boundaries", boundariesByCountry);
+  addSource("region-boundaries", boundariesByCountry);
+  addSource("uk-land-border", UKlandBorder);
   // FRAMES LAYER
   addFramesLayers("product-polygons");
   // HEATMAP LAYER
   //addHeatmapLayer("product-points");
   //CHLOROPLETH LAYER
-  addChloroplethLayer("country-boundaries");
+  //addChloroplethLayer("country-boundaries", "region-boundaries");
   // DOT LAYER
   //addDotLayer("product-points");
+  //BORDER LAYER - TEMP
+  addBorderLayer("uk-land-border");
 }
 
 function addSource(title, data) {
@@ -297,15 +294,66 @@ function addHeatmapLayer(title, productType) {
   });
 }
 
-function addChloroplethLayer(title) {
+function addChloroplethLayer(countryPolygons, regionPolygons) {
+  // map.addLayer({
+  //   id: `${countryPolygons}-chloropleth`,
+  //   type: "fill",
+  //   source: countryPolygons,
+  //   layout: {},
+  //   paint: {
+  //     "fill-color": [
+  //       "interpolate",
+  //       ["linear"],
+  //       ["get", "density"], // assign product count property within geojson to use instead of density
+  //     ],
+  //     "fill-opacity": 0.75,
+  //   },
+  // });
+
   map.addLayer({
-    id: `${title}-chloropleth`,
+    id: `${regionPolygons}-chloropleth`,
     type: "fill",
-    source: title,
+    source: regionPolygons,
+    layout: {
+      visibility: "visible",
+    },
     paint: {
-      "fill-color": productFillColours["SCENE"],
+      "fill-color": productFillColours["DOCUMENT"],
       "fill-opacity": 0.2,
     },
+  });
+}
+
+function addBorderLayer(title) {
+  map.addLayer({
+    id: `${title}-border`,
+    type: "fill",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours["DOCUMENT"],
+      "fill-opacity": 0.2,
+    },
+  });
+}
+
+function chloroLegend() {
+  const legend = document.getElementById("legend");
+
+  layers.forEach((chloroLayer, i) => {
+    const color = colors[i];
+    const item = document.createElement("div");
+    const key = document.createElement("span");
+    key.className = "legend-key";
+    key.style.backgroundColor = color;
+
+    const value = document.createElement("span");
+    value.innerHTML = `${chloroLayer}`;
+    item.appendChild(key);
+    item.appendChild(value);
+    legend.appendChild(item);
   });
 }
 export async function circleLinkZoom(d) {
