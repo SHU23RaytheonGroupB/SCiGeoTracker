@@ -3,10 +3,10 @@
 
 import { circleLinkZoom } from "./map.js";
 
-export function Timeline(map, options) {
+export default function Timeline(map, options) {
   const axis = {};
   const nodes = {};
-  let _map = map;
+  let myData = map;
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
     from: new Date().setFullYear(new Date().getFullYear() + 1),
@@ -19,6 +19,8 @@ export function Timeline(map, options) {
     zoomFilter: () => {},
     ...options
   };
+
+  
 
   const MS_PER_HOUR = 60 * 60 * 1000;
   const MS_PER_SECOND = 1000;
@@ -38,8 +40,8 @@ export function Timeline(map, options) {
 
   const zoomScaleExtent = [1, Math.round(MS_PER_YEAR * 10)];
 
-  const findDensityConfig = (map, value) => {
-    for (const [limit, config] of map) {
+  const findDensityConfig = (myData, value) => {
+    for (const [limit, config] of myData) {
       if (value < limit) {
         return config;
       }
@@ -314,7 +316,7 @@ export function Timeline(map, options) {
       return { start: scaleX.domain()[0], end: scaleX.domain()[1] };
     };
 
-    const items = bind(map);
+    const items = bind(myData);
 
     const zoom = d3
       .zoom()
