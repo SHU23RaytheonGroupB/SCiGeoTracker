@@ -65,8 +65,8 @@ const draw = new MapboxDraw({
   displayControlsDefault: false,
   // Select which mapbox-gl-draw control buttons to add to the map.
   controls: {
-    polygon: true,
-    trash: true,
+    //polygon: true,
+    //trash: true,
   },
   // Set mapbox-gl-draw to draw by default.
   // The user does not have to click the polygon control button first.
@@ -169,15 +169,34 @@ map.on("load", async () => {
   document.querySelector("#timeline-container").appendChild(timeline.element);
 });
 
-//document.getElementById('polygon-button').onclick = function () {
-map.addControl(draw);
-//draw.changeMode('draw_polygon');
-map.on("draw.create", updateArea);
-//}
+let polygonButton = document.getElementById("polygon-button");
+polygonButton.addEventListener("click", drawPoly);
 
-//map.on("draw.delete", updateArea);
-//map.on("draw.update", updateArea);
-//map.on("draw.selectionchange", updateArea);
+let infoCloseButton = document.getElementById("area-selection-info-close-button");
+infoCloseButton.addEventListener("click", closeInfo);
+
+let infoMoveButton = document.getElementById("move-button");
+infoCloseButton.addEventListener("click", moveMap);
+
+function closeInfo() {
+  document.getElementById("area-selection-info-container").style.display = "none";
+}
+
+map.addControl(draw);
+draw.changeMode('simple_select'); //default not draw
+
+function moveMap() {
+  draw.changeMode('simple_select');
+}
+
+function drawPoly() {
+  draw.changeMode('draw_polygon');
+  map.on("draw.create", updateArea);
+  map.on("draw.delete", updateArea);
+  map.on("draw.update", updateArea);
+  map.on("draw.selectionchange", updateArea);
+}
+
 
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
@@ -915,8 +934,79 @@ document.querySelector("#dot-density-item").onclick = dotDensityMode;
 document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
 document.querySelector("#border-selection-item").onclick = borderSelectionMode;
 
+
+
+
+
+let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
+
+const saveSavedAreas = () => {
+  sessionStorage.setItem("savedAreas", JSON.stringify(savedAreas));
+};
+
+if (savedAreas.length == 0) {
+  for (let i = 0; i < 10; i++) {
+    savedAreas.push({
+      name: `Test area ${i+1}`,
+    });
+  }
+  saveSavedAreas();
+}
+
+const savedAreasContainerEle = document.querySelector("#saved-areas-container");
+const savedAreasListEle = document.querySelector("#saved-areas-list");
+
 let savedAreasOpen = false;
 const openSavedAreas = () => {
+  savedAreasListEle.replaceChildren();
+  savedAreas.forEach((savedArea) => {
+    const savedAreaContainerEle = document.createElement("div");
+    savedAreaContainerEle.className = "p-1.5 rounded-md bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex";
+    const savedAreaCheckboxEle = document.createElement("input");
+    savedAreaCheckboxEle.type = "checkbox";
+    savedAreaCheckboxEle.name = "saved-area-checkbox";
+    savedAreaCheckboxEle.className = "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
+    savedAreaContainerEle.append(savedAreaCheckboxEle);
+    const savedAreaNameEle = document.createElement("span");
+    savedAreaNameEle.className = "grow my-auto";
+    savedAreaNameEle.textContent = savedArea.name;
+    savedAreaContainerEle.append(savedAreaNameEle);
+    const savedAreaViewButtonEle = document.createElement("button");
+    const savedAreaEditButtonEle = document.createElement("button");
+    const savedAreaDeleteButtonEle = document.createElement("button");
+    savedAreaViewButtonEle.name = "saved-area-view-button";
+    savedAreaEditButtonEle.name = "saved-area-edit-button";
+    savedAreaDeleteButtonEle.name = "saved-area-delete-button";
+    savedAreaViewButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
+    savedAreaEditButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
+    savedAreaDeleteButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
+    const savedAreaViewButtonImageEle = document.createElement("img");
+    const savedAreaEditButtonImageEle = document.createElement("img");
+    const savedAreaDeleteButtonImageEle = document.createElement("img");
+    savedAreaViewButtonImageEle.className = "h-4 w-4";
+    savedAreaEditButtonImageEle.className = "h-4 w-4";
+    savedAreaDeleteButtonImageEle.className = "h-4 w-4";
+    savedAreaViewButtonImageEle.src = "images/icons8-map-90.png";
+    savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
+    savedAreaDeleteButtonImageEle.src = "images/icons8-delete-90.png";
+    savedAreaViewButtonEle.append(savedAreaViewButtonImageEle);
+    savedAreaEditButtonEle.append(savedAreaEditButtonImageEle);
+    savedAreaDeleteButtonEle.append(savedAreaDeleteButtonImageEle);
+    savedAreaViewButtonEle.onclick = () => {
+      alert(savedArea.name);
+    };
+    savedAreaEditButtonEle.onclick = () => {
+      alert(savedArea.name);
+    };
+    savedAreaDeleteButtonEle.onclick = () => {
+      alert(savedArea.name);
+    };
+    savedAreaContainerEle.append(savedAreaViewButtonEle);
+    savedAreaContainerEle.append(savedAreaEditButtonEle);
+    savedAreaContainerEle.append(savedAreaDeleteButtonEle);
+    savedAreasListEle.append(savedAreaContainerEle);
+  });
+
   savedAreasOpen = true;
   savedAreasContainerEle.style.display = null;
   savedAreasContainerEle.focus();
@@ -926,7 +1016,6 @@ const closeSavedAreas = () => {
   savedAreasContainerEle.style.display = "none";
 };
 
-const savedAreasContainerEle = document.querySelector("#saved-areas-container");
 document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
 document.querySelector("#folder-button").onclick = () => {
   if (!savedAreasOpen) openSavedAreas();
