@@ -8,6 +8,7 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"></script>
+
     <link
       rel="stylesheet"
       href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css"
@@ -291,6 +292,9 @@
       id="saved-areas-container"
       class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto"
     >
+
+    <% var selectedItems = [] %>
+
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Saved Areas</h2>
         <button type="button" id="saved-areas-close-button" class="ml-auto">
@@ -305,44 +309,49 @@
           class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2 bg-neutral-600/50 ring-1 ring-neutral-500/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-600/80"
           placeholder="Search"
         />
-        <div id="saved-areas-list-container" class="h-52">
-          <ul id="polygonList" class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
+        <div id="saved-areas-list-container" class="h-52 overflow-y-scroll">
+          <ul id="polygonList" class="max-w-md max-h-42 space-y-1 text-gray-500 list-inside dark:text-gray-400">
             <% files.forEach(f => { %>
-              <%- ul.appendChild(f) %>
-             <% }) %>
-            
-            <li class="text-white">show me <%= files %></li>
-            <script type="module">
-              // var file = sessionStorage.getItem("/localPolygons/file1.txt");
-              // console.log(file);
-              // setTimeout(() => {
-              //   console.log("data in setTimeout", data)
-              // }, 3000)
-              // let list = document.getElementById("polygonList");
-              // for (i = 0; i < data.length; ++i) {
-              //   let li = document.createElement('li');
-              //   li.innerText = data[i];
-              //   polygonList.appendChild(li);
-              // }
-            </script>
+              <li>
+                <div class="p-1.5 rounded-md
+                  bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex items-center mb-4" src="">
+
+                  <input id="itemCheckbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 
+                    dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    >
+                  
+                  <span class="grow my-auto ml-2"><%= f %></span>
+                  <button type="button" #id="saved-area-view-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
+                    <img class="h-4 w-4" src="images/icons8-map-90.png"/>
+                  </button>
+                  <button type="button" #id="saved-area-edit-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
+                    <img class="h-4 w-4" src="images/icons8-edit-90.png"/>
+                  </button>
+                  <button type="button" #id="saved-area-delete-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
+                    <img class="h-4 w-4" src="images/icons8-delete-90.png"/>
+                  </button>
+                </div>
+              </li>
+            <% }) %>                
           </ul>
+          </div>
+          <div class="flex flex-row gap-2 text-xs text-neutral-400 pt-2">
+            <button
+              type="button"
+              id="saved-areas-info-view-button"
+              class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+            >
+              Import GeoJSON
+            </button>
+            <button
+              type="button"
+              id="saved-areas-info-view-button"
+              class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+            >
+              Export GeoJSON
+            </button>
+          </div>
         </div>
-      </div>
-      <div class="flex flex-row gap-2 text-xs text-neutral-400">
-        <button
-          type="button"
-          id="saved-areas-info-view-button"
-          class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
-        >
-          Import GeoJSON
-        </button>
-        <button
-          type="button"
-          id="saved-areas-info-view-button"
-          class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
-        >
-          Export GeoJSON
-        </button>
       </div>
     </div>
 
@@ -374,20 +383,4 @@
 </html>
 <!-- 
 
-<div class="p-1 rounded-md
-              bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex items-center mb-4" src="">
-              
-              <input id="itemCheckbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 
-              dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-    
-                <span class="grow my-auto ml-2">Item 1</span>
-                <button type="button" #id="saved-area-view-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
-                  <img class="h-4 w-4" src="images/icons8-map-90.png"/>
-                </button>
-                <button type="button" #id="saved-area-edit-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
-                  <img class="h-4 w-4" src="images/icons8-edit-90.png"/>
-                </button>
-                <button type="button" #id="saved-area-delete-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
-                  <img class="h-4 w-4" src="images/icons8-delete-90.png"/>
-                </button>
-              </div> -->
+ -->
