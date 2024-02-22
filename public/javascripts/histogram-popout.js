@@ -1,4 +1,4 @@
-export function createHistogramChart(products) {
+export function createHistogramChart(products, startDate, endDate) {
   // Declare the chart dimensions and margins.
   const width = 960;
   const height = 500;
@@ -7,12 +7,14 @@ export function createHistogramChart(products) {
   const marginBottom = 30;
   const marginLeft = 40;
 
+  const dateFrequencies = calculateProductFrequency(products);
+
   // Bin the data.
   const bins = d3
     .bin()
     .thresholds(40)
-    .value((d) => d.rate)(products);
-
+    .value((d) => d.productDayFrequency)(dateFrequencies);
+  console.log(dateFrequencies);
   // Declare the x (horizontal position) scale.
   const x = d3
     .scaleLinear()
@@ -83,4 +85,31 @@ export function createHistogramChart(products) {
 
   // Return the SVG element.
   return svg.node();
+}
+
+function calculateProductFrequency(allProducts) {
+  // Initialize maps to keep track of frequencies
+  let productYearFrequency = {};
+  let productMonthFrequency = {};
+  let productDayFrequency = {};
+  console.log();
+  allProducts.forEach((product) => {
+    const d = new Date(product.date_start);
+    console.log("Product start date: " + product.date_start);
+    const year = d.getFullYear();
+    const month = `${year}-${d.getMonth() + 1}`; // Zero-based month
+    const day = `${month}-${d.getDate()}`;
+    console.log(`d:${d}, year: ${year},month: ${month},day: ${day}`);
+
+    // Increment year frequency
+    productYearFrequency[year] = (productYearFrequency[year] || 0) + 1;
+
+    // Increment month frequency
+    productMonthFrequency[month] = (productMonthFrequency[month] || 0) + 1;
+
+    // Increment day frequency
+    productDayFrequency[day] = (productDayFrequency[day] || 0) + 1;
+  });
+
+  return { productYearFrequency, productMonthFrequency, productDayFrequency };
 }

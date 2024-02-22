@@ -154,7 +154,7 @@ map.on("load", async () => {
   const until = END_DATE;
   const timeline = Timeline(map, { from, until });
   document.querySelector("#timeline-container").appendChild(timeline.element);
-  document.querySelector("#histogram-graph").appendChild(createHistogramChart(allProducts.title, from, until));
+  document.querySelector("#histogram-graph").appendChild(createHistogramChart(allProducts, from, until));
 });
 
 map.addControl(draw);
@@ -188,7 +188,7 @@ async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
   await addProductsToMap();
-
+  getFilteredProducts();
   //filtersPanel.on("change", filterProductsByType);
   framesMode();
 }
@@ -201,11 +201,10 @@ function filterProductsByType() {
   //addProductsToMap()
 }
 
-function getProductCount(products) {
+function getFilteredProducts() {
   //should filter by a visible attribute assigned on collection
-  map
-    .querySourceFeatures(products, { filter: ["==", "date_start", new Date(value)] })
-    .forEach((feature) => bounds.extend(feature.geometry.coordinates));
+  map.querySourceFeatures(map.getSource("product-polygons")._data.features, { filter: ["==", "isVisible", true] });
+  console.log(map.getSource("product-polygons")._data.features);
 }
 
 //Draw every product to the screen
@@ -224,6 +223,7 @@ async function addProductsToMap() {
         date_created: product.datecreated,
         date_start: product.objectstartdate,
         date_end: product.objectenddate,
+        isVisible: true,
       },
     })),
   };
@@ -243,6 +243,7 @@ async function addProductsToMap() {
         date_created: product.datecreated,
         date_start: product.objectstartdate,
         date_end: product.objectenddate,
+        isVisible: true,
       },
     })),
   };
