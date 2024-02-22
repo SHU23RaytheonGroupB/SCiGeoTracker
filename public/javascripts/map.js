@@ -1,3 +1,5 @@
+import {  displayMissionMenue } from "./mission-popout-menue.js";
+
 let productFillColours = {
   SCENE: "#A2A2A2", //GREY
   DOCUMENT: "#219BF5", //blue
@@ -202,7 +204,8 @@ function filterProductsByType() {
 
 //Draw every product to the screen
 async function addProductsToMap() {
-  //Define polygon & point mapbox sources
+  //Define polygon & point mapbox 
+  console.log(allProducts);
   let polygonFeatureCollection = {
     type: "FeatureCollection",
     features: allProducts.map((product) => ({
@@ -216,6 +219,7 @@ async function addProductsToMap() {
         date_created: product.datecreated,
         date_start: product.objectstartdate,
         date_end: product.objectenddate,
+        pub: product.publisher, 
       },
     })),
   };
@@ -235,6 +239,8 @@ async function addProductsToMap() {
         date_created: product.datecreated,
         date_start: product.objectstartdate,
         date_end: product.objectenddate,
+        mission_group: product.title.split(" ")[0],
+        scene_name: product.title.split(" ")[1],
       },
     })),
   };
@@ -266,7 +272,7 @@ async function addProductsToMap() {
   // DOT LAYER
   addDotLayer("product-points");
   // BORDER LAYER - TEMP
-  // addBorderLayer("uk-land-border");
+  addBorderLayer("uk-land-border");
 }
 
 function addSource(title, data) {
@@ -411,16 +417,32 @@ function chloroLegend() {
   });
 }
 export async function circleLinkZoom(d) {
+  let reset = document.querySelectorAll('circle')  
+  reset.forEach((reset) => {
+    reset.style.fill = "red";
+  });
+
+  let misGroup;
+  let currentProduct;
   allProducts.forEach((product) => {
     if (product.identifier === d) {
-      console.log("true");
+      misGroup = product.title.split(" ")[0];
+      currentProduct = product;
       map.flyTo({
         center: product.centre.split(",").reverse(),
         zoom: 12,
         essential: true,
-      });
-    }
+      });      
+  }});
+  let circleGroup = document.querySelectorAll('circle[mission="'+misGroup+'"]')  
+  circleGroup.forEach((circle) => {
+    circle.style.fill = "blue";
   });
+  displayMissionMenue(currentProduct);
+
+  // allProducts.forEach((product) => {
+    
+  // });
 }
 
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
@@ -571,7 +593,7 @@ const hideAllLayers = () => {
   map.setLayoutProperty("product-points-dot-density", "visibility", "none");
   map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
   map.setLayoutProperty("region-boundaries-chloropleth", "visibility", "none");
-  map.setLayoutProperty("country-boundaries-borders", "visibility", "none");
+  map.setLayoutProperty(" -boundaries-borders", "visibility", "none");
   map.setLayoutProperty("country-boundaries-chloropleth", "visibility", "none");
 }
 

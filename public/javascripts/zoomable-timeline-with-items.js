@@ -11,10 +11,12 @@ export function Timeline(map_, options) {
   console.log("myData", myData);
 
   myData = Array.from({ length: myData.length }, (x, i) => ({
-    title: myData[i].attributes.title,
+    title: "Mission: " + myData[i].attributes.title.split(" ")[0] + "\n" + 
+    "Scene: " + myData[i].attributes.title.split(" ")[1] + "\n" + "Publisher: " +  myData[i].attributes.pub + "\n",
     id: myData[i].attributes.id,
     start: new Date(myData[i].attributes.date_start),
-    end: new Date(myData[i].attributes.date_end)
+    end: new Date(myData[i].attributes.date_end),
+    missionGroup:  myData[i].attributes.title.split(" ")[0],
   }));  
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
@@ -50,7 +52,7 @@ export function Timeline(map_, options) {
   const density = Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
 
   const zoomScaleExtent = [1, Math.round(MS_PER_YEAR * 10)];
-  console.log("zoomScaleExtent", zoomScaleExtent);
+  //.log("zoomScaleExtent", zoomScaleExtent);
 
   const findDensityConfig = (myData, value) => {
     for (const [limit, config] of myData) {
@@ -316,9 +318,9 @@ export function Timeline(map_, options) {
               .style("cursor", "pointer")
               .on("click", function (event, d) {
                 circleLinkZoom(d.id);
-                //console.log("clicked", d.id);
               })
               .attr("r", 4)
+              .attr("mission", (d) => d.missionGroup)
               .attr("cx", (d, i) => X[i]) 
               .attr("cy", (d, i) => Y[i] + 120)
               .append("title")
