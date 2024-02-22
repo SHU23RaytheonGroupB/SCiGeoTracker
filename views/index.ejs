@@ -18,9 +18,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   </head>
 
-  <body class="m-0 p-0 text-neutral-300 fill-neutral-500">
-    <div class="absolute top-0 left-0 z-20 m-2 flex flex-row gap-2">
-      <div id="tray" class="flex flex-col gap-2">
+  <body class="m-0 p-0 text-neutral-300 fill-neutral-500 h-screen max-h-screen">
+    <div class="absolute top-0 left-0 z-20 m-2 flex flex-row gap-2 pointer-events-none">
+      <div id="tray" class="flex flex-col gap-2 pointer-events-auto">
         <div
           class="flex flex-col overflow-hidden text-sm font-semibold rounded-lg bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm"
         >
@@ -75,7 +75,7 @@
         </button>
       </div>
 
-      <div class="w-40">
+      <div class="w-40 pointer-events-auto max-h-fit grow-0">
         <div>
           <!-- <button type="button" class="inline-flex w-full gap-x-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg
           bg-neutral-950/50 hover:bg-neutral-900 ring-1 ring-neutral-700/50 #ring-inset shadow-lg #shadow-sm" id="layer-menu-button" aria-expanded="true" aria-haspopup="true">
@@ -175,54 +175,60 @@
       </div>
     </div>
 
-    <div class="absolute top-0 right-0 z-10 m-2 flex flex-col gap-4">
-      <div id="search-container" class="flex flex-row gap-1.5">
-        <input
-          type="text"
-          name="price"
-          id="search-bar"
-          class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-950/80"
-          placeholder="Search"
-        />
-        <button
+    <div class="absolute top-0 right-0 z-10 m-2 flex flex-col gap-4 pointer-events-none">
+      <div id="search-container" class="flex flex-row gap-2">
+        <div class="pointer-events-auto flex flex-col gap-1 h-fit">
+          <input
+            type="text"
+            name="price"
+            id="search-bar"
+            class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-950/80"
+            placeholder="Search"
+          />
+          <div id="search-results-container" class="flex flex-col gap-1 overflow-y-auto max-h-96">
+          </div>
+        </div>
+        <div class="flex flex-col gap-4">
+          <button
           type="button"
           alt="Search by placename"
           id="search-button"
-          class="rounded-lg p-2 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+          class="pointer-events-auto max-h-fit rounded-lg p-2 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
         >
           <img class="h-4 w-4" src="images/icons8-search-90.png" alt="Search by placename" />
         </button>
-      </div>
 
-      <div id="zoom-container" class="ml-auto">
-        <div class="flex flex-col">
-          <button
-            type="button"
-            alt="Increase zoom"
-            id="zoom-in-button"
-            class="z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
-          >
-            <img class="h-3 w-3" src="images/icons8-plus-90.png" alt="Increase zoom" />
-          </button>
-          <div class="h-44 relative">
-            <div class="absolute w-full h-full py-3">
-              <div
-                id="zoom-scroll-button"
-                class="relative w-full h-2 rounded-md -mt-1 bg-neutral-800 ring-1 ring-neutral-700"
-              ></div>
+          <div id="zoom-container" class="ml-auto">
+            <div class="flex flex-col">
+              <button
+                type="button"
+                alt="Increase zoom"
+                id="zoom-in-button"
+                class="pointer-events-auto z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+              >
+                <img class="h-3 w-3" src="images/icons8-plus-90.png" alt="Increase zoom" />
+              </button>
+              <div class="h-44 relative">
+                <div class="absolute w-full h-full py-3">
+                  <div
+                    id="zoom-scroll-button"
+                    class="pointer-events-auto relative w-full h-2 rounded-md -mt-1 bg-neutral-800 ring-1 ring-neutral-700"
+                  ></div>
+                </div>
+                <div
+                  class="pointer-events-auto w-1 h-full mx-auto bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800"
+                ></div>
+              </div>
+              <button
+                type="button"
+                alt="Decrease zoom"
+                id="zoom-out-button"
+                class="pointer-events-auto z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+              >
+                <img class="h-3 w-3" src="images/icons8-minus-90.png" alt="Decrease zoom" />
+              </button>
             </div>
-            <div
-              class="w-1 h-full mx-auto bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800"
-            ></div>
           </div>
-          <button
-            type="button"
-            alt="Decrease zoom"
-            id="zoom-out-button"
-            class="z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
-          >
-            <img class="h-3 w-3" src="images/icons8-minus-90.png" alt="Decrease zoom" />
-          </button>
         </div>
       </div>
     </div>
@@ -327,7 +333,7 @@
     
     <div
       id="saved-areas-container"
-      class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto"
+      class="absolute z-30 w-96 max-h-fit px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto"
       style="display: none"
     >
       <div class="flex flex-row gap-2 px-1">

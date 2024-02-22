@@ -36,6 +36,18 @@ let cursorMode;
 let layerMode;
 let allProducts = [];
 
+const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
+const boundariesByCountry = await getGeojsonFile("../boundaries/UK-by-country.json");
+const UKlandBorder = await getGeojsonFile("../boundaries/UK-land-border.json");
+
+async function getGeojsonFile(fileLocation) {
+  const response = await fetch(fileLocation);
+  if (!response.ok) {
+    throw new Error(`Error getting ${fileLocation} file`);
+  }
+  return await response.json();
+}
+
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 const map = new mapboxgl.Map({
   container: "map", // container ID
@@ -245,17 +257,6 @@ async function addProductsToMap() {
     })),
   };
 
-  const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
-  const boundariesByCountry = await getGeojsonFile("../boundaries/UK-by-country.json");
-  const UKlandBorder = await getGeojsonFile("../boundaries/UK-land-border.json");
-
-  async function getGeojsonFile(fileLocation) {
-    const response = await fetch(fileLocation);
-    if (!response.ok) {
-      throw new Error(`Error getting ${fileLocation} file`);
-    }
-    return await response.json();
-  }
   // SOURCES
   addSource("product-polygons", polygonFeatureCollection);
   addSource("product-points", pointFeatureCollection);
@@ -901,7 +902,42 @@ document.querySelector("#zoom-in-button").onclick = () => map.zoomIn();
 document.querySelector("#zoom-out-button").onclick = () => map.zoomOut();
 
 
-document.querySelector("#search-bar").oninput = (e) => {
-  const searchQuery = e.target.value;
-  
+const searchResultsContainerEle = document.querySelector("#search-results-container");
+const searchBarEle = document.querySelector("#search-bar");
+
+const updateSearchResults = () => {
+  searchResultsContainerEle.replaceChildren();
+  const searchQuery = searchBarEle.value.toLowerCase().trim();
+  if (searchQuery.length == 0) return;
+  const results = [];
+  boundariesByRegion.features.forEach((feature) => {
+    if (feature.properties.LAD23NM.toLowerCase().includes(searchQuery)) {
+      results.push(feature.properties);
+    }
+  });
+  // const results = map.querySourceFeatures("region-boundaries", {
+  //   filter: [
+  //     "in",
+  //     searchQuery,
+  //     ["string", ["get", "LAD23NM"]]
+  //     // "==", "LAD23NM", searchQuery
+  //   ]
+  // });
+  results.forEach((result) => {
+    const resultEle = document.createElement("button");
+    resultEle.type = "button";
+    resultEle.className = "text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm hover:bg-neutral-950/80";
+    const resultSpanEle = document.createElement("span");
+    resultSpanEle.textContent = result.LAD23NM;
+    resultEle.onclick = () => {
+      searchResultsContainerEle.replaceChildren();
+      alert(result.LAD23CD);
+    };
+    // resultEle.querySelector("span").textContent = result.LAD23NM;
+    resultEle.append(resultSpanEle);
+    searchResultsContainerEle.append(resultEle);
+  });
 };
+
+searchBarEle.oninput = updateSearchResults;
+document.querySelector("#search-button").onclick = updateSearchResults;
