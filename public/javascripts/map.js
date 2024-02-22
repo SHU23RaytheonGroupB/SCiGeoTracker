@@ -42,6 +42,7 @@ const map = new mapboxgl.Map({
   zoom: 5, // starting zoom
   minZoom: minZoom,
   maxZoom: maxZoom,
+  attributionControl: false,
 });
 
 const draw = new MapboxDraw({
@@ -136,12 +137,23 @@ const draw = new MapboxDraw({
   ],
 });
 
+import { Timeline } from "./zoomable-timeline-with-items.js";
+
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
-map.on("load", () => {
+map.on("load", async () => {
   renderOverlaysMove();
   renderOverlaysZoom();
-  initialiseProducts();
+  await initialiseProducts();
+  
+  const START_DATE = new Date(1558231200000);
+  const END_DATE = new Date(1593914400000);
+
+  const from = START_DATE;
+  const until = END_DATE;
+  const timeline = Timeline(map, { from, until });
+  document.querySelector("#timeline-container").appendChild(timeline.element);
+
 });
 
 map.addControl(draw);
@@ -242,25 +254,26 @@ async function addProductsToMap() {
   addSource("product-polygons", polygonFeatureCollection);
   addSource("product-points", pointFeatureCollection);
   addSource("country-boundaries", boundariesByCountry);
-  addSource("region-boundaries", boundariesByCountry);
+  addSource("region-boundaries", boundariesByRegion);
   addSource("uk-land-border", UKlandBorder);
+  updateChoroplethSource();
   // FRAMES LAYER
   addFramesLayers("product-polygons");
   // HEATMAP LAYER
-  //addHeatmapLayer("product-points");
+  addHeatmapLayer("product-points");
   //CHLOROPLETH LAYER
-  //addChloroplethLayer("country-boundaries", "region-boundaries");
+  addChloroplethLayers("country-boundaries", "region-boundaries");
   // DOT LAYER
-  //addDotLayer("product-points");
-  //BORDER LAYER - TEMP
-  addBorderLayer("uk-land-border");
+  addDotLayer("product-points");
+  // BORDER LAYER - TEMP
+  // addBorderLayer("uk-land-border");
 }
 
 function addSource(title, data) {
   map.addSource(title, {
     type: "geojson",
     data: data,
-    tolerance: 3,
+    // tolerance: 3,
     // buffer: 512,
   });
 }
@@ -270,7 +283,9 @@ function addFramesLayers(title) {
     id: `${title}-frames-fill`,
     type: "fill",
     source: title,
-    layout: {},
+    layout: {
+      visibility: "none",
+    },
     paint: {
       "fill-color": productFillColours["SCENE"],
       "fill-opacity": 0.2,
@@ -280,7 +295,9 @@ function addFramesLayers(title) {
     id: `${title}-frames-outline`,
     type: "line",
     source: title,
-    layout: {},
+    layout: {
+      visibility: "none",
+    },
     paint: {
       "line-color": productOutlineColours["SCENE"],
       "line-width": 1,
@@ -294,50 +311,84 @@ function addHeatmapLayer(title, productType) {
     id: `${title}-heatmap`,
     type: "heatmap",
     source: title,
+    layout: {
+      visibility: "none",
+    },
   });
 }
 
-function addChloroplethLayer(countryPolygons, regionPolygons) {
-  // map.addLayer({
-  //   id: `${countryPolygons}-chloropleth`,
-  //   type: "fill",
-  //   source: countryPolygons,
-  //   layout: {},
-  //   paint: {
-  //     "fill-color": [
-  //       "interpolate",
-  //       ["linear"],
-  //       ["get", "density"], // assign product count property within geojson to use instead of density
-  //     ],
-  //     "fill-opacity": 0.75,
-  //   },
-  // });
+function updateChoroplethSource() {
+  const regionBoundariesSource = map.getSource("region-boundaries");
+  const data = regionBoundariesSource._data;
+  data.features.forEach((feature) => {
+    // find the amount of points within a feature bounding box
+    feature.properties.total_missions = Math.ceil(Math.random() * 100);
+  });
+  regionBoundariesSource.setData(data);
+}
 
+function addChloroplethLayers(countryPolygons, regionPolygons) {
+  map.addLayer({
+    id: `${regionPolygons}-borders`,
+    type: "line",
+    source: regionPolygons,
+    layout: {
+      visibility: "none",
+    },
+    paint: {
+      "line-width": 0.5,
+      "line-opacity": 0.4,
+      "line-color": '#ffffff'
+    },
+  });
   map.addLayer({
     id: `${regionPolygons}-chloropleth`,
     type: "fill",
     source: regionPolygons,
     layout: {
-      visibility: "visible",
+      visibility: "none",
     },
     paint: {
-      "fill-color": productFillColours["DOCUMENT"],
-      "fill-opacity": 0.2,
+      "fill-color": [
+        "interpolate",
+        ["linear"],
+        ["get", "total_missions"], // assign product count property within geojson to use instead of density
+        0,
+        "#FFFFFF",
+        100,
+        "#2AFF25",
+      ],
+      "fill-opacity": 0.7,
     },
   });
+  // map.addLayer({
+  //   id: `${regionPolygons}-chloropleth`,
+  //   type: "fill",
+  //   source: regionPolygons,
+  //   layout: {
+  //     visibility: "visible",
+  //   },
+  //   paint: {
+  //     "fill-color": productFillColours["DOCUMENT"],
+  //     "fill-opacity": 0.2,
+  //   },
+  // });
 }
 
 function addBorderLayer(title) {
   map.addLayer({
     id: `${title}-border`,
-    type: "fill",
+    type: "line",
     source: title,
     layout: {
       visibility: "visible",
     },
     paint: {
-      "fill-color": productFillColours["DOCUMENT"],
-      "fill-opacity": 0.2,
+      // "fill-color": productFillColours["DOCUMENT"],
+      // "fill-opacity": 0.2,
+      "line-width": 0.5,
+      "line-opacity": 0.4,
+      "line-color": '#ffffff'
     },
   });
 }
@@ -518,6 +569,10 @@ const hideAllLayers = () => {
   map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
   map.setLayoutProperty("product-points-heatmap", "visibility", "none");
   map.setLayoutProperty("product-points-dot-density", "visibility", "none");
+  map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
+  map.setLayoutProperty("region-boundaries-chloropleth", "visibility", "none");
+  map.setLayoutProperty("country-boundaries-borders", "visibility", "none");
+  map.setLayoutProperty("country-boundaries-chloropleth", "visibility", "none");
 }
 
 const framesMode = () => {
@@ -542,6 +597,10 @@ const choroplethMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
+  map.setLayoutProperty("region-boundaries-borders", "visibility", "visible");
+  map.setLayoutProperty("region-boundaries-chloropleth", "visibility", "visible");
+  map.setLayoutProperty("country-boundaries-borders", "visibility", "visible");
+  map.setLayoutProperty("country-boundaries-chloropleth", "visibility", "visible");
 };
 
 const isarithmicMode = () => {
@@ -591,6 +650,7 @@ document.querySelector("#folder-button").onclick = () => {
   else closeSavedAreas();
 };
 
+export { map as map };
 
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
 areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
@@ -598,3 +658,9 @@ areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
 
 document.querySelector("#zoom-in-button").onclick = () => map.zoomIn();
 document.querySelector("#zoom-out-button").onclick = () => map.zoomOut();
+
+
+document.querySelector("#search-bar").oninput = (e) => {
+  const searchQuery = e.target.value;
+  
+};
