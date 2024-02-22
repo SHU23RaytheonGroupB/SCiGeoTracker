@@ -183,7 +183,7 @@ function closeInfo() {
 }
 
 map.addControl(draw);
-draw.changeMode('simple_select');
+draw.changeMode('simple_select'); //default not draw
 
 function moveMap() {
   draw.changeMode('simple_select');
@@ -192,17 +192,10 @@ function moveMap() {
 function drawPoly() {
   draw.changeMode('draw_polygon');
   map.on("draw.create", updateArea);
+  map.on("draw.delete", updateArea);
+  map.on("draw.update", updateArea);
+  map.on("draw.selectionchange", updateArea);
 }
-
-//document.getElementById('polygon-button').onclick = function () {
-  //map.addControl(draw);
-  //draw.changeMode('draw_polygon');
-  //map.on("draw.create", updateArea);
-//}
-
-// map.on("draw.delete", updateArea);
-// map.on("draw.update", updateArea);
-// map.on("draw.selectionchange", updateArea);
 
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
