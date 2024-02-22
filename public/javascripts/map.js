@@ -170,11 +170,11 @@ map.on("load", async () => {
 });
 
 
-document.getElementById('polygon-button').onclick = function () {
+//document.getElementById('polygon-button').onclick = function () {
   map.addControl(draw);
   //draw.changeMode('draw_polygon');
   map.on("draw.create", updateArea);
-}
+//}
 
 
 //map.on("draw.delete", updateArea);
