@@ -156,7 +156,6 @@ import { Timeline } from "./zoomable-timeline-with-items.js";
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
 map.on("load", async () => {
-  renderOverlaysMove();
   renderOverlaysZoom();
   await initialiseProducts();
   
@@ -179,18 +178,14 @@ map.on("draw.selectionchange", updateArea);
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
 
-function renderOverlaysMove() {
-  const { lng, lat } = map.getCenter();
-  coordEle.textContent = `${lng.toFixed(3)}, ${lat.toFixed(3)}`;
-}
-
 function renderOverlaysZoom() {
   const zoomPercentage = ((map.getZoom() - minZoom) / (maxZoom - minZoom)) * 100;
   zoomScrollEle.style.top = `${100 - zoomPercentage}%`;
 }
 
-map.on("move", (ev) => {
-  renderOverlaysMove();
+map.on("mousemove", (ev) => {
+  const { lng, lat } = ev.lngLat;
+  coordEle.textContent = `${lng.toFixed(3)}, ${lat.toFixed(3)}`;
 });
 
 map.on("zoom", (ev) => {
