@@ -263,8 +263,8 @@ async function addProductsToMap() {
   addFramesLayers("product-polygons");
   // HEATMAP LAYER
   addHeatmapLayer("product-points");
-  //CHLOROPLETH LAYER
-  addChloroplethLayers("country-boundaries", "region-boundaries");
+  // CHOROPLETH LAYER
+  addChoroplethLayers("country-boundaries", "region-boundaries");
   // DOT LAYER
   addDotLayer("product-points");
   // BORDER LAYER - TEMP
@@ -329,7 +329,7 @@ function updateChoroplethSource() {
   regionBoundariesSource.setData(data);
 }
 
-function addChloroplethLayers(countryPolygons, regionPolygons) {
+function addChoroplethLayers(countryPolygons, regionPolygons) {
   map.addLayer({
     id: `${regionPolygons}-borders`,
     type: "line",
@@ -344,7 +344,7 @@ function addChloroplethLayers(countryPolygons, regionPolygons) {
     },
   });
   map.addLayer({
-    id: `${regionPolygons}-chloropleth`,
+    id: `${regionPolygons}-choropleth`,
     type: "fill",
     source: regionPolygons,
     layout: {
@@ -360,11 +360,17 @@ function addChloroplethLayers(countryPolygons, regionPolygons) {
         100,
         "#2AFF25",
       ],
-      "fill-opacity": 0.7,
+      "fill-opacity": 
+      [
+        'case',
+        ["boolean", ["feature-state", "hover"], false],
+        0.8,
+        0.7,
+      ],
     },
   });
   // map.addLayer({
-  //   id: `${regionPolygons}-chloropleth`,
+  //   id: `${regionPolygons}-choropleth`,
   //   type: "fill",
   //   source: regionPolygons,
   //   layout: {
@@ -395,10 +401,42 @@ function addBorderLayer(title) {
   });
 }
 
-function chloroLegend() {
+let hoveredPolygonId = null;
+
+map.on("mousemove", "region-boundaries-choropleth", (e) => {
+  if (e.features.length > 0) {
+    if (hoveredPolygonId !== null) {
+      map.setFeatureState(
+        { source: "region-boundaries", id: hoveredPolygonId },
+        { hover: false }
+      );
+    }
+    hoveredPolygonId = e.features[0].id;
+    map.setFeatureState(
+      { source: "region-boundaries", id: hoveredPolygonId },
+      { hover: true }
+    );
+  }
+});
+
+map.on("mouseleave", "region-boundaries-choropleth", () => {
+  if (hoveredPolygonId !== null) {
+    map.setFeatureState(
+      { source: "region-boundaries", id: hoveredPolygonId },
+      { hover: false }
+    );
+  }
+  hoveredPolygonId = null;
+});
+
+map.on("click", "region-boundaries-choropleth", (e) => {
+  alert(e.features[0].properties.LAD23NM);
+});
+
+function choroplethLegend() {
   const legend = document.getElementById("legend");
 
-  layers.forEach((chloroLayer, i) => {
+  layers.forEach((choroLayer, i) => {
     const color = colors[i];
     const item = document.createElement("div");
     const key = document.createElement("span");
@@ -406,7 +444,7 @@ function chloroLegend() {
     key.style.backgroundColor = color;
 
     const value = document.createElement("span");
-    value.innerHTML = `${chloroLayer}`;
+    value.innerHTML = `${choroLayer}`;
     item.appendChild(key);
     item.appendChild(value);
     legend.appendChild(item);
@@ -807,9 +845,9 @@ const hideAllLayers = () => {
   map.setLayoutProperty("product-points-heatmap", "visibility", "none");
   map.setLayoutProperty("product-points-dot-density", "visibility", "none");
   map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
-  map.setLayoutProperty("region-boundaries-chloropleth", "visibility", "none");
+  map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
   map.setLayoutProperty(" -boundaries-borders", "visibility", "none");
-  map.setLayoutProperty("country-boundaries-chloropleth", "visibility", "none");
+  map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 }
 
 const framesMode = () => {
@@ -835,9 +873,9 @@ const choroplethMode = () => {
   closeLayerMenu();
   hideAllLayers();
   map.setLayoutProperty("region-boundaries-borders", "visibility", "visible");
-  map.setLayoutProperty("region-boundaries-chloropleth", "visibility", "visible");
+  map.setLayoutProperty("region-boundaries-choropleth", "visibility", "visible");
   map.setLayoutProperty("country-boundaries-borders", "visibility", "visible");
-  map.setLayoutProperty("country-boundaries-chloropleth", "visibility", "visible");
+  map.setLayoutProperty("country-boundaries-choropleth", "visibility", "visible");
 };
 
 const isarithmicMode = () => {
@@ -936,3 +974,4 @@ const updateSearchResults = () => {
 
 searchBarEle.oninput = updateSearchResults;
 document.querySelector("#search-button").onclick = updateSearchResults;
+
