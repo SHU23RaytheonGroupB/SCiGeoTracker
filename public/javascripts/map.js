@@ -138,6 +138,7 @@ const draw = new MapboxDraw({
 });
 
 import { Timeline } from "./zoomable-timeline-with-items.js";
+import { createHistogramChart } from "./histogram-popout.js";
 
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
@@ -145,7 +146,7 @@ map.on("load", async () => {
   renderOverlaysMove();
   renderOverlaysZoom();
   await initialiseProducts();
-  
+
   const START_DATE = new Date(1558231200000);
   const END_DATE = new Date(1593914400000);
 
@@ -153,7 +154,7 @@ map.on("load", async () => {
   const until = END_DATE;
   const timeline = Timeline(map, { from, until });
   document.querySelector("#timeline-container").appendChild(timeline.element);
-
+  document.querySelector("#histogram-graph").appendChild(createHistogramChart(allProducts.title));
 });
 
 map.addControl(draw);
@@ -198,6 +199,13 @@ function filterProductsByType() {
   //filteredProducts = allProducts.where( p => p.type == type)
   //map.allLayers.forEach(remove)
   //addProductsToMap()
+}
+
+function getProductCount(products) {
+  //should filter by a visible attribute assigned on collection
+  map
+    .querySourceFeatures(products, { filter: ["==", "date_start", new Date(value)] })
+    .forEach((feature) => bounds.extend(feature.geometry.coordinates));
 }
 
 //Draw every product to the screen
@@ -305,8 +313,7 @@ function addFramesLayers(title) {
   });
 }
 
-
-function addHeatmapLayer(title, productType) {
+function addHeatmapLayer(title) {
   map.addLayer({
     id: `${title}-heatmap`,
     type: "heatmap",
@@ -338,7 +345,7 @@ function addChloroplethLayers(countryPolygons, regionPolygons) {
     paint: {
       "line-width": 0.5,
       "line-opacity": 0.4,
-      "line-color": '#ffffff'
+      "line-color": "#ffffff",
     },
   });
   map.addLayer({
@@ -388,7 +395,7 @@ function addBorderLayer(title) {
       // "fill-opacity": 0.2,
       "line-width": 0.5,
       "line-opacity": 0.4,
-      "line-color": '#ffffff'
+      "line-color": "#ffffff",
     },
   });
 }
@@ -478,7 +485,9 @@ function updateArea(e) {
     document.querySelector("#area-selection-total-area").textContent = `${roundedArea.toLocaleString()}mi²`;
     document.querySelector("#area-selection-covered-area").textContent = `${coveredArea.toLocaleString()}mi²`;
     document.querySelector("#area-selection-uncovered-area").textContent = `${uncoveredArea.toLocaleString()}mi²`;
-    document.querySelector("#area-selection-coverage-percentage").textContent = `${coveragePercentage.toLocaleString()}%`;
+    document.querySelector(
+      "#area-selection-coverage-percentage"
+    ).textContent = `${coveragePercentage.toLocaleString()}%`;
     document.querySelector("#area-selection-total-missions").textContent = `${missionCount.toLocaleString()}`;
   } else {
     areaSelectionInfoContainerEle.style.display = "none";
@@ -490,7 +499,7 @@ function updateArea(e) {
 function addDotLayer(title) {
   map.addLayer({
     id: `${title}-dot-density`,
-    type: 'circle',
+    type: "circle",
     source: title,
     paint: {
       "circle-color": "#FF0000",
@@ -573,7 +582,7 @@ const hideAllLayers = () => {
   map.setLayoutProperty("region-boundaries-chloropleth", "visibility", "none");
   map.setLayoutProperty("country-boundaries-borders", "visibility", "none");
   map.setLayoutProperty("country-boundaries-chloropleth", "visibility", "none");
-}
+};
 
 const framesMode = () => {
   layerMode = LayerMode.Frames;
@@ -655,12 +664,9 @@ export { map as map };
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
 areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
 
-
 document.querySelector("#zoom-in-button").onclick = () => map.zoomIn();
 document.querySelector("#zoom-out-button").onclick = () => map.zoomOut();
 
-
 document.querySelector("#search-bar").oninput = (e) => {
   const searchQuery = e.target.value;
-  
 };
