@@ -1,4 +1,4 @@
-import {  displayMissionMenue } from "./mission-popout-menue.js";
+import { displayMissionMenue } from "./mission-popout-menue.js";
 
 let productFillColours = {
   SCENE: "#A2A2A2", //GREY
@@ -27,6 +27,7 @@ const LayerMode = {
   Isarithmic: "Isarithmic",
   DotDensity: "Dot Density",
   FrameOverlaps: "Frame Overlaps",
+  BorderSelection: "Border Selection",
 };
 
 const minZoom = 4;
@@ -158,7 +159,7 @@ import { Timeline } from "./zoomable-timeline-with-items.js";
 map.on("load", async () => {
   renderOverlaysZoom();
   await initialiseProducts();
-  
+
   const START_DATE = new Date(1558231200000);
   const END_DATE = new Date(1593914400000);
 
@@ -166,7 +167,6 @@ map.on("load", async () => {
   const until = END_DATE;
   const timeline = Timeline(map, { from, until });
   document.querySelector("#timeline-container").appendChild(timeline.element);
-
 });
 
 let polygonButton = document.getElementById("polygon-button");
@@ -196,6 +196,7 @@ function drawPoly() {
   map.on("draw.update", updateArea);
   map.on("draw.selectionchange", updateArea);
 }
+
 
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
@@ -233,7 +234,7 @@ function filterProductsByType() {
 
 //Draw every product to the screen
 async function addProductsToMap() {
-  //Define polygon & point mapbox 
+  //Define polygon & point mapbox
   console.log(allProducts);
   let polygonFeatureCollection = {
     type: "FeatureCollection",
@@ -248,7 +249,7 @@ async function addProductsToMap() {
         date_created: product.datecreated,
         date_start: product.objectstartdate,
         date_end: product.objectenddate,
-        pub: product.publisher, 
+        pub: product.publisher,
       },
     })),
   };
@@ -279,7 +280,7 @@ async function addProductsToMap() {
   addSource("product-points", pointFeatureCollection);
   addSource("country-boundaries", boundariesByCountry);
   addSource("region-boundaries", boundariesByRegion);
-  addSource("uk-land-border", UKlandBorder);
+  addSource("uk-land", UKlandBorder);
   updateChoroplethSource();
   // FRAMES LAYER
   addFramesLayers("product-polygons");
@@ -290,7 +291,7 @@ async function addProductsToMap() {
   // DOT LAYER
   addDotLayer("product-points");
   // BORDER LAYER - TEMP
-  addBorderLayer("uk-land-border");
+  addBorderLayer("uk-land");
 }
 
 function addSource(title, data) {
@@ -329,7 +330,6 @@ function addFramesLayers(title) {
   });
 }
 
-
 function addHeatmapLayer(title, productType) {
   map.addLayer({
     id: `${title}-heatmap`,
@@ -362,7 +362,7 @@ function addChoroplethLayers(countryPolygons, regionPolygons) {
     paint: {
       "line-width": 0.5,
       "line-opacity": 0.4,
-      "line-color": '#ffffff'
+      "line-color": "#ffffff",
     },
   });
   map.addLayer({
@@ -382,13 +382,7 @@ function addChoroplethLayers(countryPolygons, regionPolygons) {
         100,
         "#2AFF25",
       ],
-      "fill-opacity": 
-      [
-        'case',
-        ["boolean", ["feature-state", "hover"], false],
-        0.8,
-        0.7,
-      ],
+      "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.8, 0.7],
     },
   });
   // map.addLayer({
@@ -418,7 +412,7 @@ function addBorderLayer(title) {
       // "fill-opacity": 0.2,
       "line-width": 0.5,
       "line-opacity": 0.4,
-      "line-color": '#ffffff'
+      "line-color": "#ffffff",
     },
   });
 }
@@ -428,25 +422,16 @@ let hoveredPolygonId = null;
 map.on("mousemove", "region-boundaries-choropleth", (e) => {
   if (e.features.length > 0) {
     if (hoveredPolygonId !== null) {
-      map.setFeatureState(
-        { source: "region-boundaries", id: hoveredPolygonId },
-        { hover: false }
-      );
+      map.setFeatureState({ source: "region-boundaries", id: hoveredPolygonId }, { hover: false });
     }
     hoveredPolygonId = e.features[0].id;
-    map.setFeatureState(
-      { source: "region-boundaries", id: hoveredPolygonId },
-      { hover: true }
-    );
+    map.setFeatureState({ source: "region-boundaries", id: hoveredPolygonId }, { hover: true });
   }
 });
 
 map.on("mouseleave", "region-boundaries-choropleth", () => {
   if (hoveredPolygonId !== null) {
-    map.setFeatureState(
-      { source: "region-boundaries", id: hoveredPolygonId },
-      { hover: false }
-    );
+    map.setFeatureState({ source: "region-boundaries", id: hoveredPolygonId }, { hover: false });
   }
   hoveredPolygonId = null;
 });
@@ -473,7 +458,7 @@ function choroplethLegend() {
   });
 }
 export async function circleLinkZoom(d) {
-  let reset = document.querySelectorAll('circle')  
+  let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {
     reset.style.fill = "red";
   });
@@ -488,16 +473,17 @@ export async function circleLinkZoom(d) {
         center: product.centre.split(",").reverse(),
         zoom: 12,
         essential: true,
-      });      
-  }});
-  let circleGroup = document.querySelectorAll('circle[mission="'+misGroup+'"]')  
+      });
+    }
+  });
+  let circleGroup = document.querySelectorAll('circle[mission="' + misGroup + '"]');
   circleGroup.forEach((circle) => {
     circle.style.fill = "blue";
   });
   displayMissionMenue(currentProduct);
 
   // allProducts.forEach((product) => {
-    
+
   // });
 }
 
@@ -575,7 +561,7 @@ function updateArea(e) {
 function addDotLayer(title) {
   map.addLayer({
     id: `${title}-dot-density`,
-    type: 'circle',
+    type: "circle",
     source: title,
     paint: {
       "circle-color": "#FF0000",
@@ -590,14 +576,15 @@ function addDotLayer(title) {
   });
 }
 
-function missionsWithinBoundingBox(allMissons, polygon) { 
+function missionsWithinBoundingBox(allMissons, polygon) {
   let containedMissions = [];
-  var turfpolygon = turf.polygon([polygon], { name: 'poly1'});
+  var turfpolygon = turf.polygon([polygon], { name: "poly1" });
 
   for (let i = 0; i < allMissons.length; i++) {
-    if (allMissons[i].centre != null) { // temporarly missions without a center cannot be added to 
+    if (allMissons[i].centre != null) {
+      // temporarly missions without a center cannot be added to
       const coordinatesArray = allMissons[i].centre.split(",");
-      var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]); 
+      var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]);
       if (turf.inside(point, turfpolygon)) {
         containedMissions.push(allMissons[i]);
       }
@@ -609,12 +596,12 @@ function missionsWithinBoundingBox(allMissons, polygon) {
 function missionsWithinPolygon(boundingBoxMissions, polygon) {
   //console.log(boundingBoxMissions);
   let containedMissions = [];
-  var turfpolygon = turf.polygon([polygon], { name: 'poly1'});
+  var turfpolygon = turf.polygon([polygon], { name: "poly1" });
 
   for (let i = 0; i < boundingBoxMissions.length; i++) {
     if (boundingBoxMissions[i].centre != null) {
       const coordinatesArray = boundingBoxMissions[i].centre.split(",");
-      var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]); 
+      var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]);
       if (turf.inside(point, turfpolygon)) {
         containedMissions.push(boundingBoxMissions[i]);
         continue;
@@ -622,7 +609,10 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
     }
     //console.log(boundingBoxMissions[i].footprint.coordinates[0].length);
     for (let k = 0; k < boundingBoxMissions[i].footprint.coordinates[0].length; k++) {
-      var point = turf.point(boundingBoxMissions[i].footprint.coordinates[0][k], boundingBoxMissions[i].footprint.coordinates[0][k]); 
+      var point = turf.point(
+        boundingBoxMissions[i].footprint.coordinates[0][k],
+        boundingBoxMissions[i].footprint.coordinates[0][k]
+      );
       //console.log(boundingBoxMissions[i].footprint.coordinates[0][k][0] + ", " + boundingBoxMissions[i].footprint.coordinates[0][k][0]);
       if (turf.inside(point, turfpolygon)) {
         containedMissions.push(boundingBoxMissions[i]);
@@ -649,12 +639,12 @@ function calculateMissionCoverage(allMissons, polygon) {
 
   for (let i = 0; i < polygonMissions.length; i++) {
     var feature = {
-      'type': 'Feature',
-      'properties': { 'name': i },
-      'geometry': {
-        'type': 'Polygon',
-        'coordinates': [polygonMissions[i]]
-      }
+      type: "Feature",
+      properties: { name: i },
+      geometry: {
+        type: "Polygon",
+        coordinates: [polygonMissions[i]],
+      },
     };
     fcMissions.push(feature);
   }
@@ -683,15 +673,15 @@ function calculateMissionCoverage(allMissons, polygon) {
   for (let i = 0; i < fcMissions.length; i++) {
     var intersection = turf.intersect(turf.polygon(fcMissions[i].geometry.coordinates), turfpolygon);
     if (intersection) {
-        var feature = {
-          'type': 'Feature',
-          'properties': { 'name': i },
-          'geometry': {
-            'type': 'Polygon',
-            'coordinates': [intersection.geometry.coordinates[0]]
-          }
-        };
-        fcMissionsWithinPoly.push(feature);
+      var feature = {
+        type: "Feature",
+        properties: { name: i },
+        geometry: {
+          type: "Polygon",
+          coordinates: [intersection.geometry.coordinates[0]],
+        },
+      };
+      fcMissionsWithinPoly.push(feature);
     }
   }
 
@@ -714,20 +704,22 @@ function calculateMissionCoverage(allMissons, polygon) {
   //     },
   // });
 
-
   var fcMissionIntersects = [];
 
   for (let i = 0; i < fcMissions.length; i++) {
     for (let k = i + 1; k < fcMissions.length; k++) {
-      var intersection = turf.intersect(turf.polygon(fcMissions[i].geometry.coordinates), turf.polygon(fcMissions[k].geometry.coordinates));
+      var intersection = turf.intersect(
+        turf.polygon(fcMissions[i].geometry.coordinates),
+        turf.polygon(fcMissions[k].geometry.coordinates)
+      );
       if (intersection) {
         var feature = {
-          'type': 'Feature',
-          'properties': { 'name': i },
-          'geometry': {
-            'type': 'Polygon',
-            'coordinates': [intersection.geometry.coordinates[0]]
-          }
+          type: "Feature",
+          properties: { name: i },
+          geometry: {
+            type: "Polygon",
+            coordinates: [intersection.geometry.coordinates[0]],
+          },
         };
         fcMissionIntersects.push(feature);
       }
@@ -758,15 +750,15 @@ function calculateMissionCoverage(allMissons, polygon) {
   for (let i = 0; i < fcMissionIntersects.length; i++) {
     var intersection = turf.intersect(turf.polygon(fcMissionIntersects[i].geometry.coordinates), turfpolygon);
     //console.log(intersection);
-    
+
     if (intersection) {
       var feature = {
-        'type': 'Feature',
-        'properties': { 'name': i },
-        'geometry': {
-          'type': 'Polygon',
-          'coordinates': [intersection.geometry.coordinates[0]]
-        }
+        type: "Feature",
+        properties: { name: i },
+        geometry: {
+          type: "Polygon",
+          coordinates: [intersection.geometry.coordinates[0]],
+        },
       };
       fcMissionIntersectsWithinPoly.push(feature);
     }
@@ -872,9 +864,9 @@ const hideAllLayers = () => {
   map.setLayoutProperty("product-points-dot-density", "visibility", "none");
   map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
   map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
-  map.setLayoutProperty(" -boundaries-borders", "visibility", "none");
-  map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
-}
+  map.setLayoutProperty("uk-land-border", "visibility", "none");
+  //map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
+};
 
 const framesMode = () => {
   layerMode = LayerMode.Frames;
@@ -926,12 +918,21 @@ const frameOverlapsMode = () => {
   hideAllLayers();
 };
 
+const borderSelectionMode = () => {
+  layerMode = LayerMode.BorderSelection;
+  layerMenuButtonTextEle.textContent = layerMode;
+  closeLayerMenu();
+  hideAllLayers();
+  map.setLayoutProperty("uk-land-border", "visibility", "visible");
+};
+
 document.querySelector("#frames-item").onclick = framesMode;
 document.querySelector("#heatmap-item").onclick = heatmapMode;
 document.querySelector("#choropleth-item").onclick = choroplethMode;
 document.querySelector("#isarithmic-item").onclick = isarithmicMode;
 document.querySelector("#dot-density-item").onclick = dotDensityMode;
 document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
+document.querySelector("#border-selection-item").onclick = borderSelectionMode;
 
 
 
@@ -1026,10 +1027,8 @@ export { map as map };
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
 areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
 
-
 document.querySelector("#zoom-in-button").onclick = () => map.zoomIn();
 document.querySelector("#zoom-out-button").onclick = () => map.zoomOut();
-
 
 const searchResultsContainerEle = document.querySelector("#search-results-container");
 const searchBarEle = document.querySelector("#search-bar");
@@ -1055,7 +1054,8 @@ const updateSearchResults = () => {
   results.forEach((result) => {
     const resultEle = document.createElement("button");
     resultEle.type = "button";
-    resultEle.className = "text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm hover:bg-neutral-950/80";
+    resultEle.className =
+      "text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm hover:bg-neutral-950/80";
     const resultSpanEle = document.createElement("span");
     resultSpanEle.textContent = result.LAD23NM;
     resultEle.onclick = () => {
@@ -1070,4 +1070,3 @@ const updateSearchResults = () => {
 
 searchBarEle.oninput = updateSearchResults;
 document.querySelector("#search-button").onclick = updateSearchResults;
-
