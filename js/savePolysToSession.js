@@ -1,13 +1,12 @@
 const fs = require("fs");
 
 function saveTo() {
-  console.log("HERE");
   const dir = "./localPolygons";
-  let count = 1;
+  var fileFind = []
   fs.readdir(dir, (err, files) => {
-    console.log(files);
+    fileFind = files;
   });
-  return count;
+  return fileFind;
 }
 
 module.exports = saveTo;

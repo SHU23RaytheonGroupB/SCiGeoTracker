@@ -307,7 +307,11 @@
         />
         <div id="saved-areas-list-container" class="h-52">
           <ul id="polygonList" class="max-w-md space-y-1 text-gray-500 list-inside dark:text-gray-400">
-            <li class="text-white">show me <%= filenames %></li>
+            <% files.forEach(f => { %>
+              <%- ul.appendChild(f) %>
+             <% }) %>
+            
+            <li class="text-white">show me <%= files %></li>
             <script type="module">
               // var file = sessionStorage.getItem("/localPolygons/file1.txt");
               // console.log(file);
