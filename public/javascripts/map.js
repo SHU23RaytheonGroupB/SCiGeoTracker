@@ -64,8 +64,8 @@ const draw = new MapboxDraw({
   displayControlsDefault: false,
   // Select which mapbox-gl-draw control buttons to add to the map.
   controls: {
-    polygon: true,
-    trash: true,
+    //polygon: true,
+    //trash: true,
   },
   // Set mapbox-gl-draw to draw by default.
   // The user does not have to click the polygon control button first.
@@ -169,17 +169,40 @@ map.on("load", async () => {
 
 });
 
+let polygonButton = document.getElementById("polygon-button");
+polygonButton.addEventListener("click", drawPoly);
+
+let infoCloseButton = document.getElementById("area-selection-info-close-button");
+infoCloseButton.addEventListener("click", closeInfo);
+
+let infoMoveButton = document.getElementById("move-button");
+infoCloseButton.addEventListener("click", moveMap);
+
+function closeInfo() {
+  document.getElementById("area-selection-info-container").style.display = "none";
+}
+
+map.addControl(draw);
+draw.changeMode('simple_select');
+
+function moveMap() {
+  draw.changeMode('simple_select');
+}
+
+function drawPoly() {
+  draw.changeMode('draw_polygon');
+  map.on("draw.create", updateArea);
+}
 
 //document.getElementById('polygon-button').onclick = function () {
-  map.addControl(draw);
+  //map.addControl(draw);
   //draw.changeMode('draw_polygon');
-  map.on("draw.create", updateArea);
+  //map.on("draw.create", updateArea);
 //}
 
-
-//map.on("draw.delete", updateArea);
-//map.on("draw.update", updateArea);
-//map.on("draw.selectionchange", updateArea);
+// map.on("draw.delete", updateArea);
+// map.on("draw.update", updateArea);
+// map.on("draw.selectionchange", updateArea);
 
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
