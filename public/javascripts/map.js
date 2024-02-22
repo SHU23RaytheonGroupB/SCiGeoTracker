@@ -158,11 +158,17 @@ map.on("load", async () => {
 
 });
 
-map.addControl(draw);
-map.on("draw.create", updateArea);
-map.on("draw.delete", updateArea);
-map.on("draw.update", updateArea);
-map.on("draw.selectionchange", updateArea);
+
+document.getElementById('polygon-button').onclick = function () {
+  map.addControl(draw);
+  //draw.changeMode('draw_polygon');
+  map.on("draw.create", updateArea);
+}
+
+
+//map.on("draw.delete", updateArea);
+//map.on("draw.update", updateArea);
+//map.on("draw.selectionchange", updateArea);
 
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
@@ -446,6 +452,11 @@ export async function circleLinkZoom(d) {
 }
 
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
+const totalAreaContainerEle = document.querySelector("#Total-area-value-container");
+const coveredAreaContainerEle = document.querySelector("#Covered-area-value-container");
+const uncoveredAreaContainerEle = document.querySelector("#Uncovered-area-value-container");
+const coveragePercentageContainerEle = document.querySelector("#Coverage-percentage-value-container");
+const missionCountContainerEle = document.querySelector("#Mission-count-value-container");
 
 function updateArea(e) {
   //USED FOR DRAW POLYGON
@@ -491,7 +502,6 @@ function updateArea(e) {
   //console.log(boundingBox);
   let containedMissions = missionsWithinPolygon(missionsWithinBoundingBox(allProducts, boundingBox), polyCoordinates);
 
-  const answer = document.getElementById("areaSelectionPanel");
   if (data.features.length > 0) {
     const area = turf.area(data) / 1000; //divide by 1000 to get square km
     const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
@@ -499,12 +509,12 @@ function updateArea(e) {
     const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
     const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
     const Mission_count = containedMissions.length;
-    //tempory way to display values
-    answer.innerHTML = `<p style="font-size: 11px; color: black; margin: 0px;">Total Area: <strong>${rounded_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Covered Area: <strong>${Covered_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Uncovered Area: <strong>${Uncovered_area}</strong> Km²</p>`;
-    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Coverage %: <strong>${Coverage_percentage}</strong>%</p>`;
-    answer.innerHTML += `<p style="font-size: 11px; color: black; margin: 0px;">Total missions: <strong>${Mission_count}</strong></p>`;
+    areaSelectionInfoContainerEle.style.display = "inline";
+    totalAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${rounded_area}</td>`;
+    coveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Covered_area}</td>`;
+    uncoveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Uncovered_area}</td>`;
+    coveragePercentageContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Coverage_percentage}</td>`;
+    missionCountContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Mission_count}</td>`;
   } else {
     areaSelectionInfoContainerEle.style.display = "none";
     //if (e.type !== 'draw.delete')
@@ -599,23 +609,23 @@ function calculateMissionCoverage(allMissons, polygon) {
     fcMissions.push(feature);
   }
 
-  map.addSource('test1', {
-    'type': 'geojson',
-    'data': {
-      'type': 'FeatureCollection',
-      'features': fcMissions
-    }
-  });
-  map.addLayer({
-    id: 'test1' + "fill",
-    type: "fill",
-    source: "test1", // reference the data source
-    layout: {},
-    paint: {
-      "fill-color": "#00FF00",
-      "fill-opacity": 0.7,
-    },
-  });
+  // map.addSource('test1', {
+  //   'type': 'geojson',
+  //   'data': {
+  //     'type': 'FeatureCollection',
+  //     'features': fcMissions
+  //   }
+  // });
+  // map.addLayer({
+  //   id: 'test1' + "fill",
+  //   type: "fill",
+  //   source: "test1", // reference the data source
+  //   layout: {},
+  //   paint: {
+  //     "fill-color": "#00FF00",
+  //     "fill-opacity": 0.7,
+  //   },
+  // });
 
   var turfpolygon = turf.polygon([polygon]);
   var fcMissionsWithinPoly = [];
@@ -635,24 +645,24 @@ function calculateMissionCoverage(allMissons, polygon) {
     }
   }
 
-  map.addSource('test2', {
-      'type': 'geojson',
-      'data': {
-          'type': 'FeatureCollection',
-          'features': fcMissionsWithinPoly
-      }
-  });
+  // map.addSource('test2', {
+  //     'type': 'geojson',
+  //     'data': {
+  //         'type': 'FeatureCollection',
+  //         'features': fcMissionsWithinPoly
+  //     }
+  // });
 
-  map.addLayer({
-      id: 'test2' + "fill",
-      type: "fill",
-      source: "test2", // reference the data source
-      layout: {},
-      paint: {
-          "fill-color": "#FF0000",
-          "fill-opacity": 0.7,
-      },
-  });
+  // map.addLayer({
+  //     id: 'test2' + "fill",
+  //     type: "fill",
+  //     source: "test2", // reference the data source
+  //     layout: {},
+  //     paint: {
+  //         "fill-color": "#FF0000",
+  //         "fill-opacity": 0.7,
+  //     },
+  // });
 
 
   var fcMissionIntersects = [];
@@ -674,30 +684,30 @@ function calculateMissionCoverage(allMissons, polygon) {
     }
   }
 
-  map.addSource('test3', {
-    'type': 'geojson',
-    'data': {
-        'type': 'FeatureCollection',
-        'features': fcMissionIntersects
-    }
-  });
+  // map.addSource('test3', {
+  //   'type': 'geojson',
+  //   'data': {
+  //       'type': 'FeatureCollection',
+  //       'features': fcMissionIntersects
+  //   }
+  // });
 
-  map.addLayer({
-      id: 'test3' + "fill",
-      type: "fill",
-      source: "test3", // reference the data source
-      layout: {},
-      paint: {
-          "fill-color": "#0000FF",
-          "fill-opacity": 0.7,
-      },
-  });
+  // map.addLayer({
+  //     id: 'test3' + "fill",
+  //     type: "fill",
+  //     source: "test3", // reference the data source
+  //     layout: {},
+  //     paint: {
+  //         "fill-color": "#0000FF",
+  //         "fill-opacity": 0.7,
+  //     },
+  // });
 
   var fcMissionIntersectsWithinPoly = [];
 
   for (let i = 0; i < fcMissionIntersects.length; i++) {
     var intersection = turf.intersect(turf.polygon(fcMissionIntersects[i].geometry.coordinates), turfpolygon);
-    console.log(intersection);
+    //console.log(intersection);
     
     if (intersection) {
       var feature = {
@@ -712,24 +722,24 @@ function calculateMissionCoverage(allMissons, polygon) {
     }
   }
 
-  map.addSource('test4', {
-    'type': 'geojson',
-    'data': {
-        'type': 'FeatureCollection',
-        'features': fcMissionIntersectsWithinPoly
-    }
-  });
+  // map.addSource('test4', {
+  //   'type': 'geojson',
+  //   'data': {
+  //       'type': 'FeatureCollection',
+  //       'features': fcMissionIntersectsWithinPoly
+  //   }
+  // });
 
-  map.addLayer({
-      id: 'test4' + "fill",
-      type: "fill",
-      source: "test4", // reference the data source
-      layout: {},
-      paint: {
-          "fill-color": "#FFFFFF",
-          "fill-opacity": 0.7,
-      },
-  });
+  // map.addLayer({
+  //     id: 'test4' + "fill",
+  //     type: "fill",
+  //     source: "test4", // reference the data source
+  //     layout: {},
+  //     paint: {
+  //         "fill-color": "#FFFFFF",
+  //         "fill-opacity": 0.7,
+  //     },
+  // });
 
   var areaCoveredWithOverlaps = 0;
   for (let i = 0; i < fcMissionsWithinPoly.length; i++) {
@@ -745,7 +755,7 @@ function calculateMissionCoverage(allMissons, polygon) {
   area /= 1000; //divide by 1000 to get square km
   var rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
 
-  console.log(rounded_area);
+  //console.log(rounded_area);
   return rounded_area;
 }
 // BUTTON FUNCTIONALITY
