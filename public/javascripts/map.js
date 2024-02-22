@@ -154,7 +154,9 @@ map.on("load", async () => {
   const until = END_DATE;
   const timeline = Timeline(map, { from, until });
   document.querySelector("#timeline-container").appendChild(timeline.element);
-  document.querySelector("#histogram-graph").appendChild(createHistogramChart(allProducts, from, until));
+  document
+    .querySelector("#histogram-graph")
+    .appendChild(createHistogramChart(map.getSource("product-polygons")._data.features, from, until));
 });
 
 map.addControl(draw);
@@ -202,9 +204,10 @@ function filterProductsByType() {
 }
 
 function getFilteredProducts() {
-  //should filter by a visible attribute assigned on collection
-  map.querySourceFeatures(map.getSource("product-polygons")._data.features, { filter: ["==", "isVisible", true] });
-  console.log(map.getSource("product-polygons")._data.features);
+  //ISSUE WITH RETURN TYPE, NEEDS TO BE ALL PRODUCTS BY FILTER
+  return map.querySourceFeatures(map.getSource("product-polygons")._data.features, {
+    filter: ["==", "isVisible", true],
+  });
 }
 
 //Draw every product to the screen
