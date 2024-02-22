@@ -268,10 +268,10 @@ async function addProductsToMap() {
   // HEATMAP LAYER
   addHeatmapLayer("product-points");
   //CHLOROPLETH LAYER
-  addChloroplethLayers("country-boundaries", "region-boundaries");
+  addChloroplethLayer("country-boundaries", "region-boundaries");
   // DOT LAYER
   addDotLayer("product-points");
-  // BORDER LAYER - TEMP
+  //BORDER LAYER - TEMP
   addBorderLayer("uk-land-border");
 }
 

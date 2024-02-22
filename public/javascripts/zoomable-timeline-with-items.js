@@ -47,8 +47,6 @@ export function Timeline(map_, options) {
 
   const originalScaleX = scaleX.copy();
 
-  let xsize = 0;
-
   const density = Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
 
   const zoomScaleExtent = [1, Math.round(MS_PER_YEAR * 10)];
@@ -57,7 +55,6 @@ export function Timeline(map_, options) {
   const findDensityConfig = (myData, value) => {
     for (const [limit, config] of myData) {
       if (value < limit) {
-        xsize = value;
         return config;
       }
     }
@@ -326,7 +323,8 @@ export function Timeline(map_, options) {
               .append("title")
               .text((d) => d.title),
           (update) =>
-            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130),
+            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130).attr("r", 1/Math.log(xscale) * 2),
+            console.log(xscale),
         );
 
       const density =
