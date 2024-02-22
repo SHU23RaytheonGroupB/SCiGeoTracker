@@ -242,8 +242,11 @@
         <p id="scale" class="font-normal">10km</p>
       </div>
     </div>
-    <div id="area-selection-info-container" class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm
-    bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 right-20" style="display: none">
+    <div 
+      id="area-selection-info-container" 
+      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 right-20" 
+      style="display: none"
+    >
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Area Selection</h2>
         <button type="button" id="area-selection-info-close-button" class="ml-auto">
@@ -255,23 +258,28 @@
           <tbody>
             <tr>
               <td class="font-light text-neutral-400">Total area</td>
-              <td id="area-selection-total-area" class="font-medium text-right text-neutral-200">mi²</td>
+              <td id="Total-area-value-container" class="font-medium text-neutral-200">0</td>
+              <td id="area-selection-total-area" class="font-light text-right text-neutral-400">km²</td>
             </tr>
             <tr>
               <td class="font-light text-neutral-400">Covered area</td>
-              <td id="area-selection-covered-area" class="font-medium text-right text-neutral-200">mi²</td>
+              <td id="Covered-area-value-container" class="font-medium text-neutral-200">0</td>
+              <td id="area-selection-covered-area" class="font-light text-right text-neutral-400">km²</td>
             </tr>
             <tr>
               <td class="font-light text-neutral-400">Uncovered area</td>
-              <td id="area-selection-uncovered-area" class="font-medium text-right text-neutral-200">mi²</td>
+              <td id="Uncovered-area-value-container" class="font-medium text-neutral-200">0</td>
+              <td id="area-selection-uncovered-area" class="font-light text-right text-neutral-400">km²</td>
             </tr>
             <tr>
               <td class="font-light text-neutral-400">Coverage %</td>
-              <td id="area-selection-coverage-percentage" class="font-medium text-right text-neutral-200">%</td>
+              <td id="Coverage-percentage-value-container" class="font-medium text-neutral-200">0</td>
+              <td id="area-selection-coverage-percentage" class="font-light text-right text-neutral-400">%</td>
             </tr>
             <tr>
               <td class="font-light text-neutral-400">Total missions</td>
-              <td id="area-selection-total-missions" class="font-medium text-right text-neutral-200"></td>
+              <td id="Mission-count-value-container" class="font-medium text-neutral-200">0</td>
+              <td id="area-selection-total-missions" class="font-light text-right text-neutral-400"></td>
             </tr>
           </tbody>
         </table>
