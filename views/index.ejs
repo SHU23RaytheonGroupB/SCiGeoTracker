@@ -339,8 +339,6 @@
       style="display: none;"
       >
 
-    <% var selectedItems = [] %>
-
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Saved Areas</h2>
         <button type="button" id="saved-areas-close-button" class="ml-auto">
@@ -355,48 +353,23 @@
           class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2 bg-neutral-600/50 ring-1 ring-neutral-500/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-600/80"
           placeholder="Search"
         />
-        <div id="saved-areas-list-container" class="h-52 overflow-y-scroll">
-          <ul id="polygonList" class="max-w-md max-h-42 space-y-1 text-gray-500 list-inside dark:text-gray-400">
-            <% files.forEach(f => { %>
-              <li>
-                <div class="p-1.5 rounded-md
-                  bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex items-center mb-4" src="">
-
-                  <input id="itemCheckbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 
-                    dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    >
-                  
-                  <span class="grow my-auto ml-2"><%= f %></span>
-                  <button type="button" #id="saved-area-view-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
-                    <img class="h-4 w-4" src="images/icons8-map-90.png"/>
-                  </button>
-                  <button type="button" #id="saved-area-edit-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
-                    <img class="h-4 w-4" src="images/icons8-edit-90.png"/>
-                  </button>
-                  <button type="button" #id="saved-area-delete-button" class="ml-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50">
-                    <img class="h-4 w-4" src="images/icons8-delete-90.png"/>
-                  </button>
-                </div>
-              </li>
-            <% }) %>                
-          </ul>
-          </div>
-          <div class="flex flex-row gap-2 text-xs text-neutral-400 pt-2">
-            <button
-              type="button"
-              id="saved-areas-info-view-button"
-              class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
-            >
-              Import GeoJSON
-            </button>
-            <button
-              type="button"
-              id="saved-areas-info-view-button"
-              class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
-            >
-              Export GeoJSON
-            </button>
-          </div>
+        <div id="saved-areas-list" class="h-52 overflow-y-scroll text-gray-500 dark:text-gray-400 flex flex-col gap-2">
+        </div>
+        <div class="flex flex-row gap-2 text-xs text-neutral-400 pt-2">
+          <button
+            type="button"
+            id="saved-areas-info-view-button"
+            class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+          >
+            Import GeoJSON
+          </button>
+          <button
+            type="button"
+            id="saved-areas-info-view-button"
+            class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+          >
+            Export GeoJSON
+          </button>
         </div>
       </div>
     </div>
