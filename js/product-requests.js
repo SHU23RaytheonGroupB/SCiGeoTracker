@@ -23,7 +23,7 @@ class ProductService {
     return data.results.searchresults.map((item) => item.id);
   }
 
-  async searchProducts(keywords = "", page_size = 150) {
+  async searchProducts(keywords = "scene", page_size = 150) {
     try {
       const response = await fetch(`${API_ORIGIN}/v1/products/search`, {
         method: "POST",

@@ -1,4 +1,11 @@
-import { displayMissionMenue } from "./mission-popout-menue.js";
+import { displayMissionMenu } from "./mission-popout-menu.js";
+
+let productTypes = {
+  SCENE: "scene",
+  DOCUMENT: "document",
+  IMAGERY: "image",
+  VIDEO: "video",
+};
 
 let productFillColours = {
   SCENE: "#A2A2A2", //GREY
@@ -36,6 +43,7 @@ const maxZoom = 12;
 let cursorMode;
 let layerMode;
 let allProducts = [];
+let allRenderableProducts = [];
 
 const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
 const boundariesByCountry = await getGeojsonFile("../boundaries/UK-by-country.json");
@@ -183,20 +191,19 @@ function closeInfo() {
 }
 
 map.addControl(draw);
-draw.changeMode('simple_select'); //default not draw
+draw.changeMode("simple_select"); //default not draw
 
 function moveMap() {
-  draw.changeMode('simple_select');
+  draw.changeMode("simple_select");
 }
 
 function drawPoly() {
-  draw.changeMode('draw_polygon');
+  draw.changeMode("draw_polygon");
   map.on("draw.create", updateArea);
   map.on("draw.delete", updateArea);
   map.on("draw.update", updateArea);
   map.on("draw.selectionchange", updateArea);
 }
-
 
 const coordEle = document.querySelector("#coords");
 const zoomScrollEle = document.querySelector("#zoom-scroll-button");
@@ -218,24 +225,22 @@ map.on("zoom", (ev) => {
 async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
+  //allRenderableProducts = filterOutNonSceneProducts();
+
   await addProductsToMap();
 
   //filtersPanel.on("change", filterProductsByType);
   framesMode();
 }
 
-function filterProductsByType() {
-  //PSEUDOCODE IDEA
-  //let type = dropdown.value
-  //filteredProducts = allProducts.where( p => p.type == type)
-  //map.allLayers.forEach(remove)
-  //addProductsToMap()
+function filterOutNonSceneProducts() {
+  let filteredProducts = allProducts.filter((p) => p.documentType === productTypes["SCENE"]);
+  return filteredProducts;
 }
 
 //Draw every product to the screen
 async function addProductsToMap() {
   //Define polygon & point mapbox
-  console.log(allProducts);
   let polygonFeatureCollection = {
     type: "FeatureCollection",
     features: allProducts.map((product) => ({
@@ -480,7 +485,7 @@ export async function circleLinkZoom(d) {
   circleGroup.forEach((circle) => {
     circle.style.fill = "blue";
   });
-  displayMissionMenue(currentProduct);
+  displayMissionMenu(currentProduct);
 
   // allProducts.forEach((product) => {
 
@@ -934,10 +939,6 @@ document.querySelector("#dot-density-item").onclick = dotDensityMode;
 document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
 document.querySelector("#border-selection-item").onclick = borderSelectionMode;
 
-
-
-
-
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
 
 const saveSavedAreas = () => {
@@ -947,7 +948,7 @@ const saveSavedAreas = () => {
 if (savedAreas.length == 0) {
   for (let i = 0; i < 10; i++) {
     savedAreas.push({
-      name: `Test area ${i+1}`,
+      name: `Test area ${i + 1}`,
     });
   }
   saveSavedAreas();
@@ -961,11 +962,13 @@ const openSavedAreas = () => {
   savedAreasListEle.replaceChildren();
   savedAreas.forEach((savedArea) => {
     const savedAreaContainerEle = document.createElement("div");
-    savedAreaContainerEle.className = "p-1.5 rounded-md bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex";
+    savedAreaContainerEle.className =
+      "p-1.5 rounded-md bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex";
     const savedAreaCheckboxEle = document.createElement("input");
     savedAreaCheckboxEle.type = "checkbox";
     savedAreaCheckboxEle.name = "saved-area-checkbox";
-    savedAreaCheckboxEle.className = "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
+    savedAreaCheckboxEle.className =
+      "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
     savedAreaContainerEle.append(savedAreaCheckboxEle);
     const savedAreaNameEle = document.createElement("span");
     savedAreaNameEle.className = "grow my-auto";

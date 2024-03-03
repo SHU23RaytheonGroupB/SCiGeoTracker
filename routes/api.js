@@ -11,6 +11,7 @@ const PASSWORD = "!H%j50H2";
 const CLIENT_ID = "sci-toolset";
 const CLIENT_SECRET = "st";
 const ts = new TokenService(HOSTNAME, TOKEN_PATH, USERNAME, PASSWORD, CLIENT_ID, CLIENT_SECRET);
+const refreshTime = 600000; //10 Minutes
 
 async function getAuthToken() {
   const cache = Cache.getInstance();
@@ -52,4 +53,14 @@ router.get("/getProducts", async function (req, res, next) {
   }
 });
 
-module.exports = router
+async function refreshCache() {
+  const token = await getAuthToken();
+  const cache = Cache.getInstance();
+  const ps = new ProductService(token.access_token);
+  const allProductMetaData = await ps.getAllProducts();
+  cache.set("allProducts", allProductMetaData);
+}
+
+setInterval(refreshCache, refreshTime);
+
+module.exports = router;
