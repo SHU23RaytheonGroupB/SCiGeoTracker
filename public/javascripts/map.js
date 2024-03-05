@@ -962,6 +962,7 @@ let savedAreasOpen = false;
 const openSavedAreas = () => {
   savedAreasListEle.replaceChildren();
   savedAreas.forEach((savedArea) => {
+    var tempContent = "";
     const savedAreaContainerEle = document.createElement("div");
     savedAreaContainerEle.className = "p-1.5 rounded-md bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex";
     const savedAreaCheckboxEle = document.createElement("input");
@@ -1004,27 +1005,44 @@ const openSavedAreas = () => {
     }
     savedAreaViewButtonEle.onclick = () => {
       alert(savedArea.name);
+      if(savedAreaNameEle.contentEditable == 'true'){
+        savedAreaNameEle.contentEditable = 'false';
+        savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
+        savedAreaViewButtonEle.src = "images/icons8-map-90.png";
+        savedAreaNameEle.textContent = tempContent;
+      }
+      else{
+
+      }
     };
     savedAreaEditButtonEle.onclick = () => {
       console.log(savedAreaNameEle.contentEditable);
       if (savedAreaNameEle.contentEditable == 'false' || savedAreaNameEle.contentEditable == 'inherit'){
+        tempContent = savedAreaNameEle.textContent;
         savedAreaNameEle.contentEditable = 'true';
         savedAreaNameEle.focus();
         //savedAreaNameEle.select(); either highlight or put cursor at end
         savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png"; //CHANGE TO TICK - ASK RYAN 
+        savedAreaViewButtonEle.src = "images/icons8-map-90.png"; //CHANGE TO CROSS
       }
       else{
         savedAreaNameEle.contentEditable = 'false';
         savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
-        savedArea.name = savedAreaNameEle.textContent;
-        saveSavedAreas();
+        savedAreaViewButtonEle.src = "images/icons8-map-90.png";
+        savedAreaNameEle.textContent = savedAreaNameEle.textContent.trim();
+        if(savedAreaNameEle.textContent.length != 0){        
+          savedArea.name = savedAreaNameEle.textContent;
+          saveSavedAreas();
+        }
+        else{
+          savedAreaNameEle.textContent = tempContent;
+        }
       }
     };
     savedAreaDeleteButtonEle.onclick = () => {
       savedAreas.splice(savedAreas.indexOf(savedArea), 1)
       saveSavedAreas();
       openSavedAreas();
-      console.log(savedAreas);
     };
     savedAreaContainerEle.append(savedAreaViewButtonEle);
     savedAreaContainerEle.append(savedAreaEditButtonEle);
@@ -1034,18 +1052,31 @@ const openSavedAreas = () => {
   savedAreasOpen = true;
   savedAreasContainerEle.style.display = null;
   savedAreasContainerEle.focus();
-
-  
 };
 
-
 const importFiles = () => {
-  alert("import");
+  var files = []
+  const filesUploaded = document.getElementById("saved-areas-upload").files;
+  for (var x = 0; x < filesUploaded.length; x++) {files.push(filesUploaded[x])}
+  if(files.length != 0){
+    var successes = 0;
+    files.forEach(file => {
+      if(file.name.endsWith(".geojson")){
+        savedAreas.push(file);
+        successes++;
+      }
+    });
+    if(successes != files.length){
+      alert("Some or all files uploaded were not compatible.\nPlease only upload GEOJSON files.");
+    }
+    saveSavedAreas();
+    openSavedAreas();
+  }
 }
 
 const exportFiles = () => {
   if(selectedAreas.length == 0){
-    alert("No areas selected");
+    alert("No areas selected"); //maybe change this for something less intrusive
   }
   else{
     
@@ -1058,7 +1089,7 @@ const popupMessage = () => {
 }
 
 
-document.querySelector("#saved-areas-import-button").onclick = importFiles;
+document.querySelector("#saved-areas-upload").oninput = importFiles;
 document.querySelector("#saved-areas-export-button").onclick = exportFiles;
 
 const closeSavedAreas = () => {
