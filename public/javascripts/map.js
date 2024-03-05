@@ -1,20 +1,34 @@
-import { displayMissionMenu } from "./mission-popout-menu.js";
+import { displayMissionMenu } from "./mission-popout-menue.js";
 
-let productTypes = {
-  SCENE: "scene",
-  DOCUMENT: "document",
-  IMAGERY: "image",
-  VIDEO: "video",
-};
-
-let productFillColours = {
+const darkTheme_ProductFillColours = {
   SCENE: "#fc685d", //LIGHT RED
   DOCUMENT: "#219BF5", //BLUE
   IMAGERY: "#0085EC", //DARK BLUE
   VIDEO: "#008907", //GREEN
 };
 
-let productOutlineColours = {
+const outdoorsTheme_ProductFillColours = {
+  SCENE: "#00ff00", //LIGHT RED
+  DOCUMENT: "#219BF5", //BLUE
+  IMAGERY: "#0085EC", //DARK BLUE
+  VIDEO: "#008907", //GREEN
+};
+
+const satelliteTheme_ProductFillColours = {
+  SCENE: "#ffffff", //LIGHT RED
+  DOCUMENT: "#219BF5", //BLUE
+  IMAGERY: "#0085EC", //DARK BLUE
+  VIDEO: "#008907", //GREEN
+};
+
+const productFillColours = {
+  "dark-v11": darkTheme_ProductFillColours, 
+  "satellite-streets-v12": satelliteTheme_ProductFillColours, 
+  "outdoors-v11": outdoorsTheme_ProductFillColours,
+  "light-v11": outdoorsTheme_ProductFillColours,
+};
+
+const productOutlineColours = {
   SCENE: "#000000", //BLACK
   DOCUMENT: "#000000", //BLACK
   IMAGERY: "#000000", //BLACK
@@ -40,7 +54,8 @@ const LayerMode = {
 const allThemes = [ //first theme is default
   "dark-v11", 
   "satellite-streets-v12",
-  "light-v11"
+  "outdoors-v11",
+  "light-v11",
 ]
 
 const minZoom = 4;
@@ -195,6 +210,10 @@ map.on('style.load', () => {
   }
 });
 
+// Prevent default context menu:
+const div = document.getElementById("tray");
+div.addEventListener("contextmenu", (e) => {e.preventDefault()});
+
 let polygonButton = document.getElementById("polygon-button");
 polygonButton.addEventListener("click", drawPoly);
 
@@ -208,18 +227,18 @@ function closeInfo() {
 let infoMoveButton = document.getElementById("move-button");
 infoMoveButton.addEventListener("click", moveMap);
 
-let themeChangeButton = document.getElementById("theme-button");
+const themeChangeButton = document.getElementById("theme-button");
 themeChangeButton.addEventListener("click", nextTheme);
-themeChangeButton.addEventListener("oncontextmenu", prevTheme);
+themeChangeButton.addEventListener("contextmenu", prevTheme);
 
 function nextTheme() {
   currentTheme = (currentTheme + 1) % allThemes.length;
-  changeTheme()
+  changeTheme();
 }
 
 function prevTheme() {
-  currentTheme = (currentTheme - 1) % allThemes.length;
-  changeTheme()
+  currentTheme = (((currentTheme - 1) % allThemes.length) + allThemes.length) % allThemes.length; //Negitive numbers and modulo are weired in JS, https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
+  changeTheme();
 }
 
 function changeTheme() {
@@ -353,7 +372,7 @@ function addFramesLayers(title) {
       visibility: "none",
     },
     paint: {
-      "fill-color": productFillColours["SCENE"],
+      "fill-color": productFillColours[allThemes[currentTheme]]["SCENE"],
       "fill-opacity": 0.2,
     },
   });
