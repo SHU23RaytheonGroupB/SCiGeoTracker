@@ -1097,9 +1097,9 @@ const updateSearchResults = () => {
     const resultEle = document.createElement("button");
     resultEle.type = "button";
     resultEle.className =
-      `text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 ring-1 shadow-sm
+      `text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 ring-1 ring-inset shadow-sm
       dark:bg-neutral-950/50 dark:ring-neutral-700/50 dark:hover:bg-neutral-950/80
-      bg-neutral-200/90 ring-neutral-300/90 hover:bg-neutral-300/80`;
+      bg-neutral-100/80 ring-neutral-300/90 hover:bg-neutral-200/90`;
     const resultSpanEle = document.createElement("span");
     resultSpanEle.textContent = result.LAD23NM;
     resultEle.onclick = () => {
