@@ -45,6 +45,12 @@ const LayerMode = {
   BorderSelection: "Border Selection",
 };
 
+const CursorMode = {
+  Move: "Move",
+  Rectangle: "Rectangle",
+  Polygon: "Polygon",
+};
+
 const allThemes = [ //first theme is default
   "dark-v11", 
   "satellite-streets-v12",
