@@ -51,7 +51,7 @@ let layerMode;
 let mapStyle = MapStyle.Dark;
 let allProducts = [];
 let allRenderableProducts = [];
-let darkMode = true;
+let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
 
 setDarkMode(darkMode);
 
@@ -266,6 +266,7 @@ document.querySelector("#theme-button").onclick = () => setDarkMode(!darkMode);
 
 function setDarkMode(enabled) {
   darkMode = enabled;
+  sessionStorage.setItem("dark", darkMode ? "true" : "false");
   if (darkMode) {
     document.body.classList.add("dark");
   } else {
