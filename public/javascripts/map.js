@@ -935,11 +935,9 @@ document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
 document.querySelector("#border-selection-item").onclick = borderSelectionMode;
 
 
-
-
-
+let selectedAreas = [];
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
-
+console.log(savedAreas);
 const saveSavedAreas = () => {
   sessionStorage.setItem("savedAreas", JSON.stringify(savedAreas));
 };
@@ -948,8 +946,12 @@ if (savedAreas.length == 0) {
   for (let i = 0; i < 10; i++) {
     savedAreas.push({
       name: `Test area ${i+1}`,
+      type: 'geojson',
+      geometry: './tempFile/test-NORTHIRE.geojson',
     });
+    
   }
+  console.log(savedAreas);
   saveSavedAreas();
 }
 
@@ -992,25 +994,73 @@ const openSavedAreas = () => {
     savedAreaViewButtonEle.append(savedAreaViewButtonImageEle);
     savedAreaEditButtonEle.append(savedAreaEditButtonImageEle);
     savedAreaDeleteButtonEle.append(savedAreaDeleteButtonImageEle);
+    savedAreaCheckboxEle.onclick = () => {
+      if (selectedAreas.includes(savedArea)){
+        selectedAreas.splice(selectedAreas.indexOf(savedArea), 1);
+      }
+      else{
+        selectedAreas.push(savedArea);
+      }
+    }
     savedAreaViewButtonEle.onclick = () => {
       alert(savedArea.name);
     };
     savedAreaEditButtonEle.onclick = () => {
-      alert(savedArea.name);
+      console.log(savedAreaNameEle.contentEditable);
+      if (savedAreaNameEle.contentEditable == 'false' || savedAreaNameEle.contentEditable == 'inherit'){
+        savedAreaNameEle.contentEditable = 'true';
+        savedAreaNameEle.focus();
+        //savedAreaNameEle.select(); either highlight or put cursor at end
+        savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png"; //CHANGE TO TICK - ASK RYAN 
+      }
+      else{
+        savedAreaNameEle.contentEditable = 'false';
+        savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
+        savedArea.name = savedAreaNameEle.textContent;
+        saveSavedAreas();
+      }
     };
     savedAreaDeleteButtonEle.onclick = () => {
-      alert(savedArea.name);
+      savedAreas.splice(savedAreas.indexOf(savedArea), 1)
+      saveSavedAreas();
+      openSavedAreas();
+      console.log(savedAreas);
     };
     savedAreaContainerEle.append(savedAreaViewButtonEle);
     savedAreaContainerEle.append(savedAreaEditButtonEle);
     savedAreaContainerEle.append(savedAreaDeleteButtonEle);
     savedAreasListEle.append(savedAreaContainerEle);
   });
-
   savedAreasOpen = true;
   savedAreasContainerEle.style.display = null;
   savedAreasContainerEle.focus();
+
+  
 };
+
+
+const importFiles = () => {
+  alert("import");
+}
+
+const exportFiles = () => {
+  if(selectedAreas.length == 0){
+    alert("No areas selected");
+  }
+  else{
+    
+  }
+}
+const popupMessage = () => {
+  let popup = document.getElementById("#snackbar-no-select");
+  popup.className = "show";
+  setTimeout(function(){ popup.className = popup.className.replace("show", ""); }, 3000);
+}
+
+
+document.querySelector("#saved-areas-import-button").onclick = importFiles;
+document.querySelector("#saved-areas-export-button").onclick = exportFiles;
+
 const closeSavedAreas = () => {
   savedAreasOpen = false;
   savedAreasContainerEle.style.display = "none";
