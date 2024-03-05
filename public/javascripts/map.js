@@ -1,4 +1,4 @@
-import { displayMissionMenu } from "./mission-popout-menue.js";
+import { displayMissionMenu } from "./mission-popout-menu.js";
 
 const darkTheme_ProductFillColours = {
   SCENE: "#fc685d", //LIGHT RED
@@ -33,12 +33,6 @@ const productOutlineColours = {
   DOCUMENT: "#000000", //BLACK
   IMAGERY: "#000000", //BLACK
   VIDEO: "#000000", //BLACK
-};
-
-const CursorMode = {
-  Move: "Move",
-  Rectangle: "Rectangle",
-  Polygon: "Polygon",
 };
 
 const LayerMode = {
@@ -210,10 +204,6 @@ map.on('style.load', () => {
   }
 });
 
-// Prevent default context menu:
-const div = document.getElementById("tray");
-div.addEventListener("contextmenu", (e) => {e.preventDefault()});
-
 let polygonButton = document.getElementById("polygon-button");
 polygonButton.addEventListener("click", drawPoly);
 
@@ -227,18 +217,18 @@ function closeInfo() {
 let infoMoveButton = document.getElementById("move-button");
 infoMoveButton.addEventListener("click", moveMap);
 
-const themeChangeButton = document.getElementById("theme-button");
+let themeChangeButton = document.getElementById("theme-button");
 themeChangeButton.addEventListener("click", nextTheme);
-themeChangeButton.addEventListener("contextmenu", prevTheme);
+themeChangeButton.addEventListener("oncontextmenu", prevTheme);
 
 function nextTheme() {
   currentTheme = (currentTheme + 1) % allThemes.length;
-  changeTheme();
+  changeTheme()
 }
 
 function prevTheme() {
-  currentTheme = (((currentTheme - 1) % allThemes.length) + allThemes.length) % allThemes.length; //Negitive numbers and modulo are weired in JS, https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
-  changeTheme();
+  currentTheme = (currentTheme - 1) % allThemes.length;
+  changeTheme()
 }
 
 function changeTheme() {
@@ -372,7 +362,7 @@ function addFramesLayers(title) {
       visibility: "none",
     },
     paint: {
-      "fill-color": productFillColours[allThemes[currentTheme]]["SCENE"],
+      "fill-color": productFillColours["SCENE"],
       "fill-opacity": 0.2,
     },
   });
