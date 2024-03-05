@@ -895,7 +895,7 @@ const moveButtonEle = document.querySelector("#move-button");
 const rectangleButtonEle = document.querySelector("#rectangle-button");
 const polygonButtonEle = document.querySelector("#polygon-button");
 const cursorSelectedClasses = [
-  "dark:bg-neutral-800", "dark:hover:bg-neutral-500/30",
+  "dark:bg-neutral-700", "dark:hover:bg-neutral-600/90",
   "bg-neutral-200/90", "hover:bg-neutral-200/30",
 ];
 
