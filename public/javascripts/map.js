@@ -8,17 +8,17 @@ let productTypes = {
 };
 
 let productFillColours = {
-  SCENE: "#A2A2A2", //GREY
-  DOCUMENT: "#219BF5", //blue
-  IMAGERY: "#0085EC", //slightly darker blue
-  VIDEO: "#008907", //green
+  SCENE: "#fc685d", //LIGHT RED
+  DOCUMENT: "#219BF5", //BLUE
+  IMAGERY: "#0085EC", //DARK BLUE
+  VIDEO: "#008907", //GREEN
 };
 
 let productOutlineColours = {
   SCENE: "#000000", //BLACK
-  DOCUMENT: "#219BF5", //blue
-  IMAGERY: "#0085EC", //slightly darker blue
-  VIDEO: "#008907", //green
+  DOCUMENT: "#000000", //BLACK
+  IMAGERY: "#000000", //BLACK
+  VIDEO: "#000000", //BLACK
 };
 
 const CursorMode = {
@@ -37,11 +37,18 @@ const LayerMode = {
   BorderSelection: "Border Selection",
 };
 
+const allThemes = [ //first theme is default
+  "dark-v11", 
+  "satellite-streets-v12",
+  "light-v11"
+]
+
 const minZoom = 4;
 const maxZoom = 12;
 
 let cursorMode;
 let layerMode;
+let currentTheme = 0;
 let allProducts = [];
 let allRenderableProducts = [];
 
@@ -60,7 +67,7 @@ async function getGeojsonFile(fileLocation) {
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 const map = new mapboxgl.Map({
   container: "map", // container ID
-  style: "mapbox://styles/mapbox/dark-v11", // style URL
+  style: "mapbox://styles/mapbox/" + allThemes[currentTheme], // style URL
   center: [-5, 55], // starting position
   zoom: 5, // starting zoom
   minZoom: minZoom,
@@ -164,6 +171,8 @@ import { Timeline } from "./zoomable-timeline-with-items.js";
 
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
+let loaded = false;
+
 map.on("load", async () => {
   renderOverlaysZoom();
   await initialiseProducts();
@@ -175,6 +184,15 @@ map.on("load", async () => {
   const until = END_DATE;
   const timeline = Timeline(map, { from, until });
   document.querySelector("#timeline-container").appendChild(timeline.element);
+
+  loaded = true; //used so style is not loaded before data is requested
+});
+
+map.on('style.load', () => {
+  if (loaded) {
+    addProductsToMap();
+    framesMode();
+  }
 });
 
 let polygonButton = document.getElementById("polygon-button");
@@ -183,11 +201,29 @@ polygonButton.addEventListener("click", drawPoly);
 let infoCloseButton = document.getElementById("area-selection-info-close-button");
 infoCloseButton.addEventListener("click", closeInfo);
 
-let infoMoveButton = document.getElementById("move-button");
-infoCloseButton.addEventListener("click", moveMap);
-
 function closeInfo() {
   document.getElementById("area-selection-info-container").style.display = "none";
+}
+
+let infoMoveButton = document.getElementById("move-button");
+infoMoveButton.addEventListener("click", moveMap);
+
+let themeChangeButton = document.getElementById("theme-button");
+themeChangeButton.addEventListener("click", nextTheme);
+themeChangeButton.addEventListener("oncontextmenu", prevTheme);
+
+function nextTheme() {
+  currentTheme = (currentTheme + 1) % allThemes.length;
+  changeTheme()
+}
+
+function prevTheme() {
+  currentTheme = (currentTheme - 1) % allThemes.length;
+  changeTheme()
+}
+
+function changeTheme() {
+  map.setStyle("mapbox://styles/mapbox/" + allThemes[currentTheme]);
 }
 
 map.addControl(draw);
