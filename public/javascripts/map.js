@@ -37,20 +37,23 @@ const LayerMode = {
   BorderSelection: "Border Selection",
 };
 
-const allThemes = [ //first theme is default
-  "dark-v11", 
-  "satellite-streets-v12",
-  "light-v11"
-]
+const MapStyle = {
+  Dark: "dark-v11",
+  Light: "light-v11",
+  Satellite: "satellite-streets-v12",
+};
 
 const minZoom = 4;
 const maxZoom = 12;
 
 let cursorMode;
 let layerMode;
-let currentTheme = 2;
+let mapStyle = MapStyle.Dark;
 let allProducts = [];
 let allRenderableProducts = [];
+let darkMode = true;
+
+setDarkMode(darkMode);
 
 const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
 const boundariesByCountry = await getGeojsonFile("../boundaries/UK-by-country.json");
@@ -67,7 +70,7 @@ async function getGeojsonFile(fileLocation) {
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 const map = new mapboxgl.Map({
   container: "map", // container ID
-  style: "mapbox://styles/mapbox/" + allThemes[currentTheme], // style URL
+  style: `mapbox://styles/mapbox/${mapStyle}`, // style URL
   center: [-5, 55], // starting position
   zoom: 5, // starting zoom
   minZoom: minZoom,
@@ -174,6 +177,7 @@ import { Timeline } from "./zoomable-timeline-with-items.js";
 let loaded = false;
 
 map.on("load", async () => {
+  darkStyle();
   renderOverlaysZoom();
   await initialiseProducts();
 
@@ -208,23 +212,67 @@ function closeInfo() {
 let infoMoveButton = document.getElementById("move-button");
 infoMoveButton.addEventListener("click", moveMap);
 
-let themeChangeButton = document.getElementById("theme-button");
-themeChangeButton.addEventListener("click", nextTheme);
-themeChangeButton.addEventListener("oncontextmenu", prevTheme);
 
-function nextTheme() {
-  currentTheme = (currentTheme + 1) % allThemes.length;
-  changeTheme()
+
+const styleMenuButtonEle = document.querySelector("#style-menu-button");
+const styleMenuItemsContainerEle = document.querySelector("#style-menu-items-container");
+const styleMenuButtonTextEle = document.querySelector("#style-menu-button-text");
+let styleMenuOpen = false;
+const openStyleMenu = () => {
+  styleMenuOpen = true;
+  styleMenuItemsContainerEle.style.display = null;
+  styleMenuItemsContainerEle.focus();
+};
+const closeStyleMenu = () => {
+  styleMenuOpen = false;
+  styleMenuItemsContainerEle.style.display = "none";
+};
+styleMenuButtonEle.onclick = () => {
+  if (!styleMenuOpen) openStyleMenu();
+  else closeStyleMenu();
+};
+styleMenuItemsContainerEle.focusout = () => {
+  closeStyleMenu();
+};
+
+const darkStyle = () => {
+  mapStyle = MapStyle.Dark;
+  styleMenuButtonTextEle.textContent = "Dark";
+  closeStyleMenu();
+  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+};
+
+const lightStyle = () => {
+  mapStyle = MapStyle.Light;
+  styleMenuButtonTextEle.textContent = "Light";
+  closeStyleMenu();
+  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+};
+
+const satelliteStyle = () => {
+  mapStyle = MapStyle.Satellite;
+  styleMenuButtonTextEle.textContent = "Satellite";
+  closeStyleMenu();
+  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+};
+
+document.querySelector("#dark-item").onclick = darkStyle;
+document.querySelector("#light-item").onclick = lightStyle;
+document.querySelector("#satellite-item").onclick = satelliteStyle;
+
+
+
+document.querySelector("#theme-button").onclick = () => setDarkMode(!darkMode);
+
+function setDarkMode(enabled) {
+  darkMode = enabled;
+  if (darkMode) {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
 }
 
-function prevTheme() {
-  currentTheme = (currentTheme - 1) % allThemes.length;
-  changeTheme()
-}
-
-function changeTheme() {
-  map.setStyle("mapbox://styles/mapbox/" + allThemes[currentTheme]);
-}
 
 map.addControl(draw);
 draw.changeMode("simple_select"); //default not draw
@@ -1114,3 +1162,7 @@ const updateSearchResults = () => {
 
 searchBarEle.oninput = updateSearchResults;
 document.querySelector("#search-button").onclick = updateSearchResults;
+
+
+
+

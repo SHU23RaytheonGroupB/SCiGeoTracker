@@ -108,7 +108,7 @@
         </button>
       </div>
 
-      <div class="w-40 pointer-events-auto max-h-fit grow-0">
+      <div class="w-40 pointer-events-auto h-fit grow-0">
         <div>
           <button
             type="button"
@@ -294,6 +294,82 @@
       </div>
     </div>
 
+    <div class="absolute bottom-0 left-0 z-10 m-2 flex flex-col gap-4 pointer-events-none">
+      <div class="w-40 pointer-events-auto h-fit grow-0">
+        <!--
+          Dropdown menu, show/hide based on menu state.
+      
+          Entering: "transition ease-out duration-100"
+            From: "transform opacity-0 scale-95"
+            To: "transform opacity-100 scale-100"
+          Leaving: "transition ease-in duration-75"
+            From: "transform opacity-100 scale-100"
+            To: "transform opacity-0 scale-95"
+        -->
+        <div
+          id="style-menu-items-container"
+          class="z-20 mt-2 rounded-md overflow-hidden ring-1 focus:outline-none shadow-sm
+          dark:bg-neutral-900/90 dark:ring-neutral-700/50
+          bg-neutral-100/90 ring-neutral-200/50"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabindex="-1"
+          style="display: none"
+        >
+          <div class="#py-1" role="none">
+            <!-- Active: "bg-neutral-900 text-neutral-200", Not Active: "text-neutral-100" -->
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
+              role="menuitem"
+              tabindex="-1"
+              id="dark-item"
+              >Dark</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
+              role="menuitem"
+              tabindex="-1"
+              id="light-item"
+              >Light</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
+              role="menuitem"
+              tabindex="-1"
+              id="satellite-item"
+              >Satellite</a
+            >
+          </div>
+        </div>
+        <div>
+          <button
+            type="button"
+            alt="Dropdown list for different filters"
+            class="inline-flex w-full gap-x-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg shadow-sm ring-1
+            dark:bg-neutral-900/90 dark:hover:bg-neutral-900 dark:ring-neutral-700/50
+            bg-neutral-100/90 hover:bg-neutral-200/90 ring-neutral-300/50"
+            id="style-menu-button"
+            aria-expanded="true"
+            aria-haspopup="true"
+          >
+            <span id="style-menu-button-text"></span>
+            <img
+              class="h-4 w-4 ml-auto my-auto"
+              src="images/icons8-dropdown-stroke-1px-90.png"
+              alt="Dropdown list for different filters"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="absolute bottom-0 right-0 z-10 m-2 flex flex-row gap-2">
       <div
         id="coords-container"
@@ -303,6 +379,7 @@
         <p id="scale" class="font-normal">10km</p>
       </div>
     </div>
+
     <div 
       id="area-selection-info-container" 
       class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 top-20 right-20" 
@@ -445,7 +522,7 @@
 
 
     <div id="timeline-container" class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 shadow-lg rounded-lg
-    opacity-70 #dark:bg-black bg-white
+    opacity-70 dark:bg-black bg-white
     #dark:bg-neutral-900/90 #bg-white/90">
     </div>
 
