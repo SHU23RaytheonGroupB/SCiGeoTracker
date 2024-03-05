@@ -15,28 +15,43 @@
     />
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      }
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   </head>
 
-  <body class="m-0 p-0 text-neutral-300 fill-neutral-500 h-screen max-h-screen">
+  <body class="m-0 p-0 text-neutral-500 dark:text-neutral-300 fill-neutral-500 h-screen max-h-screen light">
     <div class="absolute top-0 left-0 z-20 m-2 flex flex-row gap-2 pointer-events-none">
       <div id="tray" class="flex flex-col gap-2 pointer-events-auto">
         <div
-          class="flex flex-col overflow-hidden text-sm font-semibold rounded-lg bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm"
+          class="flex flex-col overflow-hidden text-sm font-semibold rounded-lg ring-1 shadow-sm
+          dark:ring-neutral-700/50 ring-neutral-300/50"
         >
           <!-- <button type="button" id="button" class="p-2 hover:bg-neutral-900">
             <svg class="h-5 w-5 rotate-45" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
             </svg>
           </button> -->
-          <button type="button" alt="Drag and move map tool" id="move-button" class="p-1.5 hover:bg-neutral-500/10">
+          <button
+            type="button"
+            alt="Drag and move map tool"
+            id="move-button"
+            class="p-1.5
+            dark:bg-neutral-900/90 dark:hover:bg-neutral-500/10
+            bg-neutral-100/90 hover:bg-neutral-100/60"
+          >
             <img class="h-6 w-6" src="images/icons8-move-90.png" alt="Drag and move map tool" />
           </button>
           <button
             type="button"
             alt="Draw custom rectangle tool"
             id="rectangle-button"
-            class="p-1.5 hover:bg-neutral-500/10"
+            class="p-1.5
+            dark:bg-neutral-900/90 dark:hover:bg-neutral-500/10
+            bg-neutral-100/90 hover:bg-neutral-100/60"
           >
             <img class="h-6 w-6" src="images/icons8-rectangle-90.png" alt="Draw custom rectangle tool" />
           </button>
@@ -44,7 +59,9 @@
             type="button"
             alt="Draw custom polygon tool"
             id="polygon-button"
-            class="p-1.5 hover:bg-neutral-500/10"
+            class="p-1.5
+            dark:bg-neutral-900/90 dark:hover:bg-neutral-500/10
+            bg-neutral-100/90 hover:bg-neutral-100/60"
           >
             <img class="h-6 w-6" src="images/icons8-radar-plot-90.png" alt="Draw custom polygon tool" />
           </button>
@@ -53,7 +70,9 @@
           type="button"
           alt="Filter map tool"
           id="filter-button"
-          class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+          class="rounded-lg p-1.5 ring-1 shadow-sm
+          dark:bg-neutral-900/90 dark:hover:bg-neutral-500/10 dark:ring-neutral-700/50
+          bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
           <img class="h-6 w-6" src="images/icons8-filter-90.png" alt="Filter map tool" />
         </button>
@@ -61,7 +80,9 @@
           type="button"
           alt="Saved areas folder"
           id="folder-button"
-          class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+          class="rounded-lg p-1.5 ring-1 shadow-sm
+          dark:bg-neutral-900/90 dark:hover:bg-neutral-500/10 dark:ring-neutral-700/50
+          bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
           <img class="h-6 w-6" src="images/icons8-folder-90.png" alt="Saved areas folder" />
         </button>
@@ -69,7 +90,9 @@
           type="button"
           alt="Display histogram"
           id="histogram-button"
-          class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+          class="rounded-lg p-1.5 ring-1 shadow-sm
+          dark:bg-neutral-900/90 dark:hover:bg-neutral-500/10 dark:ring-neutral-700/50
+          bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
           <img class="h-6 w-6" src="images/icons8-futures-90.png" alt="Display histogram" />
         </button>
@@ -77,7 +100,9 @@
           type="button"
           alt="Change map theme"
           id="theme-button"
-          class="rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+          class="rounded-lg p-1.5 ring-1 shadow-sm
+          dark:bg-neutral-900/90 dark:hover:bg-neutral-500/10 dark:ring-neutral-700/50
+          bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
           <img class="h-6 w-6" src="images/moon-4-64.png" alt="Change map theme" />
         </button>
@@ -85,17 +110,12 @@
 
       <div class="w-40 pointer-events-auto max-h-fit grow-0">
         <div>
-          <!-- <button type="button" class="inline-flex w-full gap-x-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg
-          bg-neutral-950/50 hover:bg-neutral-900 ring-1 ring-neutral-700/50 #ring-inset shadow-lg #shadow-sm" id="layer-menu-button" aria-expanded="true" aria-haspopup="true">
-            Frames
-            <svg class="ml-auto #-mr-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-            </svg>
-          </button> -->
           <button
             type="button"
             alt="Dropdown list for different filters"
-            class="inline-flex w-full gap-x-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg bg-neutral-950/50 hover:bg-neutral-900 ring-1 ring-neutral-700/50 #ring-inset shadow-sm"
+            class="inline-flex w-full gap-x-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg shadow-sm ring-1
+            dark:bg-neutral-900/90 dark:hover:bg-neutral-900 dark:ring-neutral-700/50
+            bg-neutral-100/90 hover:bg-neutral-200/90 ring-neutral-300/50"
             id="layer-menu-button"
             aria-expanded="true"
             aria-haspopup="true"
@@ -121,7 +141,9 @@
         -->
         <div
           id="layer-menu-items-container"
-          class="z-20 mt-2 rounded-md overflow-hidden bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #ring-opacity-5 focus:outline-none shadow-sm"
+          class="z-20 mt-2 rounded-md overflow-hidden ring-1 focus:outline-none shadow-sm
+          dark:bg-neutral-900/90 dark:ring-neutral-700/50
+          bg-neutral-100/90 ring-neutral-200/50"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
@@ -132,7 +154,8 @@
             <!-- Active: "bg-neutral-900 text-neutral-200", Not Active: "text-neutral-100" -->
             <a
               href="#"
-              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
               role="menuitem"
               tabindex="-1"
               id="frames-item"
@@ -140,7 +163,8 @@
             >
             <a
               href="#"
-              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
               role="menuitem"
               tabindex="-1"
               id="heatmap-item"
@@ -148,7 +172,8 @@
             >
             <a
               href="#"
-              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
               role="menuitem"
               tabindex="-1"
               id="choropleth-item"
@@ -156,7 +181,8 @@
             >
             <a
               href="#"
-              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
               role="menuitem"
               tabindex="-1"
               id="isarithmic-item"
@@ -164,7 +190,8 @@
             >
             <a
               href="#"
-              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
               role="menuitem"
               tabindex="-1"
               id="dot-density-item"
@@ -172,7 +199,8 @@
             >
             <a
               href="#"
-              class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+              class="block px-4 py-2 text-sm
+              dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
               role="menuitem"
               tabindex="-1"
               id="frame-overlaps-item"
@@ -180,7 +208,8 @@
             >
             <a
             href="#"
-            class="hover:bg-neutral-800/40 block px-4 #px-3 py-2 text-sm"
+            class="block px-4 py-2 text-sm
+            dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
             role="menuitem"
             tabindex="-1"
             id="border-selection-item"
@@ -198,7 +227,11 @@
             type="text"
             name="price"
             id="search-bar"
-            class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-950/80"
+            class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm w-64 ring-1 shadow-sm focus:outline-none
+            dark:bg-neutral-900/90 bg-neutral-100/90
+            dark:focus:bg-neutral-950/80 focus:bg-white
+            dark:placeholder:text-neutral-400 placeholder:text-neutral-500
+            dark:ring-neutral-700/50 ring-neutral-300/90"
             placeholder="Search"
           />
           <div id="search-results-container" class="flex flex-col gap-1 overflow-y-auto max-h-96">
@@ -209,7 +242,9 @@
           type="button"
           alt="Search by placename"
           id="search-button"
-          class="pointer-events-auto max-h-fit rounded-lg p-2 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+          class="pointer-events-auto max-h-fit rounded-lg p-2 shadow-sm ring-1
+          dark:bg-neutral-900/90 dark:hover:bg-neutral-500/10 dark:ring-neutral-700/50
+          bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
           <img class="h-4 w-4" src="images/icons8-search-90.png" alt="Search by placename" />
         </button>
@@ -220,7 +255,10 @@
                 type="button"
                 alt="Increase zoom"
                 id="zoom-in-button"
-                class="pointer-events-auto z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+                class="pointer-events-auto z-20 rounded-lg p-1.5 ring-1 shadow-sm
+                dark:bg-neutral-900/90 bg-neutral-100/90
+                dark:ring-neutral-700/50 ring-neutral-300/90
+                dark:hover:bg-neutral-500/10 hover:bg-neutral-200/90"
               >
                 <img class="h-3 w-3" src="images/icons8-plus-90.png" alt="Increase zoom" />
               </button>
@@ -228,18 +266,25 @@
                 <div class="absolute w-full h-full py-3">
                   <div
                     id="zoom-scroll-button"
-                    class="pointer-events-auto relative w-full h-2 rounded-md -mt-1 bg-neutral-800 ring-1 ring-neutral-700"
+                    class="pointer-events-auto relative w-full h-2 rounded-md -mt-1 ring-1
+                    dark:bg-neutral-800 dark:ring-neutral-700
+                    bg-neutral-100/90 ring-neutral-300/90"
                   ></div>
                 </div>
                 <div
-                  class="pointer-events-auto w-1 h-full mx-auto bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800"
+                  class="pointer-events-auto w-1 h-full mx-auto ring-1
+                  dark:bg-neutral-900/90 dark:ring-neutral-700/50
+                  bg-neutral-200/90 ring-neutral-300/90"
                 ></div>
               </div>
               <button
                 type="button"
                 alt="Decrease zoom"
                 id="zoom-out-button"
-                class="pointer-events-auto z-20 rounded-lg p-1.5 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset #border #border-neutral-800 hover:bg-neutral-500/10 shadow-sm"
+                class="pointer-events-auto z-20 rounded-lg p-1.5 ring-1 shadow-sm
+                dark:bg-neutral-900/90 bg-neutral-100/90
+                dark:ring-neutral-700/50 ring-neutral-300/90
+                dark:hover:bg-neutral-500/10 hover:bg-neutral-200/90"
               >
                 <img class="h-3 w-3" src="images/icons8-minus-90.png" alt="Decrease zoom" />
               </button>
@@ -252,7 +297,7 @@
     <div class="absolute bottom-0 right-0 z-10 m-2 flex flex-row gap-2">
       <div
         id="coords-container"
-        class="py-1 px-6 #w-20 #h-10 rounded-sm bg-neutral-900/80 text-[9px] font-mono text-center"
+        class="py-1 px-6 #w-20 #h-10 rounded-sm bg-neutral-900/80 text-[9px] font-mono text-center dark:text-neutral-700 text-neutral-300"
       >
         <p id="coords" class="font-medium">-.000, -.000</p>
         <p id="scale" class="font-normal">10km</p>
@@ -260,7 +305,7 @@
     </div>
     <div 
       id="area-selection-info-container" 
-      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 right-20" 
+      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 top-20 right-20" 
       style="display: none"
     >
       <div class="flex flex-row gap-2 px-1">
@@ -314,7 +359,7 @@
 
 
     <div id="flyto-mission-info-container" class="absolute z-20 w-100 px-4 py-2 rounded-xl overflow-hidden text-sm
-    bg-neutral-950/50 ring-1 ring-neutral-700/50 top-20 start-20" style="display: none">
+    dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 top-20 start-20" style="display: none">
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Mission Data</h2>
         <button type="button" id="flyto-mission-info-close-button" class="ml-auto">
@@ -374,7 +419,7 @@
           type="text"
           name="saved-areas-search"
           id="saved-areas-search"
-          class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2 bg-neutral-600/50 ring-1 ring-neutral-500/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none #focus:ring-neutral-500 focus:bg-neutral-600/80"
+          class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2 bg-neutral-600/50 ring-1 ring-neutral-500/50 #ring-inset shadow-sm placeholder:text-neutral-500 focus:outline-none focus:bg-neutral-600/80"
           placeholder="Search"
         />
         <div id="saved-areas-list" class="h-52 overflow-y-scroll text-gray-500 dark:text-gray-400 flex flex-col gap-2">
@@ -399,7 +444,9 @@
     </div>
 
 
-    <div id="timeline-container" class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg">
+    <div id="timeline-container" class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 shadow-lg rounded-lg
+    opacity-70 #dark:bg-black bg-white
+    #dark:bg-neutral-900/90 #bg-white/90">
     </div>
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>

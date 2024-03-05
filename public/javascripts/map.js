@@ -48,7 +48,7 @@ const maxZoom = 12;
 
 let cursorMode;
 let layerMode;
-let currentTheme = 0;
+let currentTheme = 2;
 let allProducts = [];
 let allRenderableProducts = [];
 
@@ -846,7 +846,10 @@ function calculateMissionCoverage(allMissons, polygon) {
 const moveButtonEle = document.querySelector("#move-button");
 const rectangleButtonEle = document.querySelector("#rectangle-button");
 const polygonButtonEle = document.querySelector("#polygon-button");
-const cursorSelectedClasses = ["bg-neutral-800", "hover:bg-neutral-500/30"];
+const cursorSelectedClasses = [
+  "dark:bg-neutral-800", "dark:hover:bg-neutral-500/30",
+  "bg-neutral-200/90", "hover:bg-neutral-200/30",
+];
 
 function deselectAllCursors() {
   moveButtonEle.classList.remove(...cursorSelectedClasses);
@@ -1094,7 +1097,9 @@ const updateSearchResults = () => {
     const resultEle = document.createElement("button");
     resultEle.type = "button";
     resultEle.className =
-      "text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm hover:bg-neutral-950/80";
+      `text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 ring-1 shadow-sm
+      dark:bg-neutral-950/50 dark:ring-neutral-700/50 dark:hover:bg-neutral-950/80
+      bg-neutral-200/90 ring-neutral-300/90 hover:bg-neutral-300/80`;
     const resultSpanEle = document.createElement("span");
     resultSpanEle.textContent = result.LAD23NM;
     resultEle.onclick = () => {
