@@ -55,6 +55,7 @@ const MapStyle = {
   Dark: "dark-v11",
   Light: "light-v11",
   Satellite: "satellite-streets-v12",
+  Outdoors: "outdoors-v11"
 };
 
 const minZoom = 4;
@@ -270,9 +271,17 @@ const satelliteStyle = () => {
   map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
 };
 
+const topoStyle = () => {
+  mapStyle = MapStyle.Outdoors;
+  styleMenuButtonTextEle.textContent = "Topology";
+  closeStyleMenu();
+  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+};
+
 document.querySelector("#dark-item").onclick = darkStyle;
 document.querySelector("#light-item").onclick = lightStyle;
 document.querySelector("#satellite-item").onclick = satelliteStyle;
+document.querySelector("#totp-item").onclick = topoStyle;
 
 
 
