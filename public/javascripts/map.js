@@ -281,7 +281,7 @@ const topoStyle = () => {
 document.querySelector("#dark-item").onclick = darkStyle;
 document.querySelector("#light-item").onclick = lightStyle;
 document.querySelector("#satellite-item").onclick = satelliteStyle;
-document.querySelector("#totp-item").onclick = topoStyle;
+document.querySelector("#topo-item").onclick = topoStyle;
 
 
 
