@@ -2,20 +2,23 @@ import { displayMissionMenu } from "./mission-popout-menu.js";
 
 const darkTheme_ProductFillColours = {
   SCENE: "#fc685d", //LIGHT RED
+  BORDER: "#cc0000", //DARK RED
   DOCUMENT: "#219BF5", //BLUE
   IMAGERY: "#0085EC", //DARK BLUE
   VIDEO: "#008907", //GREEN
 };
 
 const outdoorsTheme_ProductFillColours = {
-  SCENE: "#00ff00", //LIGHT RED
+  SCENE: "#00ff00", //LIGHT GREEN
+  BORDER: "#6a329f", //PURPLE
   DOCUMENT: "#219BF5", //BLUE
   IMAGERY: "#0085EC", //DARK BLUE
   VIDEO: "#008907", //GREEN
 };
 
 const satelliteTheme_ProductFillColours = {
-  SCENE: "#ffffff", //LIGHT RED
+  SCENE: "#ffffff", //wHITE
+  BORDER: "#fc685d", //LIGHT RED
   DOCUMENT: "#219BF5", //BLUE
   IMAGERY: "#0085EC", //DARK BLUE
   VIDEO: "#008907", //GREEN
@@ -420,7 +423,7 @@ function addFramesLayers(title) {
       visibility: "none",
     },
     paint: {
-      "fill-color": productFillColours["SCENE"],
+      "fill-color": productFillColours[mapStyle]["SCENE"],
       "fill-opacity": 0.2,
     },
   });
@@ -509,18 +512,28 @@ function addChoroplethLayers(countryPolygons, regionPolygons) {
 
 function addBorderLayer(title) {
   map.addLayer({
-    id: `${title}-border`,
+    id: `${title}-border-fill`,
+    type: "fill",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours[mapStyle]["SCENE"],
+      "fill-opacity": 0.2,
+    },
+  });
+  map.addLayer({
+    id: `${title}-border-outline`,
     type: "line",
     source: title,
     layout: {
       visibility: "visible",
     },
     paint: {
-      // "fill-color": productFillColours["DOCUMENT"],
-      // "fill-opacity": 0.2,
-      "line-width": 0.5,
+      "line-width": 1.2,
       "line-opacity": 0.4,
-      "line-color": "#ffffff",
+      "line-color": productFillColours[mapStyle]["BORDER"],
     },
   });
 }
@@ -977,7 +990,8 @@ const hideAllLayers = () => {
   map.setLayoutProperty("product-points-dot-density", "visibility", "none");
   map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
   map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
-  map.setLayoutProperty("uk-land-border", "visibility", "none");
+  map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
+  map.setLayoutProperty("uk-land-border-outline", "visibility", "none");
   //map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 };
 
@@ -1036,7 +1050,8 @@ const borderSelectionMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  map.setLayoutProperty("uk-land-border", "visibility", "visible");
+  map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
+  map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
 };
 
 document.querySelector("#frames-item").onclick = framesMode;
