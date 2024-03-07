@@ -22,8 +22,8 @@ const satelliteTheme_ProductFillColours = {
 };
 
 const productFillColours = {
-  "dark-v11": darkTheme_ProductFillColours, 
-  "satellite-streets-v12": satelliteTheme_ProductFillColours, 
+  "dark-v11": darkTheme_ProductFillColours,
+  "satellite-streets-v12": satelliteTheme_ProductFillColours,
   "outdoors-v11": outdoorsTheme_ProductFillColours,
   "light-v11": outdoorsTheme_ProductFillColours,
 };
@@ -55,7 +55,7 @@ const MapStyle = {
   Dark: "dark-v11",
   Light: "light-v11",
   Satellite: "satellite-streets-v12",
-  Outdoors: "outdoors-v11"
+  Outdoors: "outdoors-v11",
 };
 
 const minZoom = 4;
@@ -207,7 +207,7 @@ map.on("load", async () => {
   loaded = true; //used so style is not loaded before data is requested
 });
 
-map.on('style.load', () => {
+map.on("style.load", () => {
   if (loaded) {
     addProductsToMap();
     framesMode();
@@ -226,8 +226,6 @@ function closeInfo() {
 
 let infoMoveButton = document.getElementById("move-button");
 infoMoveButton.addEventListener("click", moveMap);
-
-
 
 const styleMenuButtonEle = document.querySelector("#style-menu-button");
 const styleMenuItemsContainerEle = document.querySelector("#style-menu-items-container");
@@ -283,8 +281,6 @@ document.querySelector("#light-item").onclick = lightStyle;
 document.querySelector("#satellite-item").onclick = satelliteStyle;
 document.querySelector("#topo-item").onclick = topoStyle;
 
-
-
 document.querySelector("#theme-button").onclick = () => setDarkMode(!darkMode);
 
 function setDarkMode(enabled) {
@@ -296,7 +292,6 @@ function setDarkMode(enabled) {
     document.body.classList.remove("dark");
   }
 }
-
 
 map.addControl(draw);
 draw.changeMode("simple_select"); //default not draw
@@ -919,8 +914,10 @@ const moveButtonEle = document.querySelector("#move-button");
 const rectangleButtonEle = document.querySelector("#rectangle-button");
 const polygonButtonEle = document.querySelector("#polygon-button");
 const cursorSelectedClasses = [
-  "dark:bg-neutral-700", "dark:hover:bg-neutral-600/90",
-  "bg-neutral-200/90", "hover:bg-neutral-200/30",
+  "dark:bg-neutral-700",
+  "dark:hover:bg-neutral-600/90",
+  "bg-neutral-200/90",
+  "hover:bg-neutral-200/30",
 ];
 
 function deselectAllCursors() {
@@ -1074,7 +1071,7 @@ const openSavedAreas = () => {
   savedAreas.forEach((savedArea) => {
     const savedAreaContainerEle = document.createElement("div");
     savedAreaContainerEle.className =
-      "p-1.5 rounded-md bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex";
+      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
     const savedAreaCheckboxEle = document.createElement("input");
     savedAreaCheckboxEle.type = "checkbox";
     savedAreaCheckboxEle.name = "saved-area-checkbox";
@@ -1168,8 +1165,7 @@ const updateSearchResults = () => {
   results.forEach((result) => {
     const resultEle = document.createElement("button");
     resultEle.type = "button";
-    resultEle.className =
-      `text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 ring-1 ring-inset shadow-sm
+    resultEle.className = `text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 ring-1 ring-inset shadow-sm
       dark:bg-neutral-950/50 dark:ring-neutral-700/50 dark:hover:bg-neutral-950/80
       bg-neutral-100/80 ring-neutral-300/90 hover:bg-neutral-200/90`;
     const resultSpanEle = document.createElement("span");
@@ -1186,7 +1182,3 @@ const updateSearchResults = () => {
 
 searchBarEle.oninput = updateSearchResults;
 document.querySelector("#search-button").onclick = updateSearchResults;
-
-
-
-
