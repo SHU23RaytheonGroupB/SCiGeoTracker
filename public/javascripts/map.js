@@ -1088,9 +1088,12 @@ const openSavedAreas = () => {
     savedAreaViewButtonEle.name = "saved-area-view-button";
     savedAreaEditButtonEle.name = "saved-area-edit-button";
     savedAreaDeleteButtonEle.name = "saved-area-delete-button";
-    savedAreaViewButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
-    savedAreaEditButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
-    savedAreaDeleteButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
+    savedAreaViewButtonEle.className =
+      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
+    savedAreaEditButtonEle.className =
+      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
+    savedAreaDeleteButtonEle.className =
+      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
     const savedAreaViewButtonImageEle = document.createElement("img");
     const savedAreaEditButtonImageEle = document.createElement("img");
     const savedAreaDeleteButtonImageEle = document.createElement("img");
