@@ -312,11 +312,38 @@ function drawPoly() {
 }
 
 const coordEle = document.querySelector("#coords");
-const zoomScrollEle = document.querySelector("#zoom-scroll-button");
+const zoomScrollButtonEle = document.querySelector("#zoom-scroll-button");
 
 function renderOverlaysZoom() {
   const zoomPercentage = ((map.getZoom() - minZoom) / (maxZoom - minZoom)) * 100;
-  zoomScrollEle.style.top = `${100 - zoomPercentage}%`;
+  zoomScrollButtonEle.style.top = `${100 - zoomPercentage}%`;
+}
+
+var barTop = 0, barBottom = 0;
+zoomScrollButtonEle.onmousedown = dragMouseDown;
+
+function setZoomByPercentage(percentage) {
+  percentage = Math.min(100, Math.max(0, percentage))
+  map.setZoom(percentage / 100 * (maxZoom - minZoom) + minZoom);
+}
+
+function dragMouseDown(e) {
+  e.preventDefault();
+  const boundingRect = zoomScrollButtonEle.parentElement.getBoundingClientRect();
+  barTop = boundingRect.top + 12;
+  barBottom = boundingRect.bottom - 12;
+  document.onmouseup = closeDragElement;
+  document.onmousemove = elementDrag;
+}
+
+function elementDrag(e) {
+  e.preventDefault();
+  setZoomByPercentage((barBottom - e.clientY) / (barBottom - barTop) * 100);
+}
+
+function closeDragElement() {
+  document.onmouseup = null;
+  document.onmousemove = null;
 }
 
 map.on("mousemove", (ev) => {
