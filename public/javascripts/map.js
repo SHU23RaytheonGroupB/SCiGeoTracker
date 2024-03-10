@@ -1,4 +1,3 @@
-import { addListener } from "nodemon";
 import { displayMissionMenue } from "./mission-popout-menue.js";
 
 let productFillColours = {
@@ -971,17 +970,20 @@ const savedAreasSearch = document.querySelector("#saved-areas-search");
 let searchedAreas = savedAreas;
 
 const savedSearchChanged = () => {
+  console.log("here");
   if(savedAreasSearch.value.length == 0){
     searchedAreas = savedAreas;
+    openSavedAreas();
   }
   else{
     let tempArray = [];
     savedAreas.forEach(area => {
-      if (area.name.includes(savedAreasSearch.textContent) == true){
+      if (area.name.includes(savedAreasSearch.value) == true){
         tempArray.push(area);
       }
     });
     if (tempArray != searchedAreas) {
+      console.log(searchedAreas);
       searchedAreas = tempArray;
       openSavedAreas();
     }
@@ -1119,7 +1121,15 @@ const exportFiles = () => {
     alert("No areas selected"); //maybe change this for something less intrusive
   }
   else{
-    
+    selectedAreas.forEach(area => {
+      console.log("hi");
+      var link = document.createElement("a");
+      //link.href
+      link.setAttribute = ('download', area);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    });
   }
 }
 const popupMessage = () => {
