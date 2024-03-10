@@ -1,3 +1,4 @@
+import { addListener } from "nodemon";
 import { displayMissionMenue } from "./mission-popout-menue.js";
 
 let productFillColours = {
@@ -965,11 +966,35 @@ if (savedAreas.length == 0) {
 
 const savedAreasContainerEle = document.querySelector("#saved-areas-container");
 const savedAreasListEle = document.querySelector("#saved-areas-list");
+const savedAreasSearch = document.querySelector("#saved-areas-search");
+
+let searchedAreas = savedAreas;
+
+const savedSearchChanged = () => {
+  if(savedAreasSearch.value.length == 0){
+    searchedAreas = savedAreas;
+  }
+  else{
+    let tempArray = [];
+    savedAreas.forEach(area => {
+      if (area.name.includes(savedAreasSearch.textContent) == true){
+        tempArray.push(area);
+      }
+    });
+    if (tempArray != searchedAreas) {
+      searchedAreas = tempArray;
+      openSavedAreas();
+    }
+  }
+}
+
+savedAreasSearch.addEventListener("change", savedSearchChanged)
+
 
 let savedAreasOpen = false;
 const openSavedAreas = () => {
   savedAreasListEle.replaceChildren();
-  savedAreas.forEach((savedArea) => {
+  searchedAreas.forEach((savedArea) => {
     var tempContent = "";
     const savedAreaContainerEle = document.createElement("div");
     savedAreaContainerEle.className = "p-1.5 rounded-md bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex";
@@ -1030,15 +1055,15 @@ const openSavedAreas = () => {
         savedAreaNameEle.contentEditable = 'true';
         savedAreaNameEle.focus();
         //savedAreaNameEle.select(); either highlight or put cursor at end
-        savedAreaEditButtonImageEle.src = "images/icons8-tick-30.png"; //CHANGE TO TICK - ASK RYAN 
-        savedAreaViewButtonImageEle.src = "images/icons8-cross-30.png"; //CHANGE TO CROSS
+        savedAreaEditButtonImageEle.src = "images/icons8-tick-30.png";
+        savedAreaViewButtonImageEle.src = "images/icons8-cross-30.png";
       }
       else{
         savedAreaNameEle.contentEditable = 'false';
         savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
         savedAreaViewButtonImageEle.src = "images/icons8-map-90.png";
         savedAreaNameEle.textContent = savedAreaNameEle.textContent.trim();
-        if(savedAreaNameEle.textContent.length != 0){        
+        if(savedAreaNameEle.textContent.length != 0){
           savedArea.name = savedAreaNameEle.textContent;
           saveSavedAreas();
         }
@@ -1048,9 +1073,11 @@ const openSavedAreas = () => {
       }
     };
     savedAreaDeleteButtonEle.onclick = () => {
-      savedAreas.splice(savedAreas.indexOf(savedArea), 1)
-      saveSavedAreas();
-      openSavedAreas();
+      if(confirm("Confirm deletion?") == true){
+        savedAreas.splice(savedAreas.indexOf(savedArea), 1)
+        saveSavedAreas();
+        openSavedAreas();
+      }
     };
     savedAreaContainerEle.append(savedAreaViewButtonEle);
     savedAreaContainerEle.append(savedAreaEditButtonEle);
