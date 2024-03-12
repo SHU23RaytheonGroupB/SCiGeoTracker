@@ -16,6 +16,7 @@
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   </head>
 
   <body class="m-0 p-0 text-neutral-300 fill-neutral-500 h-screen max-h-screen">
@@ -386,13 +387,10 @@
                 document.getElementById('saved-areas-upload').click();
               }
             </script>
-
-          
-          <button
+            <button
             type="button"
             id="saved-areas-export-button"
-            class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
-            onclick= "downloadFiles">
+            class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50">
             Export GeoJSON
           </button>
         </div>

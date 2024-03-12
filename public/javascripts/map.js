@@ -1121,23 +1121,13 @@ const exportFiles = () => {
     alert("No areas selected"); //maybe change this for something less intrusive
   }
   else{
+    
     selectedAreas.forEach(area => {
-      console.log("hi");
-      var link = document.createElement("a");
-      //link.href
-      link.setAttribute = ('download', area);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      var file = new File(["testfile"], area.name, {type: "text/plain;charset=utf-8"});
+      FileSaver.saveAs(file);
     });
   }
 }
-const popupMessage = () => {
-  let popup = document.getElementById("#snackbar-no-select");
-  popup.className = "show";
-  setTimeout(function(){ popup.className = popup.className.replace("show", ""); }, 3000);
-}
-
 
 document.querySelector("#saved-areas-upload").oninput = importFiles;
 document.querySelector("#saved-areas-export-button").onclick = exportFiles;
