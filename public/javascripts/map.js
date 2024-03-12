@@ -533,6 +533,77 @@ export async function circleLinkZoom(d) {
   // });
 }
 
+const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
+
+function updateArea(e) {
+  //USED FOR DRAW POLYGON
+  const data = draw.getAll();
+  let polyCoordinates = [];
+  let polyCoordinatesLat = [];
+  let polyCoordinatesLog = [];
+  for (let i = 0; i < data.features[0].geometry.coordinates[0].length; i++) {
+    polyCoordinates.push(data.features[0].geometry.coordinates[0][i]);
+    polyCoordinatesLog.push(data.features[0].geometry.coordinates[0][i][1]);
+    polyCoordinatesLat.push(data.features[0].geometry.coordinates[0][i][0]);
+  }
+  //bounding box is (Latt, Long) and has a padding of (±0.8 and ±0.9)
+  let boundingBox = [
+    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
+    [Math.min(...polyCoordinatesLat) - 0.8, Math.max(...polyCoordinatesLog) + 0.5],
+    [Math.max(...polyCoordinatesLat) + 0.8, Math.max(...polyCoordinatesLog) + 0.5],
+    [Math.max(...polyCoordinatesLat) + 0.8, Math.min(...polyCoordinatesLog) - 0.5],
+    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
+  ];
+  // map.addSource('title', {
+  //   'type': "geojson",
+  //   'data' : {
+  //     'type': "Feature",
+  //     'geometry': {
+  //       'type': 'Polygon',
+  //       'coordinates': [
+  //         boundingBox
+  //       ]
+  //     }
+  //   },
+  // });
+  // map.addLayer({
+  //   id: 'title' + "fill",
+  //   type: "fill",
+  //   source: "title", // reference the data source
+  //   layout: {},
+  //   paint: {
+  //     "fill-color": "#FF0000",
+  //     "fill-opacity": 0.7,
+  //   },
+  // });
+  //console.log(boundingBox);
+  let containedMissions = missionsWithinPolygon(missionsWithinBoundingBox(allProducts, boundingBox), polyCoordinates);
+
+  if (data.features.length > 0) {
+    const totalArea = turf.area(data) / 1000; //divide by 1000 to get square km
+    const totalAreaRounded = Math.round(totalArea * 100) / 100; //convert area to 2 d.p.
+    const coveredArea = calculateMissionCoverage(containedMissions, polyCoordinates);
+    const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
+    const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
+    const missionCount = containedMissions.length;
+    areaSelectionInfoContainerEle.style.display = "inline";
+    const totalAreaContainerEle = document.querySelector("#selection-total-area-value");
+    const coveredAreaContainerEle = document.querySelector("#selection-covered-area-value");
+    const uncoveredAreaContainerEle = document.querySelector("#selection-uncovered-area-value");
+    const coveragePercentageContainerEle = document.querySelector("#selection-coverage-percentage-value");
+    const missionCountContainerEle = document.querySelector("#selection-total-missions-value");
+    totalAreaContainerEle.textContent = totalAreaRounded;
+    coveredAreaContainerEle.textContent = coveredArea;
+    uncoveredAreaContainerEle.textContent = uncoveredArea;
+    coveragePercentageContainerEle.textContent = coveragePercentage;
+    missionCountContainerEle.textContent = missionCount;
+  } else {
+    areaSelectionInfoContainerEle.style.display = "none";
+    //if (e.type !== 'draw.delete')
+    //alert('Click the map to draw a polygon.');
+  }
+}
+
 function addDotLayer(title) {
   map.addLayer({
     id: `${title}-dot-density`,
@@ -819,14 +890,72 @@ const updateSearchResults = () => {
       bg-neutral-100/80 ring-neutral-300/90 hover:bg-neutral-200/90`;
     const resultSpanEle = document.createElement("span");
     resultSpanEle.textContent = result.LAD23NM;
-    resultEle.onclick = () => {
-      searchResultsContainerEle.replaceChildren();
-      alert(result.LAD23CD);
-    };
+    resultEle.onclick = () => gotoFeatureByResult(result);
     // resultEle.querySelector("span").textContent = result.LAD23NM;
     resultEle.append(resultSpanEle);
     searchResultsContainerEle.append(resultEle);
   });
+};
+
+
+const areaViewInfoContainerEle = document.querySelector("#area-view-info-container");
+document.querySelector("#area-selection-info-close-button").onclick = () => {
+  areaViewInfoContainerEle.style.display = "none";
+  map.setMaxBounds(null);
+  map.removeLayer("mask-fill");
+  map.removeLayer("mask-outline");
+  map.removeSource("mask");
+};
+
+const gotoFeatureByResult = (result) => {
+  searchResultsContainerEle.replaceChildren();
+  let feature;
+  boundariesByRegion.features.forEach((x) => {
+    if (x.properties.LAD23CD == result.LAD23CD) {
+      feature = x;
+    }
+  });
+  const boundingBox = turf.bbox(feature);
+  map.addSource("mask", {
+    "type": "geojson",
+    "data": turf.mask(feature),
+  });
+  map.addLayer({
+    "id": "mask-fill",
+    "source": "mask",
+    "type": "fill",
+    "paint": {
+      "fill-color": "black",
+      'fill-opacity': 0.5
+    }
+  });
+  map.addLayer({
+    id: "mask-outline",
+    type: "line",
+    source: "mask",
+    paint: {
+      "line-width": 1.2,
+      "line-opacity": 0.4,
+      "line-color": "white",
+    },
+  });
+  const bounds = [boundingBox.slice(0, 2), boundingBox.slice(2, 4)];
+  map.fitBounds(bounds, {
+    padding: 50,
+    animate: false
+  });
+  map.setMaxBounds(map.getBounds());
+  areaSelectionInfoContainerEle.style.display = "inline";
+  const totalAreaContainerEle = document.querySelector("#view-total-area-value");
+  const coveredAreaContainerEle = document.querySelector("#view-covered-area-value");
+  const uncoveredAreaContainerEle = document.querySelector("#view-uncovered-area-value");
+  const coveragePercentageContainerEle = document.querySelector("#view-coverage-percentage-value");
+  const missionCountContainerEle = document.querySelector("#view-total-missions-value");
+  totalAreaContainerEle.textContent = totalAreaRounded;
+  coveredAreaContainerEle.textContent = coveredArea;
+  uncoveredAreaContainerEle.textContent = uncoveredArea;
+  coveragePercentageContainerEle.textContent = coveragePercentage;
+  missionCountContainerEle.textContent = missionCount;
 };
 
 searchBarEle.oninput = updateSearchResults;
