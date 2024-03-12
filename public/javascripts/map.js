@@ -1039,7 +1039,6 @@ const openSavedAreas = () => {
       }
     }
     savedAreaViewButtonEle.onclick = () => {
-      alert(savedArea.name);
       if(savedAreaNameEle.contentEditable == 'true'){
         savedAreaNameEle.contentEditable = 'false';
         savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
@@ -1047,7 +1046,35 @@ const openSavedAreas = () => {
         savedAreaNameEle.textContent = tempContent;
       }
       else{
-
+        map.addSource(savedArea.name + "-CUSTOM", {
+          type: 'geojson',
+          data: savedArea.geometry
+      });
+        map.addLayer({
+          id: `${savedArea.name + "-CUSTOM"}-fill`,
+          type: "fill",
+          source: savedArea.name + "-CUSTOM",
+          layout: {
+            visibility: "visible",
+          },
+          paint: {
+            "fill-color": productFillColours["SCENE"],
+            "fill-opacity": 0.2,
+          },
+        });
+        map.addLayer({
+          id: `${savedArea.name + "-CUSTOM"}-lines`,
+          type: "line",
+          source: savedArea.name + "-CUSTOM",
+          layout: {
+            visibility: "visible",
+          },
+          paint: {
+            "line-color": productOutlineColours["SCENE"],
+            "line-width": 1,
+          },
+        });
+        closeSavedAreas();
       }
     };
     savedAreaEditButtonEle.onclick = () => {
@@ -1075,10 +1102,16 @@ const openSavedAreas = () => {
       }
     };
     savedAreaDeleteButtonEle.onclick = () => {
-      if(confirm("Confirm deletion?") == true){
-        savedAreas.splice(savedAreas.indexOf(savedArea), 1)
-        saveSavedAreas();
-        openSavedAreas();
+      var message = "Confirm deletion?";
+      if(selectedAreas.length != 0){message += " Multiple items selected."}
+
+      if(confirm(message) == true){
+        selectedAreas.push(savedArea);
+        selectedAreas.forEach(area => {
+          savedAreas.splice(savedAreas.indexOf(area), 1);
+        });
+        selectedAreas = [];
+        refreshSavedScreen();
       }
     };
     savedAreaContainerEle.append(savedAreaViewButtonEle);
@@ -1099,20 +1132,33 @@ const importFiles = () => {
     var successes = 0;
     files.forEach(file => {
       if(file.name.endsWith(".geojson")){
-        const reader = new FileReader();
-        savedAreas.push({
-          name: file.name.slice(0, file.name.length - 8),
-          type: 'geojson',
-          geometry: reader.readAsText(file),
-        });
+        var reader = new FileReader();
+        reader.onload = function() {    
+          var name = file.name.slice(0, file.name.length - 8);
+          var tempName = name;
+          var extra = 0;
+          for(var x = 0; x < savedAreas.length; x++){
+            if(tempName == savedAreas[x].name){
+              extra++;
+              tempName = name + "(" + extra + ")";
+              x = 0;
+            }
+          }
+          savedAreas.push({
+            name: tempName,
+            type: 'geojson',
+            geometry: JSON.parse(reader.result),
+          });
+          refreshSavedScreen();
+        }
+        reader.readAsText(file)
         successes++;
       }
     });
     if(successes != files.length){
       alert("Some or all files uploaded were not compatible.\nPlease only upload GEOJSON files.");
     }
-    saveSavedAreas();
-    openSavedAreas();
+    
   }
 }
 
@@ -1121,12 +1167,18 @@ const exportFiles = () => {
     alert("No areas selected"); //maybe change this for something less intrusive
   }
   else{
+    //console.log(selectedAreas);
     
     selectedAreas.forEach(area => {
-      var file = new File(["testfile"], area.name, {type: "text/plain;charset=utf-8"});
-      FileSaver.saveAs(file);
+      var file = new File([JSON.stringify(area.geometry)], area.name + ".geojson", {type: "geojson"});
+      window.saveAs(file);
     });
   }
+}
+
+const refreshSavedScreen = () => {
+  saveSavedAreas();
+  openSavedAreas();
 }
 
 document.querySelector("#saved-areas-upload").oninput = importFiles;
