@@ -1,23 +1,31 @@
-import { displayMissionMenue } from "./mission-popout-menue.js";
+import { displayMissionMenu } from "./mission-popout-menu.js";
+import { updateUkArea, updateArea, draw } from "./area-calculations.js";
 
-let productFillColours = {
-  SCENE: "#A2A2A2", //GREY
-  DOCUMENT: "#219BF5", //blue
-  IMAGERY: "#0085EC", //slightly darker blue
-  VIDEO: "#008907", //green
+const darkTheme_ProductFillColours = {
+  SCENE: "#fc685d", //LIGHT RED
+  BORDER: "#cc0000", //DARK RED
 };
 
-let productOutlineColours = {
+const outdoorsTheme_ProductFillColours = {
+  SCENE: "#00ff00", //LIGHT GREEN
+  BORDER: "#6a329f", //PURPLE
+};
+
+const satelliteTheme_ProductFillColours = {
+  SCENE: "#ffffff", //wHITE
+  BORDER: "#fc685d", //LIGHT RED
+};
+
+const productFillColours = {
+  "dark-v11": darkTheme_ProductFillColours,
+  "satellite-streets-v12": satelliteTheme_ProductFillColours,
+  "outdoors-v11": outdoorsTheme_ProductFillColours,
+  "light-v11": outdoorsTheme_ProductFillColours,
+};
+
+const productOutlineColours = {
   SCENE: "#000000", //BLACK
-  DOCUMENT: "#219BF5", //blue
-  IMAGERY: "#0085EC", //slightly darker blue
-  VIDEO: "#008907", //green
-};
-
-const CursorMode = {
-  Move: "Move",
-  Rectangle: "Rectangle",
-  Polygon: "Polygon",
+  DOCUMENT: "#000000", //BLACK
 };
 
 const LayerMode = {
@@ -30,12 +38,29 @@ const LayerMode = {
   BorderSelection: "Border Selection",
 };
 
+const CursorMode = {
+  Move: "Move",
+  Rectangle: "Rectangle",
+  Polygon: "Polygon",
+};
+
+const MapStyle = {
+  Dark: "dark-v11",
+  Light: "light-v11",
+  Satellite: "satellite-streets-v12",
+  Outdoors: "outdoors-v11",
+};
+
 const minZoom = 4;
 const maxZoom = 12;
 
 let cursorMode;
 let layerMode;
+let mapStyle = MapStyle.Dark;
 let allProducts = [];
+let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
+
+setDarkMode(darkMode);
 
 const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
 const boundariesByCountry = await getGeojsonFile("../boundaries/UK-by-country.json");
@@ -52,7 +77,7 @@ async function getGeojsonFile(fileLocation) {
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 const map = new mapboxgl.Map({
   container: "map", // container ID
-  style: "mapbox://styles/mapbox/dark-v11", // style URL
+  style: `mapbox://styles/mapbox/${mapStyle}`, // style URL
   center: [-5, 55], // starting position
   zoom: 5, // starting zoom
   minZoom: minZoom,
@@ -60,103 +85,14 @@ const map = new mapboxgl.Map({
   attributionControl: false,
 });
 
-const draw = new MapboxDraw({
-  //USED FOR DRAW POLYGON
-  displayControlsDefault: false,
-  // Select which mapbox-gl-draw control buttons to add to the map.
-  controls: {
-    //polygon: true,
-    //trash: true,
-  },
-  // Set mapbox-gl-draw to draw by default.
-  // The user does not have to click the polygon control button first.
-  defaultMode: "draw_polygon",
-  userProperties: true,
-  styles: [
-    {
-      id: "gl-draw-polygon-fill-inactive",
-      type: "fill",
-      filter: ["all", ["==", "active", "false"], ["==", "$type", "Polygon"], ["!=", "mode", "static"]],
-      paint: { "fill-color": "#FFFFFF", "fill-opacity": 0.1 },
-    },
-    {
-      id: "gl-draw-polygon-fill-active",
-      type: "fill",
-      filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
-      paint: { "fill-color": "#FFFFFF", "fill-opacity": 0.1 },
-    },
-    {
-      id: "gl-draw-polygon-midpoint",
-      type: "circle",
-      filter: ["all", ["==", "$type", "Point"], ["==", "meta", "midpoint"]],
-      paint: { "circle-radius": 3, "circle-color": "#ffffff" },
-    },
-    {
-      id: "gl-draw-polygon-and-line-vertex-stroke-inactive",
-      type: "circle",
-      filter: ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"], ["!=", "mode", "static"]],
-      paint: { "circle-radius": 3, "circle-color": "#ffffff" },
-    },
-    {
-      id: "gl-draw-polygon-stroke-inactive",
-      type: "line",
-      filter: ["all", ["==", "active", "false"], ["==", "$type", "Polygon"], ["!=", "mode", "static"]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ff0000", "line-width": 2 },
-    },
-    {
-      id: "gl-draw-polygon-stroke-active",
-      type: "line",
-      filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ff0000", "line-width": 2, "line-opacity": 0.5 },
-    },
-    {
-      id: "gl-draw-line-inactive",
-      type: "line",
-      filter: ["all", ["==", "active", "false"], ["==", "$type", "LineString"], ["!=", "mode", "static"]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#3bb2d0", "line-width": 2 },
-    },
-    {
-      id: "gl-draw-line-active",
-      type: "line",
-      filter: ["all", ["==", "$type", "LineString"], ["==", "active", "true"]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ff0000", "line-width": 2, "line-opacity": 0.5 },
-    },
-    {
-      id: "gl-draw-point-point-stroke-inactive",
-      type: "circle",
-      filter: [
-        "all",
-        ["==", "active", "false"],
-        ["==", "$type", "Point"],
-        ["==", "meta", "feature"],
-        ["!=", "mode", "static"],
-      ],
-      paint: { "circle-radius": 5, "circle-opacity": 1, "circle-color": "#fff" },
-    },
-    {
-      id: "gl-draw-point-stroke-active",
-      type: "circle",
-      filter: ["all", ["==", "$type", "Point"], ["==", "active", "true"], ["!=", "meta", "midpoint"]],
-      paint: { "circle-radius": 5, "circle-color": "#ffffff" },
-    },
-    {
-      id: "gl-draw-point-active",
-      type: "circle",
-      filter: ["all", ["==", "$type", "Point"], ["!=", "meta", "midpoint"], ["==", "active", "true"]],
-      paint: { "circle-radius": 3, "circle-color": "#ff0000" },
-    },
-  ],
-});
-
 import { Timeline } from "./zoomable-timeline-with-items.js";
 
 //Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
 //this will determine all calls for any functions not to be triggered on instant load of page
+let loaded = false;
+
 map.on("load", async () => {
+  darkStyle();
   renderOverlaysZoom();
   await initialiseProducts();
 
@@ -167,6 +103,15 @@ map.on("load", async () => {
   const until = END_DATE;
   const timeline = Timeline(map, { from, until });
   document.querySelector("#timeline-container").appendChild(timeline.element);
+
+  loaded = true; //used so style is not loaded before data is requested
+});
+
+map.on("style.load", () => {
+  if (loaded) {
+    addProductsToMap();
+    framesMode();
+  }
 });
 
 let polygonButton = document.getElementById("polygon-button");
@@ -175,35 +120,128 @@ polygonButton.addEventListener("click", drawPoly);
 let infoCloseButton = document.getElementById("area-selection-info-close-button");
 infoCloseButton.addEventListener("click", closeInfo);
 
-let infoMoveButton = document.getElementById("move-button");
-infoCloseButton.addEventListener("click", moveMap);
-
 function closeInfo() {
   document.getElementById("area-selection-info-container").style.display = "none";
 }
 
+let infoMoveButton = document.getElementById("move-button");
+infoMoveButton.addEventListener("click", moveMap);
+
+const styleMenuButtonEle = document.querySelector("#style-menu-button");
+const styleMenuItemsContainerEle = document.querySelector("#style-menu-items-container");
+const styleMenuButtonTextEle = document.querySelector("#style-menu-button-text");
+let styleMenuOpen = false;
+const openStyleMenu = () => {
+  styleMenuOpen = true;
+  styleMenuItemsContainerEle.style.display = null;
+  styleMenuItemsContainerEle.focus();
+};
+const closeStyleMenu = () => {
+  styleMenuOpen = false;
+  styleMenuItemsContainerEle.style.display = "none";
+};
+styleMenuButtonEle.onclick = () => {
+  if (!styleMenuOpen) openStyleMenu();
+  else closeStyleMenu();
+};
+styleMenuItemsContainerEle.focusout = () => {
+  closeStyleMenu();
+};
+
+const darkStyle = () => {
+  mapStyle = MapStyle.Dark;
+  styleMenuButtonTextEle.textContent = "Dark";
+  closeStyleMenu();
+  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+};
+
+const lightStyle = () => {
+  mapStyle = MapStyle.Light;
+  styleMenuButtonTextEle.textContent = "Light";
+  closeStyleMenu();
+  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+};
+
+const satelliteStyle = () => {
+  mapStyle = MapStyle.Satellite;
+  styleMenuButtonTextEle.textContent = "Satellite";
+  closeStyleMenu();
+  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+};
+
+const topoStyle = () => {
+  mapStyle = MapStyle.Outdoors;
+  styleMenuButtonTextEle.textContent = "Topology";
+  closeStyleMenu();
+  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
+};
+
+document.querySelector("#dark-item").onclick = darkStyle;
+document.querySelector("#light-item").onclick = lightStyle;
+document.querySelector("#satellite-item").onclick = satelliteStyle;
+document.querySelector("#topo-item").onclick = topoStyle;
+
+document.querySelector("#theme-button").onclick = () => setDarkMode(!darkMode);
+
+function setDarkMode(enabled) {
+  darkMode = enabled;
+  sessionStorage.setItem("dark", darkMode ? "true" : "false");
+  if (darkMode) {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+}
+
 map.addControl(draw);
-draw.changeMode('simple_select'); //default not draw
+draw.changeMode("simple_select"); //default not draw
 
 function moveMap() {
-  draw.changeMode('simple_select');
+  draw.changeMode("simple_select");
 }
 
 function drawPoly() {
-  draw.changeMode('draw_polygon');
+  draw.changeMode("draw_polygon");
   map.on("draw.create", updateArea);
   map.on("draw.delete", updateArea);
   map.on("draw.update", updateArea);
   map.on("draw.selectionchange", updateArea);
 }
 
-
 const coordEle = document.querySelector("#coords");
-const zoomScrollEle = document.querySelector("#zoom-scroll-button");
+const zoomScrollButtonEle = document.querySelector("#zoom-scroll-button");
 
 function renderOverlaysZoom() {
   const zoomPercentage = ((map.getZoom() - minZoom) / (maxZoom - minZoom)) * 100;
-  zoomScrollEle.style.top = `${100 - zoomPercentage}%`;
+  zoomScrollButtonEle.style.top = `${100 - zoomPercentage}%`;
+}
+
+var barTop = 0,
+  barBottom = 0;
+zoomScrollButtonEle.onmousedown = dragMouseDown;
+
+function setZoomByPercentage(percentage) {
+  percentage = Math.min(100, Math.max(0, percentage));
+  map.setZoom((percentage / 100) * (maxZoom - minZoom) + minZoom);
+}
+
+function dragMouseDown(e) {
+  e.preventDefault();
+  const boundingRect = zoomScrollButtonEle.parentElement.getBoundingClientRect();
+  barTop = boundingRect.top + 12;
+  barBottom = boundingRect.bottom - 12;
+  document.onmouseup = closeDragElement;
+  document.onmousemove = elementDrag;
+}
+
+function elementDrag(e) {
+  e.preventDefault();
+  setZoomByPercentage(((barBottom - e.clientY) / (barBottom - barTop)) * 100);
+}
+
+function closeDragElement() {
+  document.onmouseup = null;
+  document.onmousemove = null;
 }
 
 map.on("mousemove", (ev) => {
@@ -218,24 +256,22 @@ map.on("zoom", (ev) => {
 async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
+  //allRenderableProducts = filterOutNonSceneProducts();
+
   await addProductsToMap();
 
   //filtersPanel.on("change", filterProductsByType);
   framesMode();
 }
 
-function filterProductsByType() {
-  //PSEUDOCODE IDEA
-  //let type = dropdown.value
-  //filteredProducts = allProducts.where( p => p.type == type)
-  //map.allLayers.forEach(remove)
-  //addProductsToMap()
+function filterOutNonSceneProducts() {
+  let filteredProducts = allProducts.filter((p) => p.documentType === productTypes["SCENE"]);
+  return filteredProducts;
 }
 
 //Draw every product to the screen
 async function addProductsToMap() {
   //Define polygon & point mapbox
-  console.log(allProducts);
   let polygonFeatureCollection = {
     type: "FeatureCollection",
     features: allProducts.map((product) => ({
@@ -312,7 +348,7 @@ function addFramesLayers(title) {
       visibility: "none",
     },
     paint: {
-      "fill-color": productFillColours["SCENE"],
+      "fill-color": productFillColours[mapStyle]["SCENE"],
       "fill-opacity": 0.2,
     },
   });
@@ -401,18 +437,28 @@ function addChoroplethLayers(countryPolygons, regionPolygons) {
 
 function addBorderLayer(title) {
   map.addLayer({
-    id: `${title}-border`,
+    id: `${title}-border-fill`,
+    type: "fill",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours[mapStyle]["SCENE"],
+      "fill-opacity": 0.2,
+    },
+  });
+  map.addLayer({
+    id: `${title}-border-outline`,
     type: "line",
     source: title,
     layout: {
       visibility: "visible",
     },
     paint: {
-      // "fill-color": productFillColours["DOCUMENT"],
-      // "fill-opacity": 0.2,
-      "line-width": 0.5,
+      "line-width": 1.2,
       "line-opacity": 0.4,
-      "line-color": "#ffffff",
+      "line-color": productFillColours[mapStyle]["BORDER"],
     },
   });
 }
@@ -480,7 +526,7 @@ export async function circleLinkZoom(d) {
   circleGroup.forEach((circle) => {
     circle.style.fill = "blue";
   });
-  displayMissionMenue(currentProduct);
+  displayMissionMenu(currentProduct);
 
   // allProducts.forEach((product) => {
 
@@ -488,75 +534,7 @@ export async function circleLinkZoom(d) {
 }
 
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
-const totalAreaContainerEle = document.querySelector("#Total-area-value-container");
-const coveredAreaContainerEle = document.querySelector("#Covered-area-value-container");
-const uncoveredAreaContainerEle = document.querySelector("#Uncovered-area-value-container");
-const coveragePercentageContainerEle = document.querySelector("#Coverage-percentage-value-container");
-const missionCountContainerEle = document.querySelector("#Mission-count-value-container");
 
-function updateArea(e) {
-  //USED FOR DRAW POLYGON
-  const data = draw.getAll();
-  let polyCoordinates = [];
-  let polyCoordinatesLat = [];
-  let polyCoordinatesLog = [];
-  for (let i = 0; i < data.features[0].geometry.coordinates[0].length; i++) {
-    polyCoordinates.push(data.features[0].geometry.coordinates[0][i]);
-    polyCoordinatesLog.push(data.features[0].geometry.coordinates[0][i][1]);
-    polyCoordinatesLat.push(data.features[0].geometry.coordinates[0][i][0]);
-  }
-  //bounding box is (Latt, Long) and has a padding of (±0.8 and ±0.9)
-  let boundingBox = [
-    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
-    [Math.min(...polyCoordinatesLat) - 0.8, Math.max(...polyCoordinatesLog) + 0.5],
-    [Math.max(...polyCoordinatesLat) + 0.8, Math.max(...polyCoordinatesLog) + 0.5],
-    [Math.max(...polyCoordinatesLat) + 0.8, Math.min(...polyCoordinatesLog) - 0.5],
-    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
-  ];
-  // map.addSource('title', {
-  //   'type': "geojson",
-  //   'data' : {
-  //     'type': "Feature",
-  //     'geometry': {
-  //       'type': 'Polygon',
-  //       'coordinates': [
-  //         boundingBox
-  //       ]
-  //     }
-  //   },
-  // });
-  // map.addLayer({
-  //   id: 'title' + "fill",
-  //   type: "fill",
-  //   source: "title", // reference the data source
-  //   layout: {},
-  //   paint: {
-  //     "fill-color": "#FF0000",
-  //     "fill-opacity": 0.7,
-  //   },
-  // });
-  //console.log(boundingBox);
-  let containedMissions = missionsWithinPolygon(missionsWithinBoundingBox(allProducts, boundingBox), polyCoordinates);
-
-  if (data.features.length > 0) {
-    const area = turf.area(data) / 1000; //divide by 1000 to get square km
-    const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-    const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinates);
-    const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
-    const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
-    const Mission_count = containedMissions.length;
-    areaSelectionInfoContainerEle.style.display = "inline";
-    totalAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${rounded_area}</td>`;
-    coveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Covered_area}</td>`;
-    uncoveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Uncovered_area}</td>`;
-    coveragePercentageContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Coverage_percentage}</td>`;
-    missionCountContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Mission_count}</td>`;
-  } else {
-    areaSelectionInfoContainerEle.style.display = "none";
-    //if (e.type !== 'draw.delete')
-    //alert('Click the map to draw a polygon.');
-  }
-}
 
 function addDotLayer(title) {
   map.addLayer({
@@ -576,236 +554,17 @@ function addDotLayer(title) {
   });
 }
 
-function missionsWithinBoundingBox(allMissons, polygon) {
-  let containedMissions = [];
-  var turfpolygon = turf.polygon([polygon], { name: "poly1" });
-
-  for (let i = 0; i < allMissons.length; i++) {
-    if (allMissons[i].centre != null) {
-      // temporarly missions without a center cannot be added to
-      const coordinatesArray = allMissons[i].centre.split(",");
-      var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]);
-      if (turf.inside(point, turfpolygon)) {
-        containedMissions.push(allMissons[i]);
-      }
-    }
-  }
-  return containedMissions;
-}
-
-function missionsWithinPolygon(boundingBoxMissions, polygon) {
-  //console.log(boundingBoxMissions);
-  let containedMissions = [];
-  var turfpolygon = turf.polygon([polygon], { name: "poly1" });
-
-  for (let i = 0; i < boundingBoxMissions.length; i++) {
-    if (boundingBoxMissions[i].centre != null) {
-      const coordinatesArray = boundingBoxMissions[i].centre.split(",");
-      var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]);
-      if (turf.inside(point, turfpolygon)) {
-        containedMissions.push(boundingBoxMissions[i]);
-        continue;
-      }
-    }
-    //console.log(boundingBoxMissions[i].footprint.coordinates[0].length);
-    for (let k = 0; k < boundingBoxMissions[i].footprint.coordinates[0].length; k++) {
-      var point = turf.point(
-        boundingBoxMissions[i].footprint.coordinates[0][k],
-        boundingBoxMissions[i].footprint.coordinates[0][k]
-      );
-      //console.log(boundingBoxMissions[i].footprint.coordinates[0][k][0] + ", " + boundingBoxMissions[i].footprint.coordinates[0][k][0]);
-      if (turf.inside(point, turfpolygon)) {
-        containedMissions.push(boundingBoxMissions[i]);
-        break;
-      }
-    }
-  }
-  //console.log(containedMissions);
-
-  return containedMissions;
-}
-
-function calculateMissionCoverage(allMissons, polygon) {
-  if (allMissons.length == 0) {
-    return 0;
-  }
-  //console.log(allMissons);
-  var polygonMissions = [];
-  for (let i = 0; i < allMissons.length; i++) {
-    polygonMissions.push(allMissons[i].footprint.coordinates[0]);
-  }
-
-  var fcMissions = [];
-
-  for (let i = 0; i < polygonMissions.length; i++) {
-    var feature = {
-      type: "Feature",
-      properties: { name: i },
-      geometry: {
-        type: "Polygon",
-        coordinates: [polygonMissions[i]],
-      },
-    };
-    fcMissions.push(feature);
-  }
-
-  // map.addSource('test1', {
-  //   'type': 'geojson',
-  //   'data': {
-  //     'type': 'FeatureCollection',
-  //     'features': fcMissions
-  //   }
-  // });
-  // map.addLayer({
-  //   id: 'test1' + "fill",
-  //   type: "fill",
-  //   source: "test1", // reference the data source
-  //   layout: {},
-  //   paint: {
-  //     "fill-color": "#00FF00",
-  //     "fill-opacity": 0.7,
-  //   },
-  // });
-
-  var turfpolygon = turf.polygon([polygon]);
-  var fcMissionsWithinPoly = [];
-
-  for (let i = 0; i < fcMissions.length; i++) {
-    var intersection = turf.intersect(turf.polygon(fcMissions[i].geometry.coordinates), turfpolygon);
-    if (intersection) {
-      var feature = {
-        type: "Feature",
-        properties: { name: i },
-        geometry: {
-          type: "Polygon",
-          coordinates: [intersection.geometry.coordinates[0]],
-        },
-      };
-      fcMissionsWithinPoly.push(feature);
-    }
-  }
-
-  // map.addSource('test2', {
-  //     'type': 'geojson',
-  //     'data': {
-  //         'type': 'FeatureCollection',
-  //         'features': fcMissionsWithinPoly
-  //     }
-  // });
-
-  // map.addLayer({
-  //     id: 'test2' + "fill",
-  //     type: "fill",
-  //     source: "test2", // reference the data source
-  //     layout: {},
-  //     paint: {
-  //         "fill-color": "#FF0000",
-  //         "fill-opacity": 0.7,
-  //     },
-  // });
-
-  var fcMissionIntersects = [];
-
-  for (let i = 0; i < fcMissions.length; i++) {
-    for (let k = i + 1; k < fcMissions.length; k++) {
-      var intersection = turf.intersect(
-        turf.polygon(fcMissions[i].geometry.coordinates),
-        turf.polygon(fcMissions[k].geometry.coordinates)
-      );
-      if (intersection) {
-        var feature = {
-          type: "Feature",
-          properties: { name: i },
-          geometry: {
-            type: "Polygon",
-            coordinates: [intersection.geometry.coordinates[0]],
-          },
-        };
-        fcMissionIntersects.push(feature);
-      }
-    }
-  }
-
-  // map.addSource('test3', {
-  //   'type': 'geojson',
-  //   'data': {
-  //       'type': 'FeatureCollection',
-  //       'features': fcMissionIntersects
-  //   }
-  // });
-
-  // map.addLayer({
-  //     id: 'test3' + "fill",
-  //     type: "fill",
-  //     source: "test3", // reference the data source
-  //     layout: {},
-  //     paint: {
-  //         "fill-color": "#0000FF",
-  //         "fill-opacity": 0.7,
-  //     },
-  // });
-
-  var fcMissionIntersectsWithinPoly = [];
-
-  for (let i = 0; i < fcMissionIntersects.length; i++) {
-    var intersection = turf.intersect(turf.polygon(fcMissionIntersects[i].geometry.coordinates), turfpolygon);
-    //console.log(intersection);
-
-    if (intersection) {
-      var feature = {
-        type: "Feature",
-        properties: { name: i },
-        geometry: {
-          type: "Polygon",
-          coordinates: [intersection.geometry.coordinates[0]],
-        },
-      };
-      fcMissionIntersectsWithinPoly.push(feature);
-    }
-  }
-
-  // map.addSource('test4', {
-  //   'type': 'geojson',
-  //   'data': {
-  //       'type': 'FeatureCollection',
-  //       'features': fcMissionIntersectsWithinPoly
-  //   }
-  // });
-
-  // map.addLayer({
-  //     id: 'test4' + "fill",
-  //     type: "fill",
-  //     source: "test4", // reference the data source
-  //     layout: {},
-  //     paint: {
-  //         "fill-color": "#FFFFFF",
-  //         "fill-opacity": 0.7,
-  //     },
-  // });
-
-  var areaCoveredWithOverlaps = 0;
-  for (let i = 0; i < fcMissionsWithinPoly.length; i++) {
-    areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
-  }
-
-  var areaCoveredByOverlaps = 0;
-  for (let i = 0; i < fcMissionIntersectsWithinPoly.length; i++) {
-    areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionIntersectsWithinPoly[i].geometry.coordinates));
-  }
-
-  var area = areaCoveredWithOverlaps - areaCoveredByOverlaps; //currently in m^2
-  area /= 1000; //divide by 1000 to get square km
-  var rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-
-  //console.log(rounded_area);
-  return rounded_area;
-}
 // BUTTON FUNCTIONALITY
 
 const moveButtonEle = document.querySelector("#move-button");
 const rectangleButtonEle = document.querySelector("#rectangle-button");
 const polygonButtonEle = document.querySelector("#polygon-button");
-const cursorSelectedClasses = ["bg-neutral-800", "hover:bg-neutral-500/30"];
+const cursorSelectedClasses = [
+  "dark:bg-neutral-700",
+  "dark:hover:bg-neutral-600/90",
+  "bg-neutral-200/90",
+  "hover:bg-neutral-200/30",
+];
 
 function deselectAllCursors() {
   moveButtonEle.classList.remove(...cursorSelectedClasses);
@@ -864,7 +623,8 @@ const hideAllLayers = () => {
   map.setLayoutProperty("product-points-dot-density", "visibility", "none");
   map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
   map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
-  map.setLayoutProperty("uk-land-border", "visibility", "none");
+  map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
+  map.setLayoutProperty("uk-land-border-outline", "visibility", "none");
   //map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 };
 
@@ -923,7 +683,9 @@ const borderSelectionMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  map.setLayoutProperty("uk-land-border", "visibility", "visible");
+  map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
+  map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
+  updateUkArea();
 };
 
 document.querySelector("#frames-item").onclick = framesMode;
@@ -999,11 +761,13 @@ const openSavedAreas = () => {
   searchedAreas.forEach((savedArea) => {
     var tempContent = "";
     const savedAreaContainerEle = document.createElement("div");
-    savedAreaContainerEle.className = "p-1.5 rounded-md bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1 flex";
+    savedAreaContainerEle.className =
+      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
     const savedAreaCheckboxEle = document.createElement("input");
     savedAreaCheckboxEle.type = "checkbox";
     savedAreaCheckboxEle.name = "saved-area-checkbox";
-    savedAreaCheckboxEle.className = "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
+    savedAreaCheckboxEle.className =
+      "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
     savedAreaContainerEle.append(savedAreaCheckboxEle);
     const savedAreaNameEle = document.createElement("span");
     savedAreaNameEle.className = "grow my-auto";
@@ -1015,9 +779,12 @@ const openSavedAreas = () => {
     savedAreaViewButtonEle.name = "saved-area-view-button";
     savedAreaEditButtonEle.name = "saved-area-edit-button";
     savedAreaDeleteButtonEle.name = "saved-area-delete-button";
-    savedAreaViewButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
-    savedAreaEditButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
-    savedAreaDeleteButtonEle.className = "ml-auto my-auto p-1 rounded-md bg-neutral-700/70 ring-1 ring-neutral-600/50";
+    savedAreaViewButtonEle.className =
+      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
+    savedAreaEditButtonEle.className =
+      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
+    savedAreaDeleteButtonEle.className =
+      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
     const savedAreaViewButtonImageEle = document.createElement("img");
     const savedAreaEditButtonImageEle = document.createElement("img");
     const savedAreaDeleteButtonImageEle = document.createElement("img");
@@ -1227,18 +994,77 @@ const updateSearchResults = () => {
   results.forEach((result) => {
     const resultEle = document.createElement("button");
     resultEle.type = "button";
-    resultEle.className =
-      "text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 bg-neutral-950/50 ring-1 ring-neutral-700/50 #ring-inset shadow-sm hover:bg-neutral-950/80";
+    resultEle.className = `text-left rounded-md py-1.5 px-3 #border-0 text-sm max-w-64 ring-1 ring-inset shadow-sm
+      dark:bg-neutral-950/50 dark:ring-neutral-700/50 dark:hover:bg-neutral-950/80
+      bg-neutral-100/80 ring-neutral-300/90 hover:bg-neutral-200/90`;
     const resultSpanEle = document.createElement("span");
     resultSpanEle.textContent = result.LAD23NM;
-    resultEle.onclick = () => {
-      searchResultsContainerEle.replaceChildren();
-      alert(result.LAD23CD);
-    };
+    resultEle.onclick = () => gotoFeatureByResult(result);
     // resultEle.querySelector("span").textContent = result.LAD23NM;
     resultEle.append(resultSpanEle);
     searchResultsContainerEle.append(resultEle);
   });
+};
+
+
+const areaViewInfoContainerEle = document.querySelector("#area-view-info-container");
+document.querySelector("#area-selection-info-close-button").onclick = () => {
+  areaViewInfoContainerEle.style.display = "none";
+  map.setMaxBounds(null);
+  map.removeLayer("mask-fill");
+  map.removeLayer("mask-outline");
+  map.removeSource("mask");
+};
+
+const gotoFeatureByResult = (result) => {
+  searchResultsContainerEle.replaceChildren();
+  let feature;
+  boundariesByRegion.features.forEach((x) => {
+    if (x.properties.LAD23CD == result.LAD23CD) {
+      feature = x;
+    }
+  });
+  const boundingBox = turf.bbox(feature);
+  map.addSource("mask", {
+    "type": "geojson",
+    "data": turf.mask(feature),
+  });
+  map.addLayer({
+    "id": "mask-fill",
+    "source": "mask",
+    "type": "fill",
+    "paint": {
+      "fill-color": "black",
+      'fill-opacity': 0.5
+    }
+  });
+  map.addLayer({
+    id: "mask-outline",
+    type: "line",
+    source: "mask",
+    paint: {
+      "line-width": 1.2,
+      "line-opacity": 0.4,
+      "line-color": "white",
+    },
+  });
+  const bounds = [boundingBox.slice(0, 2), boundingBox.slice(2, 4)];
+  map.fitBounds(bounds, {
+    padding: 50,
+    animate: false
+  });
+  map.setMaxBounds(map.getBounds());
+  areaSelectionInfoContainerEle.style.display = "inline";
+  const totalAreaContainerEle = document.querySelector("#view-total-area-value");
+  const coveredAreaContainerEle = document.querySelector("#view-covered-area-value");
+  const uncoveredAreaContainerEle = document.querySelector("#view-uncovered-area-value");
+  const coveragePercentageContainerEle = document.querySelector("#view-coverage-percentage-value");
+  const missionCountContainerEle = document.querySelector("#view-total-missions-value");
+  totalAreaContainerEle.textContent = totalAreaRounded;
+  coveredAreaContainerEle.textContent = coveredArea;
+  uncoveredAreaContainerEle.textContent = uncoveredArea;
+  coveragePercentageContainerEle.textContent = coveragePercentage;
+  missionCountContainerEle.textContent = missionCount;
 };
 
 searchBarEle.oninput = updateSearchResults;
