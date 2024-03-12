@@ -636,11 +636,6 @@ export async function circleLinkZoom(d) {
 }
 
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
-const totalAreaContainerEle = document.querySelector("#Total-area-value-container");
-const coveredAreaContainerEle = document.querySelector("#Covered-area-value-container");
-const uncoveredAreaContainerEle = document.querySelector("#Uncovered-area-value-container");
-const coveragePercentageContainerEle = document.querySelector("#Coverage-percentage-value-container");
-const missionCountContainerEle = document.querySelector("#Mission-count-value-container");
 
 function updateArea(e) {
   //USED FOR DRAW POLYGON
@@ -687,18 +682,23 @@ function updateArea(e) {
   let containedMissions = missionsWithinPolygon(missionsWithinBoundingBox(allProducts, boundingBox), polyCoordinates);
 
   if (data.features.length > 0) {
-    const area = turf.area(data) / 1000; //divide by 1000 to get square km
-    const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-    const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinates);
-    const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
-    const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
-    const Mission_count = containedMissions.length;
+    const totalArea = turf.area(data) / 1000; //divide by 1000 to get square km
+    const totalAreaRounded = Math.round(totalArea * 100) / 100; //convert area to 2 d.p.
+    const coveredArea = calculateMissionCoverage(containedMissions, polyCoordinates);
+    const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
+    const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
+    const missionCount = containedMissions.length;
     areaSelectionInfoContainerEle.style.display = "inline";
-    totalAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${rounded_area}</td>`;
-    coveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Covered_area}</td>`;
-    uncoveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Uncovered_area}</td>`;
-    coveragePercentageContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Coverage_percentage}</td>`;
-    missionCountContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Mission_count}</td>`;
+    const totalAreaContainerEle = document.querySelector("#selection-total-area-value");
+    const coveredAreaContainerEle = document.querySelector("#selection-covered-area-value");
+    const uncoveredAreaContainerEle = document.querySelector("#selection-uncovered-area-value");
+    const coveragePercentageContainerEle = document.querySelector("#selection-coverage-percentage-value");
+    const missionCountContainerEle = document.querySelector("#selection-total-missions-value");
+    totalAreaContainerEle.textContent = totalAreaRounded;
+    coveredAreaContainerEle.textContent = coveredArea;
+    uncoveredAreaContainerEle.textContent = uncoveredArea;
+    coveragePercentageContainerEle.textContent = coveragePercentage;
+    missionCountContainerEle.textContent = missionCount;
   } else {
     areaSelectionInfoContainerEle.style.display = "none";
     //if (e.type !== 'draw.delete')
@@ -1215,14 +1215,72 @@ const updateSearchResults = () => {
       bg-neutral-100/80 ring-neutral-300/90 hover:bg-neutral-200/90`;
     const resultSpanEle = document.createElement("span");
     resultSpanEle.textContent = result.LAD23NM;
-    resultEle.onclick = () => {
-      searchResultsContainerEle.replaceChildren();
-      alert(result.LAD23CD);
-    };
+    resultEle.onclick = () => gotoFeatureByResult(result);
     // resultEle.querySelector("span").textContent = result.LAD23NM;
     resultEle.append(resultSpanEle);
     searchResultsContainerEle.append(resultEle);
   });
+};
+
+
+const areaViewInfoContainerEle = document.querySelector("#area-view-info-container");
+document.querySelector("#area-selection-info-close-button").onclick = () => {
+  areaViewInfoContainerEle.style.display = "none";
+  map.setMaxBounds(null);
+  map.removeLayer("mask-fill");
+  map.removeLayer("mask-outline");
+  map.removeSource("mask");
+};
+
+const gotoFeatureByResult = (result) => {
+  searchResultsContainerEle.replaceChildren();
+  let feature;
+  boundariesByRegion.features.forEach((x) => {
+    if (x.properties.LAD23CD == result.LAD23CD) {
+      feature = x;
+    }
+  });
+  const boundingBox = turf.bbox(feature);
+  map.addSource("mask", {
+    "type": "geojson",
+    "data": turf.mask(feature),
+  });
+  map.addLayer({
+    "id": "mask-fill",
+    "source": "mask",
+    "type": "fill",
+    "paint": {
+      "fill-color": "black",
+      'fill-opacity': 0.5
+    }
+  });
+  map.addLayer({
+    id: "mask-outline",
+    type: "line",
+    source: "mask",
+    paint: {
+      "line-width": 1.2,
+      "line-opacity": 0.4,
+      "line-color": "white",
+    },
+  });
+  const bounds = [boundingBox.slice(0, 2), boundingBox.slice(2, 4)];
+  map.fitBounds(bounds, {
+    padding: 50,
+    animate: false
+  });
+  map.setMaxBounds(map.getBounds());
+  areaSelectionInfoContainerEle.style.display = "inline";
+  const totalAreaContainerEle = document.querySelector("#view-total-area-value");
+  const coveredAreaContainerEle = document.querySelector("#view-covered-area-value");
+  const uncoveredAreaContainerEle = document.querySelector("#view-uncovered-area-value");
+  const coveragePercentageContainerEle = document.querySelector("#view-coverage-percentage-value");
+  const missionCountContainerEle = document.querySelector("#view-total-missions-value");
+  totalAreaContainerEle.textContent = totalAreaRounded;
+  coveredAreaContainerEle.textContent = coveredArea;
+  uncoveredAreaContainerEle.textContent = uncoveredArea;
+  coveragePercentageContainerEle.textContent = coveragePercentage;
+  missionCountContainerEle.textContent = missionCount;
 };
 
 searchBarEle.oninput = updateSearchResults;
