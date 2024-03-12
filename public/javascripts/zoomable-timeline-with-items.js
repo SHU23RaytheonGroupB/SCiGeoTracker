@@ -3,12 +3,10 @@
 
 import { circleLinkZoom } from "./map.js";
 
-export function Timeline(map_, options) {
+export function Timeline(map_, options) { 
   const axis = {};
   const nodes = {};
   let myData = map_.getSource("product-polygons")._data.features;
-
-  console.log("myData", myData);
 
   myData = Array.from({ length: myData.length }, (x, i) => ({
     title: myData[i].attributes.title,
@@ -29,8 +27,6 @@ export function Timeline(map_, options) {
     ...options
   };
 
-
-
   const MS_PER_HOUR = 60 * 60 * 1000;
   const MS_PER_SECOND = 1000;
   const MS_PER_DAY = 24 * MS_PER_HOUR;
@@ -50,7 +46,7 @@ export function Timeline(map_, options) {
   const density = Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
 
   const zoomScaleExtent = [1, Math.round(MS_PER_YEAR * 10)];
-  console.log("zoomScaleExtent", zoomScaleExtent);
+  //console.log("zoomScaleExtent", zoomScaleExtent);
 
   const findDensityConfig = (myData, value) => {
     for (const [limit, config] of myData) {

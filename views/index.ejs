@@ -3,19 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <title>Sci-GeoTracker</title>
-
+    
     <meta name="viewport" content="initial-scale=1,maximum-scale=5,user-scalable=yes" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"></script>
+    
     <link
-      rel="stylesheet"
+    rel="stylesheet"
       href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css"
       type="text/css"
     />
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+
   </head>
 
   <body class="m-0 p-0 text-neutral-300 fill-neutral-500">
@@ -350,15 +352,17 @@
 
     <div
       id="histogram-popout-container"
-      class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto"
-      style="display: block"
+      class="absolute z-30 w-800 h-500 px-2 py-2 rounded-xl overflow-hidden text-sm bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto"
+      style="display: flex"
     >
       <div class="flex flex-row gap-2 px-1">
         <h2 class="text-neutral-300 grow font-bold">Histogram</h2>
+        <div>
+          <canvas id="histogram-chart" style = "position: relative; height:40vh; width:80vw"></canvas>
+        </div>
         <button type="button" id="histogram-popout-close-button" class="ml-auto">
           <img class="h-3 w-3" src="images/icons8-close-90.png" />
         </button>
-        <div id="histogram-graph"></div>
       </div>
         <div class="p-1 rounded-md bg-neutral-800 ring-1 ring-neutral-600/50 flex flex-row gap-1">
           <span class="grow my-auto ml-2">Test</span>
@@ -373,6 +377,7 @@
     ></div>
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
+
 
     <style type="text/css">
       .timeline-axis {
@@ -425,4 +430,7 @@
     </style>
   </body>
   <script type="module" src="./javascripts/map.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </html>

@@ -154,9 +154,9 @@ map.on("load", async () => {
   const until = END_DATE;
   const timeline = Timeline(map, { from, until });
   document.querySelector("#timeline-container").appendChild(timeline.element);
-  document
-    .querySelector("#histogram-graph")
-    .appendChild(createHistogramChart(map.getSource("product-polygons")._data.features, from, until));
+
+  createHistogramChart(map);
+
 });
 
 map.addControl(draw);
