@@ -101,7 +101,6 @@ const missionCountContainerEle = document.querySelector("#Mission-count-value-co
 export function updateArea(e) {
   //USED FOR DRAW POLYGON
   const data = draw.getAll();
-  //console.log(data);
   let polyCoordinates = [];
   let polyCoordinatesLat = [];
   let polyCoordinatesLog = [];
@@ -118,22 +117,26 @@ export function updateArea(e) {
     [Math.max(...polyCoordinatesLat) + 0.8, Math.min(...polyCoordinatesLog) - 0.5],
     [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
   ];
-
   let containedMissions = missionsWithinPolygon(missionsWithinBoundingBox(allProducts, boundingBox), polyCoordinates);
 
   if (data.features.length > 0) {
-    const area = turf.area(data) / 1000; //divide by 1000 to get square km
-    const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-    const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinates);
-    const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
-    const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
-    const Mission_count = containedMissions.length;
+    const totalArea = turf.area(data) / 1000; //divide by 1000 to get square km
+    const totalAreaRounded = Math.round(totalArea * 100) / 100; //convert area to 2 d.p.
+    const coveredArea = calculateMissionCoverage(containedMissions, polyCoordinates);
+    const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
+    const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
+    const missionCount = containedMissions.length;
     areaSelectionInfoContainerEle.style.display = "inline";
-    totalAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${rounded_area}</td>`;
-    coveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Covered_area}</td>`;
-    uncoveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Uncovered_area}</td>`;
-    coveragePercentageContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Coverage_percentage}</td>`;
-    missionCountContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Mission_count}</td>`;
+    const totalAreaContainerEle = document.querySelector("#selection-total-area-value");
+    const coveredAreaContainerEle = document.querySelector("#selection-covered-area-value");
+    const uncoveredAreaContainerEle = document.querySelector("#selection-uncovered-area-value");
+    const coveragePercentageContainerEle = document.querySelector("#selection-coverage-percentage-value");
+    const missionCountContainerEle = document.querySelector("#selection-total-missions-value");
+    totalAreaContainerEle.textContent = totalAreaRounded;
+    coveredAreaContainerEle.textContent = coveredArea;
+    uncoveredAreaContainerEle.textContent = uncoveredArea;
+    coveragePercentageContainerEle.textContent = coveragePercentage;
+    missionCountContainerEle.textContent = missionCount;
   } else {
     areaSelectionInfoContainerEle.style.display = "none";
   }
