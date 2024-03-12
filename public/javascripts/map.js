@@ -817,30 +817,30 @@ const openSavedAreas = () => {
           type: 'geojson',
           data: savedArea.geometry
       });
-        map.addLayer({
-          id: `${savedArea.name + "-CUSTOM"}-fill`,
-          type: "fill",
-          source: savedArea.name + "-CUSTOM",
-          layout: {
-            visibility: "visible",
-          },
-          paint: {
-            "fill-color": productFillColours["SCENE"],
-            "fill-opacity": 0.2,
-          },
-        });
-        map.addLayer({
-          id: `${savedArea.name + "-CUSTOM"}-lines`,
-          type: "line",
-          source: savedArea.name + "-CUSTOM",
-          layout: {
-            visibility: "visible",
-          },
-          paint: {
-            "line-color": productOutlineColours["SCENE"],
-            "line-width": 1,
-          },
-        });
+      map.addLayer({
+        id: `${savedArea.name + "-CUSTOM"}-frames-fill`,
+        type: "fill",
+        source: savedArea.name + "-CUSTOM",
+        layout: {
+          visibility: "visible",
+        },
+        paint: {
+          "fill-color": productFillColours[mapStyle]["SCENE"],
+          "fill-opacity": 0.2,
+        },
+      });
+      map.addLayer({
+        id: `${savedArea.name + "-CUSTOM"}-frames-outline`,
+        type: "line",
+        source: savedArea.name + "-CUSTOM",
+        layout: {
+          visibility: "visible",
+        },
+        paint: {
+          "line-color": productOutlineColours["SCENE"],
+          "line-width": 1,
+        },
+      });
         closeSavedAreas();
       }
     };
