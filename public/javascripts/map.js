@@ -1,83 +1,13 @@
 import { displayMissionMenu } from "./mission-popout-menu.js";
-import { updateUkArea, updateArea, draw } from "./area-calculations.js";
-
-const darkTheme_ProductFillColours = {
-  SCENE: "#fc685d", //LIGHT RED
-  BORDER: "#cc0000", //DARK RED
-};
-
-const outdoorsTheme_ProductFillColours = {
-  SCENE: "#00ff00", //LIGHT GREEN
-  BORDER: "#6a329f", //PURPLE
-};
-
-const satelliteTheme_ProductFillColours = {
-  SCENE: "#ffffff", //wHITE
-  BORDER: "#fc685d", //LIGHT RED
-};
-
-const productFillColours = {
-  "dark-v11": darkTheme_ProductFillColours,
-  "satellite-streets-v12": satelliteTheme_ProductFillColours,
-  "outdoors-v11": outdoorsTheme_ProductFillColours,
-  "light-v11": outdoorsTheme_ProductFillColours,
-};
-
-const productOutlineColours = {
-  SCENE: "#000000", //BLACK
-  DOCUMENT: "#000000", //BLACK
-};
-
-const LayerMode = {
-  Frames: "Frames",
-  Heatmap: "Heatmap",
-  Choropleth: "Choropleth",
-  Isarithmic: "Isarithmic",
-  DotDensity: "Dot Density",
-  FrameOverlaps: "Frame Overlaps",
-  BorderSelection: "Border Selection",
-};
-
-const CursorMode = {
-  Move: "Move",
-  Rectangle: "Rectangle",
-  Polygon: "Polygon",
-};
-
-const MapStyle = {
-  Dark: "dark-v11",
-  Light: "light-v11",
-  Satellite: "satellite-streets-v12",
-  Outdoors: "outdoors-v11",
-};
-
-const minZoom = 4;
-const maxZoom = 12;
-
-let cursorMode;
-let layerMode;
-let mapStyle = MapStyle.Dark;
-let allProducts = [];
-let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
-
-setDarkMode(darkMode);
-
-const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
-const boundariesByCountry = await getGeojsonFile("../boundaries/UK-by-country.json");
-const UKlandBorder = await getGeojsonFile("../boundaries/UK-land-border.json");
-
-async function getGeojsonFile(fileLocation) {
-  const response = await fetch(fileLocation);
-  if (!response.ok) {
-    throw new Error(`Error getting ${fileLocation} file`);
-  }
-  return await response.json();
-}
+import { initialiseProducts, allProducts } from "./products-and-layers.js";
+import { mapStyle, minZoom, maxZoom } from "./config.js";
+import { draw } from "./area-calculations.js";
+import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
-const map = new mapboxgl.Map({
+window.map = new mapboxgl.Map({
   container: "map", // container ID
-  style: `mapbox://styles/mapbox/${mapStyle}`, // style URL
+  style: `mapbox://styles/mapbox/${mapStyle.currentStyle}`, // style URL
   center: [-5, 55], // starting position
   zoom: 5, // starting zoom
   minZoom: minZoom,
@@ -87,13 +17,11 @@ const map = new mapboxgl.Map({
 
 import { Timeline } from "./zoomable-timeline-with-items.js";
 
-//Functionality - add event listeners aka filtersPanel.on change etc to relevant functions &
-//this will determine all calls for any functions not to be triggered on instant load of page
 let loaded = false;
 
 map.on("load", async () => {
-  darkStyle();
   renderOverlaysZoom();
+  initialiseControls();
   await initialiseProducts();
 
   const START_DATE = new Date(1558231200000);
@@ -101,7 +29,7 @@ map.on("load", async () => {
 
   const from = START_DATE;
   const until = END_DATE;
-  const timeline = Timeline(map, { from, until });
+  const timeline = Timeline({ from, until });
   document.querySelector("#timeline-container").appendChild(timeline.element);
 
   loaded = true; //used so style is not loaded before data is requested
@@ -109,140 +37,11 @@ map.on("load", async () => {
 
 map.on("style.load", () => {
   if (loaded) {
-    addProductsToMap();
-    framesMode();
+    initialiseProducts();
   }
 });
 
-let polygonButton = document.getElementById("polygon-button");
-polygonButton.addEventListener("click", drawPoly);
-
-let infoCloseButton = document.getElementById("area-selection-info-close-button");
-infoCloseButton.addEventListener("click", closeInfo);
-
-function closeInfo() {
-  document.getElementById("area-selection-info-container").style.display = "none";
-}
-
-let infoMoveButton = document.getElementById("move-button");
-infoMoveButton.addEventListener("click", moveMap);
-
-const styleMenuButtonEle = document.querySelector("#style-menu-button");
-const styleMenuItemsContainerEle = document.querySelector("#style-menu-items-container");
-const styleMenuButtonTextEle = document.querySelector("#style-menu-button-text");
-let styleMenuOpen = false;
-const openStyleMenu = () => {
-  styleMenuOpen = true;
-  styleMenuItemsContainerEle.style.display = null;
-  styleMenuItemsContainerEle.focus();
-};
-const closeStyleMenu = () => {
-  styleMenuOpen = false;
-  styleMenuItemsContainerEle.style.display = "none";
-};
-styleMenuButtonEle.onclick = () => {
-  if (!styleMenuOpen) openStyleMenu();
-  else closeStyleMenu();
-};
-styleMenuItemsContainerEle.focusout = () => {
-  closeStyleMenu();
-};
-
-const darkStyle = () => {
-  mapStyle = MapStyle.Dark;
-  styleMenuButtonTextEle.textContent = "Dark";
-  closeStyleMenu();
-  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
-};
-
-const lightStyle = () => {
-  mapStyle = MapStyle.Light;
-  styleMenuButtonTextEle.textContent = "Light";
-  closeStyleMenu();
-  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
-};
-
-const satelliteStyle = () => {
-  mapStyle = MapStyle.Satellite;
-  styleMenuButtonTextEle.textContent = "Satellite";
-  closeStyleMenu();
-  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
-};
-
-const topoStyle = () => {
-  mapStyle = MapStyle.Outdoors;
-  styleMenuButtonTextEle.textContent = "Topology";
-  closeStyleMenu();
-  map.setStyle(`mapbox://styles/mapbox/${mapStyle}`);
-};
-
-document.querySelector("#dark-item").onclick = darkStyle;
-document.querySelector("#light-item").onclick = lightStyle;
-document.querySelector("#satellite-item").onclick = satelliteStyle;
-document.querySelector("#topo-item").onclick = topoStyle;
-
-document.querySelector("#theme-button").onclick = () => setDarkMode(!darkMode);
-
-function setDarkMode(enabled) {
-  darkMode = enabled;
-  sessionStorage.setItem("dark", darkMode ? "true" : "false");
-  if (darkMode) {
-    document.body.classList.add("dark");
-  } else {
-    document.body.classList.remove("dark");
-  }
-}
-
-map.addControl(draw);
-draw.changeMode("simple_select"); //default not draw
-
-function moveMap() {
-  draw.changeMode("simple_select");
-}
-
-function drawPoly() {
-  draw.changeMode("draw_polygon");
-  map.on("draw.create", updateArea);
-  map.on("draw.delete", updateArea);
-  map.on("draw.update", updateArea);
-  map.on("draw.selectionchange", updateArea);
-}
-
 const coordEle = document.querySelector("#coords");
-const zoomScrollButtonEle = document.querySelector("#zoom-scroll-button");
-
-function renderOverlaysZoom() {
-  const zoomPercentage = ((map.getZoom() - minZoom) / (maxZoom - minZoom)) * 100;
-  zoomScrollButtonEle.style.top = `${100 - zoomPercentage}%`;
-}
-
-var barTop = 0,
-  barBottom = 0;
-zoomScrollButtonEle.onmousedown = dragMouseDown;
-
-function setZoomByPercentage(percentage) {
-  percentage = Math.min(100, Math.max(0, percentage));
-  map.setZoom((percentage / 100) * (maxZoom - minZoom) + minZoom);
-}
-
-function dragMouseDown(e) {
-  e.preventDefault();
-  const boundingRect = zoomScrollButtonEle.parentElement.getBoundingClientRect();
-  barTop = boundingRect.top + 12;
-  barBottom = boundingRect.bottom - 12;
-  document.onmouseup = closeDragElement;
-  document.onmousemove = elementDrag;
-}
-
-function elementDrag(e) {
-  e.preventDefault();
-  setZoomByPercentage(((barBottom - e.clientY) / (barBottom - barTop)) * 100);
-}
-
-function closeDragElement() {
-  document.onmouseup = null;
-  document.onmousemove = null;
-}
 
 map.on("mousemove", (ev) => {
   const { lng, lat } = ev.lngLat;
@@ -253,256 +52,6 @@ map.on("zoom", (ev) => {
   renderOverlaysZoom();
 });
 
-async function initialiseProducts() {
-  const response = await fetch("/api/getProducts");
-  allProducts = await response.json();
-  //allRenderableProducts = filterOutNonSceneProducts();
-
-  await addProductsToMap();
-
-  //filtersPanel.on("change", filterProductsByType);
-  framesMode();
-}
-
-function filterOutNonSceneProducts() {
-  let filteredProducts = allProducts.filter((p) => p.documentType === productTypes["SCENE"]);
-  return filteredProducts;
-}
-
-//Draw every product to the screen
-async function addProductsToMap() {
-  //Define polygon & point mapbox
-  let polygonFeatureCollection = {
-    type: "FeatureCollection",
-    features: allProducts.map((product) => ({
-      type: "Feature",
-      geometry: product.footprint,
-      attributes: {
-        id: product.identifier,
-        type: product.type,
-        title: product.title,
-        mission_id: product.missionid,
-        date_created: product.datecreated,
-        date_start: product.objectstartdate,
-        date_end: product.objectenddate,
-        pub: product.publisher,
-      },
-    })),
-  };
-  let pointFeatureCollection = {
-    type: "FeatureCollection",
-    features: allProducts.map((product) => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: product.centre != null ? product.centre.split(",").reverse() : [],
-      },
-      attributes: {
-        id: product.identifier,
-        type: product.type,
-        title: product.title,
-        mission_id: product.missionid,
-        date_created: product.datecreated,
-        date_start: product.objectstartdate,
-        date_end: product.objectenddate,
-        mission_group: product.title.split(" ")[0],
-        scene_name: product.title.split(" ")[1],
-      },
-    })),
-  };
-
-  // SOURCES
-  addSource("product-polygons", polygonFeatureCollection);
-  addSource("product-points", pointFeatureCollection);
-  addSource("country-boundaries", boundariesByCountry);
-  addSource("region-boundaries", boundariesByRegion);
-  addSource("uk-land", UKlandBorder);
-  updateChoroplethSource();
-  // FRAMES LAYER
-  addFramesLayers("product-polygons");
-  // HEATMAP LAYER
-  addHeatmapLayer("product-points");
-  // CHOROPLETH LAYER
-  addChoroplethLayers("country-boundaries", "region-boundaries");
-  // DOT LAYER
-  addDotLayer("product-points");
-  // BORDER LAYER - TEMP
-  addBorderLayer("uk-land");
-}
-
-function addSource(title, data) {
-  map.addSource(title, {
-    type: "geojson",
-    data: data,
-    // tolerance: 3,
-    // buffer: 512,
-  });
-}
-
-function addFramesLayers(title) {
-  map.addLayer({
-    id: `${title}-frames-fill`,
-    type: "fill",
-    source: title,
-    layout: {
-      visibility: "none",
-    },
-    paint: {
-      "fill-color": productFillColours[mapStyle]["SCENE"],
-      "fill-opacity": 0.2,
-    },
-  });
-  map.addLayer({
-    id: `${title}-frames-outline`,
-    type: "line",
-    source: title,
-    layout: {
-      visibility: "none",
-    },
-    paint: {
-      "line-color": productOutlineColours["SCENE"],
-      "line-width": 1,
-    },
-  });
-}
-
-function addHeatmapLayer(title, productType) {
-  map.addLayer({
-    id: `${title}-heatmap`,
-    type: "heatmap",
-    source: title,
-    layout: {
-      visibility: "none",
-    },
-  });
-}
-
-function updateChoroplethSource() {
-  const regionBoundariesSource = map.getSource("region-boundaries");
-  const data = regionBoundariesSource._data;
-  data.features.forEach((feature) => {
-    // find the amount of points within a feature bounding box
-    feature.properties.total_missions = Math.ceil(Math.random() * 100);
-  });
-  regionBoundariesSource.setData(data);
-}
-
-function addChoroplethLayers(countryPolygons, regionPolygons) {
-  map.addLayer({
-    id: `${regionPolygons}-borders`,
-    type: "line",
-    source: regionPolygons,
-    layout: {
-      visibility: "none",
-    },
-    paint: {
-      "line-width": 0.5,
-      "line-opacity": 0.4,
-      "line-color": "#ffffff",
-    },
-  });
-  map.addLayer({
-    id: `${regionPolygons}-choropleth`,
-    type: "fill",
-    source: regionPolygons,
-    layout: {
-      visibility: "none",
-    },
-    paint: {
-      "fill-color": [
-        "interpolate",
-        ["linear"],
-        ["get", "total_missions"], // assign product count property within geojson to use instead of density
-        0,
-        "#FFFFFF",
-        100,
-        "#2AFF25",
-      ],
-      "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.8, 0.7],
-    },
-  });
-  // map.addLayer({
-  //   id: `${regionPolygons}-choropleth`,
-  //   type: "fill",
-  //   source: regionPolygons,
-  //   layout: {
-  //     visibility: "visible",
-  //   },
-  //   paint: {
-  //     "fill-color": productFillColours["DOCUMENT"],
-  //     "fill-opacity": 0.2,
-  //   },
-  // });
-}
-
-function addBorderLayer(title) {
-  map.addLayer({
-    id: `${title}-border-fill`,
-    type: "fill",
-    source: title,
-    layout: {
-      visibility: "visible",
-    },
-    paint: {
-      "fill-color": productFillColours[mapStyle]["SCENE"],
-      "fill-opacity": 0.2,
-    },
-  });
-  map.addLayer({
-    id: `${title}-border-outline`,
-    type: "line",
-    source: title,
-    layout: {
-      visibility: "visible",
-    },
-    paint: {
-      "line-width": 1.2,
-      "line-opacity": 0.4,
-      "line-color": productFillColours[mapStyle]["BORDER"],
-    },
-  });
-}
-
-let hoveredPolygonId = null;
-
-map.on("mousemove", "region-boundaries-choropleth", (e) => {
-  if (e.features.length > 0) {
-    if (hoveredPolygonId !== null) {
-      map.setFeatureState({ source: "region-boundaries", id: hoveredPolygonId }, { hover: false });
-    }
-    hoveredPolygonId = e.features[0].id;
-    map.setFeatureState({ source: "region-boundaries", id: hoveredPolygonId }, { hover: true });
-  }
-});
-
-map.on("mouseleave", "region-boundaries-choropleth", () => {
-  if (hoveredPolygonId !== null) {
-    map.setFeatureState({ source: "region-boundaries", id: hoveredPolygonId }, { hover: false });
-  }
-  hoveredPolygonId = null;
-});
-
-map.on("click", "region-boundaries-choropleth", (e) => {
-  alert(e.features[0].properties.LAD23NM);
-});
-
-function choroplethLegend() {
-  const legend = document.getElementById("legend");
-
-  layers.forEach((choroLayer, i) => {
-    const color = colors[i];
-    const item = document.createElement("div");
-    const key = document.createElement("span");
-    key.className = "legend-key";
-    key.style.backgroundColor = color;
-
-    const value = document.createElement("span");
-    value.innerHTML = `${choroLayer}`;
-    item.appendChild(key);
-    item.appendChild(value);
-    legend.appendChild(item);
-  });
-}
 export async function circleLinkZoom(d) {
   let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {
@@ -533,166 +82,7 @@ export async function circleLinkZoom(d) {
   // });
 }
 
-function addDotLayer(title) {
-  map.addLayer({
-    id: `${title}-dot-density`,
-    type: "circle",
-    source: title,
-    paint: {
-      "circle-color": "#FF0000",
-      "circle-radius": {
-        base: 1.75,
-        stops: [
-          [12, 2],
-          [32, 180],
-        ],
-      },
-    },
-  });
-}
-
-// BUTTON FUNCTIONALITY
-
-const moveButtonEle = document.querySelector("#move-button");
-const rectangleButtonEle = document.querySelector("#rectangle-button");
-const polygonButtonEle = document.querySelector("#polygon-button");
-const cursorSelectedClasses = [
-  "dark:bg-neutral-700",
-  "dark:hover:bg-neutral-600/90",
-  "bg-neutral-200/90",
-  "hover:bg-neutral-200/30",
-];
-
-function deselectAllCursors() {
-  moveButtonEle.classList.remove(...cursorSelectedClasses);
-  rectangleButtonEle.classList.remove(...cursorSelectedClasses);
-  polygonButtonEle.classList.remove(...cursorSelectedClasses);
-}
-
-const selectMoveCursor = () => {
-  cursorMode = CursorMode.Move;
-  deselectAllCursors();
-  moveButtonEle.classList.add(...cursorSelectedClasses);
-};
-
-const selectRectangleCursor = () => {
-  cursorMode = CursorMode.Rectangle;
-  deselectAllCursors();
-  rectangleButtonEle.classList.add(...cursorSelectedClasses);
-};
-
-const selectPolygonCursor = () => {
-  cursorMode = CursorMode.Polygon;
-  deselectAllCursors();
-  polygonButtonEle.classList.add(...cursorSelectedClasses);
-};
-
-moveButtonEle.onclick = selectMoveCursor;
-rectangleButtonEle.onclick = selectRectangleCursor;
-polygonButtonEle.onclick = selectPolygonCursor;
-selectMoveCursor();
-
-const layerMenuButtonEle = document.querySelector("#layer-menu-button");
-const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
-const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text");
-let layerMenuOpen = false;
-const openLayerMenu = () => {
-  layerMenuOpen = true;
-  layerMenuItemsContainerEle.style.display = null;
-  layerMenuItemsContainerEle.focus();
-};
-const closeLayerMenu = () => {
-  layerMenuOpen = false;
-  layerMenuItemsContainerEle.style.display = "none";
-};
-layerMenuButtonEle.onclick = () => {
-  if (!layerMenuOpen) openLayerMenu();
-  else closeLayerMenu();
-};
-layerMenuItemsContainerEle.focusout = () => {
-  closeLayerMenu();
-};
-
-const hideAllLayers = () => {
-  map.setLayoutProperty("product-polygons-frames-fill", "visibility", "none");
-  map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
-  map.setLayoutProperty("product-points-heatmap", "visibility", "none");
-  map.setLayoutProperty("product-points-dot-density", "visibility", "none");
-  map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
-  map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
-  map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
-  map.setLayoutProperty("uk-land-border-outline", "visibility", "none");
-  //map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
-};
-
-const framesMode = () => {
-  layerMode = LayerMode.Frames;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-  map.setLayoutProperty("product-polygons-frames-fill", "visibility", "visible");
-  map.setLayoutProperty("product-polygons-frames-outline", "visibility", "visible");
-};
-
-const heatmapMode = () => {
-  layerMode = LayerMode.Heatmap;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-  map.setLayoutProperty("product-points-heatmap", "visibility", "visible");
-};
-
-const choroplethMode = () => {
-  layerMode = LayerMode.Choropleth;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-  map.setLayoutProperty("region-boundaries-borders", "visibility", "visible");
-  map.setLayoutProperty("region-boundaries-choropleth", "visibility", "visible");
-  map.setLayoutProperty("country-boundaries-borders", "visibility", "visible");
-  map.setLayoutProperty("country-boundaries-choropleth", "visibility", "visible");
-};
-
-const isarithmicMode = () => {
-  layerMode = LayerMode.Isarithmic;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-};
-
-const dotDensityMode = () => {
-  layerMode = LayerMode.DotDensity;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-  map.setLayoutProperty("product-points-dot-density", "visibility", "visible");
-};
-
-const frameOverlapsMode = () => {
-  layerMode = LayerMode.FrameOverlaps;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-};
-
-const borderSelectionMode = () => {
-  layerMode = LayerMode.BorderSelection;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-  map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
-  map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
-  updateUkArea();
-};
-
-document.querySelector("#frames-item").onclick = framesMode;
-document.querySelector("#heatmap-item").onclick = heatmapMode;
-document.querySelector("#choropleth-item").onclick = choroplethMode;
-document.querySelector("#isarithmic-item").onclick = isarithmicMode;
-document.querySelector("#dot-density-item").onclick = dotDensityMode;
-document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
-document.querySelector("#border-selection-item").onclick = borderSelectionMode;
-
+//SAVED AREAS CODE -------------------------
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
 
 const saveSavedAreas = () => {
@@ -782,13 +172,10 @@ document.querySelector("#folder-button").onclick = () => {
   else closeSavedAreas();
 };
 
-export { map as map };
-
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
 areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
 
-document.querySelector("#zoom-in-button").onclick = () => map.zoomIn();
-document.querySelector("#zoom-out-button").onclick = () => map.zoomOut();
+//SEARCH BAR ----------------------------
 
 const searchResultsContainerEle = document.querySelector("#search-results-container");
 const searchBarEle = document.querySelector("#search-bar");

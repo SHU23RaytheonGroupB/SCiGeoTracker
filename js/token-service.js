@@ -1,5 +1,3 @@
-//JobyToDo  - secure storage needed for Uname,password,client credentials etc current setup is shoddy
-
 class TokenService {
   constructor(host, tokenPath, username, password, clientID, clientSecret) {
     this.host = host;
@@ -36,6 +34,7 @@ class TokenService {
       if (!response.ok) {
         throw new Error("Could not fetch refresh token");
       }
+      console.log(response);
       return await response.json();
     } catch (error) {
       console.error(error);

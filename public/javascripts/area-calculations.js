@@ -141,7 +141,7 @@ export function updateArea(e) {
 
 export function updateUkArea() {
   //diplay new layer of all the missions areas that over lap the uk
-  const data = UKlandBorder;
+  const data = window.map.getSource("uk-land");
 
   let polyCoordinates = [];
   let polyCoordinatesLat = [];
