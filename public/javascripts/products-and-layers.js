@@ -3,7 +3,7 @@ import { mapStyle, productFillColours, productOutlineColours } from "./config.js
 import { updateUkArea } from "./area-calculations.js";
 
 export let allProducts = [];
-const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
+export const boundariesByRegion = await getGeojsonFile("../boundaries/UK-by-region.json");
 const boundariesByCountry = await getGeojsonFile("../boundaries/UK-by-country.json");
 const UKlandBorder = await getGeojsonFile("../boundaries/UK-land-border.json");
 let layerMode;
@@ -137,7 +137,7 @@ async function addProductsToMap() {
   addBorderLayer("uk-land");
 }
 
-function addSource(title, data) {
+export function addSource(title, data) {
   map.addSource(title, {
     type: "geojson",
     data: data,

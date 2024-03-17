@@ -1,3 +1,15 @@
+export function moveMap() {
+  draw.changeMode("simple_select");
+}
+
+export function drawPoly() {
+  draw.changeMode("draw_polygon");
+  window.map.on("draw.create", updateArea);
+  window.map.on("draw.delete", updateArea);
+  window.map.on("draw.update", updateArea);
+  window.map.on("draw.selectionchange", updateArea);
+}
+
 //Polygon style properties
 export const draw = new MapboxDraw({
   //USED FOR DRAW POLYGON

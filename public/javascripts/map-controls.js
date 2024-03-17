@@ -1,6 +1,8 @@
-import { updateUkArea, updateArea, draw } from "./area-calculations.js";
+import { drawPoly, moveMap } from "./area-calculations.js";
 import { initialiseLayerMenu } from "./products-and-layers.js";
 import { mapStyle, MapStyle, minZoom, maxZoom, CursorMode } from "./config.js";
+import { initialiseSavedAreas } from "./saved-areas.js";
+import { initialiseSearchBar } from "./search-bar.js";
 
 let cursorMode;
 let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
@@ -32,9 +34,9 @@ export function initialiseControls() {
   initialiseStyleMenu();
   initialiseLayerMenu();
   initialiseCursorButtons();
-  initialiseSavedAreas();
   initialiseZoomButtons();
   initialiseSearchBar();
+  //initialiseSavedAreas();
 }
 
 export function renderOverlaysZoom() {
@@ -70,18 +72,6 @@ function closeInfo() {
   document.getElementById("area-selection-info-container").style.display = "none";
 }
 
-function moveMap() {
-  draw.changeMode("simple_select");
-}
-
-function drawPoly() {
-  draw.changeMode("draw_polygon");
-  window.map.on("draw.create", updateArea);
-  window.map.on("draw.delete", updateArea);
-  window.map.on("draw.update", updateArea);
-  window.map.on("draw.selectionchange", updateArea);
-}
-
 function initialiseStyleMenu() {
   const styleMenuButtonEle = document.querySelector("#style-menu-button");
   const styleMenuItemsContainerEle = document.querySelector("#style-menu-items-container");
@@ -108,28 +98,28 @@ function initialiseStyleMenu() {
     mapStyle.currentStyle = MapStyle.Dark;
     styleMenuButtonTextEle.textContent = "Dark";
     closeStyleMenu();
-    map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
+    window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
   };
 
   const lightStyle = () => {
     mapStyle.currentStyle = MapStyle.Light;
     styleMenuButtonTextEle.textContent = "Light";
     closeStyleMenu();
-    map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
+    window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
   };
 
   const satelliteStyle = () => {
     mapStyle.currentStyle = MapStyle.Satellite;
     styleMenuButtonTextEle.textContent = "Satellite";
     closeStyleMenu();
-    map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
+    window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
   };
 
   const topoStyle = () => {
     mapStyle.currentStyle = MapStyle.Outdoors;
     styleMenuButtonTextEle.textContent = "Topology";
     closeStyleMenu();
-    map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
+    window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
   };
 
   document.querySelector("#dark-item").onclick = darkStyle;
@@ -184,17 +174,9 @@ function deselectAllCursors() {
   polygonButtonEle.classList.remove(...cursorSelectedClasses);
 }
 
-function initialiseSavedAreas() {
-  // ... (move the saved areas code here)
-}
-
 function initialiseZoomButtons() {
   zoomScrollButtonEle.onmousedown = dragMouseDown;
 
   document.querySelector("#zoom-in-button").onclick = () => window.map.zoomIn();
   document.querySelector("#zoom-out-button").onclick = () => window.map.zoomOut();
-}
-
-function initialiseSearchBar() {
-  // ... (move the search bar code here)
 }
