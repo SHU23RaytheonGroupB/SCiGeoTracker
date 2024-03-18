@@ -3,21 +3,29 @@
 
 import { circleLinkZoom } from "./map.js";
 
-export function Timeline(map_, options) {
+export function Timeline(options) {
   const axis = {};
   const nodes = {};
-  let myData = map_.getSource("product-polygons")._data.features;
+  let myData = window.map.getSource("product-polygons")._data.features;
 
   console.log("myData", myData);
 
   myData = Array.from({ length: myData.length }, (x, i) => ({
-    title: "Mission: " + myData[i].attributes.title.split(" ")[0] + "\n" + 
-    "Scene: " + myData[i].attributes.title.split(" ")[1] + "\n" + "Publisher: " +  myData[i].attributes.pub + "\n",
+    title:
+      "Mission: " +
+      myData[i].attributes.title.split(" ")[0] +
+      "\n" +
+      "Scene: " +
+      myData[i].attributes.title.split(" ")[1] +
+      "\n" +
+      "Publisher: " +
+      myData[i].attributes.pub +
+      "\n",
     id: myData[i].attributes.id,
     start: new Date(myData[i].attributes.date_start),
     end: new Date(myData[i].attributes.date_end),
-    missionGroup:  myData[i].attributes.title.split(" ")[0],
-  }));  
+    missionGroup: myData[i].attributes.title.split(" ")[0],
+  }));
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
     from: new Date().setFullYear(new Date().getFullYear() + 1),
@@ -28,10 +36,8 @@ export function Timeline(map_, options) {
     onClickItem: () => {},
     onZoomEnd: () => {},
     zoomFilter: () => {},
-    ...options
+    ...options,
   };
-
-
 
   const MS_PER_HOUR = 60 * 60 * 1000;
   const MS_PER_SECOND = 1000;
@@ -78,15 +84,14 @@ export function Timeline(map_, options) {
         [
           d3.utcMonth,
           (d) => {
-            const startOfTheYear =
-              d.getUTCMonth() === 0 && d.getUTCDate() === 1;
+            const startOfTheYear = d.getUTCMonth() === 0 && d.getUTCDate() === 1;
             const format = startOfTheYear ? "%Y – %B" : "%B";
 
             return d3.utcFormat(format)(d);
-          }
-        ]
+          },
+        ],
       ],
-      [Infinity, [d3.utcYear, "%Y"]]
+      [Infinity, [d3.utcYear, "%Y"]],
     ];
 
     let [interval, format] = findDensityConfig(densityMap, density);
@@ -94,16 +99,11 @@ export function Timeline(map_, options) {
 
     const el = parentNode
       .attr("transform", `translate(0,${margin.top - 48})`)
-      .call(
-        d3.axisTop(scaleX).ticks(interval).tickFormat(format).tickSizeOuter(0)
-      );
+      .call(d3.axisTop(scaleX).ticks(interval).tickFormat(format).tickSizeOuter(0));
 
     el.select(".domain").remove();
 
-    el.selectAll("text")
-      .attr("y", 0)
-      .attr("x", 6)
-      .style("text-anchor", "start");
+    el.selectAll("text").attr("y", 0).attr("x", 6).style("text-anchor", "start");
 
     el.selectAll("line").attr("y1", -7).attr("y2", 6);
   };
@@ -118,7 +118,7 @@ export function Timeline(map_, options) {
       [13, [d3.utcMonth, "%b"]],
       [22, [d3.utcMonth, (d) => d3.utcFormat("%B")(d).charAt(0)]],
       [33, [d3.utcMonth.every(3), "Q%q"]],
-      [Infinity, [d3.utcMonth.every(3), ""]]
+      [Infinity, [d3.utcMonth.every(3), ""]],
     ];
 
     let [interval, format] = findDensityConfig(densityMap, density);
@@ -126,16 +126,11 @@ export function Timeline(map_, options) {
 
     const el = parentNode
       .attr("transform", `translate(0,${margin.top - 28})`)
-      .call(
-        d3.axisTop(scaleX).ticks(interval).tickFormat(format).tickSizeOuter(0)
-      );
+      .call(d3.axisTop(scaleX).ticks(interval).tickFormat(format).tickSizeOuter(0));
 
     el.select(".domain").remove();
 
-    el.selectAll("text")
-      .attr("y", 0)
-      .attr("x", 6)
-      .style("text-anchor", "start");
+    el.selectAll("text").attr("y", 0).attr("x", 6).style("text-anchor", "start");
 
     el.selectAll("line").attr("y1", -7).attr("y2", 0);
   };
@@ -144,7 +139,7 @@ export function Timeline(map_, options) {
     const densityMap = [
       [10, [d3.timeMonday, (d) => +d3.utcFormat("%-W")(d) + 1]], // monday as first of week and zero based
       [33, [d3.timeMonday, ""]],
-      [Infinity, [d3.timeMonday.every(4), ""]]
+      [Infinity, [d3.timeMonday.every(4), ""]],
     ];
 
     let [interval, format] = findDensityConfig(densityMap, density);
@@ -152,20 +147,12 @@ export function Timeline(map_, options) {
 
     const el = parentNode
       .attr("transform", `translate(0,${margin.top - 8})`)
-      .call(
-        d3.axisTop(scaleX).ticks(interval).tickFormat(format).tickSizeOuter(0)
-      );
+      .call(d3.axisTop(scaleX).ticks(interval).tickFormat(format).tickSizeOuter(0));
 
     el.select(".domain").remove();
-    el.selectAll("line").style(
-      "visibility",
-      density > densityMap[0][0] ? "visible" : "hidden"
-    );
+    el.selectAll("line").style("visibility", density > densityMap[0][0] ? "visible" : "hidden");
 
-    el.selectAll("text")
-      .attr("y", 0)
-      .attr("x", 6)
-      .style("text-anchor", "start");
+    el.selectAll("text").attr("y", 0).attr("x", 6).style("text-anchor", "start");
 
     el.selectAll("line").attr("y1", -7).attr("y2", 0);
   };
@@ -179,7 +166,7 @@ export function Timeline(map_, options) {
       [1, [d3.utcDay]],
       [8, [d3.timeMonday]],
       [22, [d3.utcMonth]],
-      [Infinity, [d3.utcMonth.every(3)]]
+      [Infinity, [d3.utcMonth.every(3)]],
     ];
 
     const [interval] = findDensityConfig(densityMap, density);
@@ -200,7 +187,7 @@ export function Timeline(map_, options) {
   axis["yearlyGrid"] = (parentNode, density) => {
     const densityMap = [
       [3, [d3.utcMonth, "%B"]],
-      [Infinity, [d3.utcYear, "%Y"]]
+      [Infinity, [d3.utcYear, "%Y"]],
     ];
 
     let [interval, format] = findDensityConfig(densityMap, density);
@@ -208,9 +195,7 @@ export function Timeline(map_, options) {
 
     const el = parentNode
       .attr("transform", `translate(0,${margin.top})`)
-      .call(
-        d3.axisTop(scaleX).ticks(interval).tickFormat(format).tickSizeOuter(0)
-      );
+      .call(d3.axisTop(scaleX).ticks(interval).tickFormat(format).tickSizeOuter(0));
 
     el.select(".domain").remove();
     el.selectAll("text").remove();
@@ -255,8 +240,7 @@ export function Timeline(map_, options) {
         let a = head;
         while (a) {
           const ai = a.index;
-          if (radius2 - epsilon > (X[ai] - x) ** 2 + (Y[ai] - y) ** 2)
-            return true;
+          if (radius2 - epsilon > (X[ai] - x) ** 2 + (Y[ai] - y) ** 2) return true;
           a = a.next;
         }
         return false;
@@ -275,10 +259,8 @@ export function Timeline(map_, options) {
             const ai = a.index;
             let y1 = Y[ai] + Math.sqrt(radius2 - (X[ai] - X[bi]) ** 2);
             let y2 = Y[ai] - Math.sqrt(radius2 - (X[ai] - X[bi]) ** 2);
-            if (Math.abs(y1) < Math.abs(Y[bi]) && !intersects(X[bi], y1))
-              Y[bi] = y1;
-            if (Math.abs(y2) < Math.abs(Y[bi]) && !intersects(X[bi], y2))
-              Y[bi] = y2;
+            if (Math.abs(y1) < Math.abs(Y[bi]) && !intersects(X[bi], y1)) Y[bi] = y1;
+            if (Math.abs(y2) < Math.abs(Y[bi]) && !intersects(X[bi], y2)) Y[bi] = y2;
             a = a.next;
           } while (a);
         }
@@ -300,7 +282,7 @@ export function Timeline(map_, options) {
       //let rescaleX = (50/(Math.log(xsize) - 20));
       //let rescaleX = (1/xsize)*100;
       let rescaleX = 4;
-      if(xsize < 0.08005333333333334){
+      if (xsize < 0.08005333333333334) {
         rescaleX = 14;
       }
       //rescaleX = 4;
@@ -321,16 +303,14 @@ export function Timeline(map_, options) {
               })
               .attr("r", 4)
               .attr("mission", (d) => d.missionGroup)
-              .attr("cx", (d, i) => X[i]) 
+              .attr("cx", (d, i) => X[i])
               .attr("cy", (d, i) => Y[i] + 120)
               .append("title")
               .text((d) => d.title),
-          (update) =>
-            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130),
+          (update) => update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130)
         );
 
-      const density =
-        Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
+      const density = Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
 
       parts.forEach((part) => {
         nodes[part].call(axis[part], density);
@@ -349,18 +329,18 @@ export function Timeline(map_, options) {
       .scaleExtent(zoomScaleExtent)
       .extent([
         [margin.left, 0],
-        [width - margin.right, 0]
+        [width - margin.right, 0],
       ])
       .translateExtent([
         [margin.left, 0],
-        [width - margin.right, 0]
+        [width - margin.right, 0],
       ])
       .on("zoom", ({ transform }) => {
         scaleX = transform.rescaleX(originalScaleX);
         bind(myData);
         element.value = {
           start: scaleX.domain()[0],
-          end: scaleX.domain()[1]
+          end: scaleX.domain()[1],
         };
         element.dispatchEvent(new CustomEvent("input"));
       });
@@ -375,7 +355,7 @@ export function Timeline(map_, options) {
       element,
       update,
       items,
-      getBounds
+      getBounds,
     };
   };
 
