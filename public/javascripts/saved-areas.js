@@ -1,4 +1,6 @@
+import { updateArea } from "./area-calculations.js";
 import { productFillColours, productOutlineColours, mapStyle } from "./config.js";
+import { allProducts } from "./products-and-layers.js";
 
 let selectedAreas = [];
 
@@ -451,7 +453,7 @@ const openSavedAreas = () => {
           (savedArea.name+"-CUSTOM-frames-outline").layout.visibility = "visible";
         }
         closeSavedAreas();
-        try{
+        //try{
           var xCoords = 0;
           var arrCount = 0;
           var yCoords = 0;
@@ -466,14 +468,16 @@ const openSavedAreas = () => {
           }
           var xAverage = xCoords / arrCount;
           var yAverage = yCoords / arrCount;
-
+          const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
+          updateArea(allProducts, savedArea.geometry);
+          areaSelectionInfoContainerEle.visibility = "visible";
           map.flyTo({
             center: [xAverage, yAverage],
             zoom: 7.5,
             essential: true,
           });
-        }
-        catch{}
+        //}
+        //catch{}
       }
     };
     savedAreaEditButtonEle.onclick = () => {
