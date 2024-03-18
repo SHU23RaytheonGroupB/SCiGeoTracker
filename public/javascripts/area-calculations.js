@@ -1,108 +1,16 @@
-export function moveMap() {
+import { allProducts } from "./products-and-layers.js";
+
+export function moveMap(draw) {
   draw.changeMode("simple_select");
 }
 
-export function drawPoly() {
+export function drawPoly(draw) {
   draw.changeMode("draw_polygon");
-  window.map.on("draw.create", updateArea);
-  window.map.on("draw.delete", updateArea);
-  window.map.on("draw.update", updateArea);
-  window.map.on("draw.selectionchange", updateArea);
+  window.map.on("draw.create", () => updateArea(allProducts, draw.getAll()));
+  window.map.on("draw.delete", () => updateArea(allProducts, draw.getAll()));
+  window.map.on("draw.update", () => updateArea(allProducts, draw.getAll()));
+  window.map.on("draw.selectionchange", () => updateArea(allProducts, draw.getAll()));
 }
-
-//Polygon style properties
-export const draw = new MapboxDraw({
-  //USED FOR DRAW POLYGON
-  displayControlsDefault: false,
-  // Select which mapbox-gl-draw control buttons to add to the map.
-  controls: {
-    //polygon: true,
-    //trash: true,
-  },
-  // Set mapbox-gl-draw to draw by default.
-  // The user does not have to click the polygon control button first.
-  defaultMode: "draw_polygon",
-  userProperties: true,
-  styles: [
-    {
-      id: "gl-draw-polygon-fill-inactive",
-      type: "fill",
-      filter: ["all", ["==", "active", "false"], ["==", "$type", "Polygon"], ["!=", "mode", "static"]],
-      paint: { "fill-color": "#FFFFFF", "fill-opacity": 0.1 },
-    },
-    {
-      id: "gl-draw-polygon-fill-active",
-      type: "fill",
-      filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
-      paint: { "fill-color": "#FFFFFF", "fill-opacity": 0.1 },
-    },
-    {
-      id: "gl-draw-polygon-midpoint",
-      type: "circle",
-      filter: ["all", ["==", "$type", "Point"], ["==", "meta", "midpoint"]],
-      paint: { "circle-radius": 3, "circle-color": "#ffffff" },
-    },
-    {
-      id: "gl-draw-polygon-and-line-vertex-stroke-inactive",
-      type: "circle",
-      filter: ["all", ["==", "meta", "vertex"], ["==", "$type", "Point"], ["!=", "mode", "static"]],
-      paint: { "circle-radius": 3, "circle-color": "#ffffff" },
-    },
-    {
-      id: "gl-draw-polygon-stroke-inactive",
-      type: "line",
-      filter: ["all", ["==", "active", "false"], ["==", "$type", "Polygon"], ["!=", "mode", "static"]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ff0000", "line-width": 2 },
-    },
-    {
-      id: "gl-draw-polygon-stroke-active",
-      type: "line",
-      filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ff0000", "line-width": 2, "line-opacity": 0.5 },
-    },
-    {
-      id: "gl-draw-line-inactive",
-      type: "line",
-      filter: ["all", ["==", "active", "false"], ["==", "$type", "LineString"], ["!=", "mode", "static"]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#3bb2d0", "line-width": 2 },
-    },
-    {
-      id: "gl-draw-line-active",
-      type: "line",
-      filter: ["all", ["==", "$type", "LineString"], ["==", "active", "true"]],
-      layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ff0000", "line-width": 2, "line-opacity": 0.5 },
-    },
-    {
-      id: "gl-draw-point-point-stroke-inactive",
-      type: "circle",
-      filter: [
-        "all",
-        ["==", "active", "false"],
-        ["==", "$type", "Point"],
-        ["==", "meta", "feature"],
-        ["!=", "mode", "static"],
-      ],
-      paint: { "circle-radius": 5, "circle-opacity": 1, "circle-color": "#fff" },
-    },
-    {
-      id: "gl-draw-point-stroke-active",
-      type: "circle",
-      filter: ["all", ["==", "$type", "Point"], ["==", "active", "true"], ["!=", "meta", "midpoint"]],
-      paint: { "circle-radius": 5, "circle-color": "#ffffff" },
-    },
-    {
-      id: "gl-draw-point-active",
-      type: "circle",
-      filter: ["all", ["==", "$type", "Point"], ["!=", "meta", "midpoint"], ["==", "active", "true"]],
-      paint: { "circle-radius": 3, "circle-color": "#ff0000" },
-    },
-  ],
-});
-
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
 const totalAreaContainerEle = document.querySelector("#Total-area-value-container");
 const coveredAreaContainerEle = document.querySelector("#Covered-area-value-container");
@@ -110,10 +18,17 @@ const uncoveredAreaContainerEle = document.querySelector("#Uncovered-area-value-
 const coveragePercentageContainerEle = document.querySelector("#Coverage-percentage-value-container");
 const missionCountContainerEle = document.querySelector("#Mission-count-value-container");
 
-export function updateArea(e) {
-  //USED FOR DRAW POLYGON
-  const data = draw.getAll();
-  //console.log(data);
+export function updateArea(allProducts, data) {
+  //USED FOR DRAW POLYGOn
+  //const data = draw.getAll();
+  console.log(data.features[0].geometry.coordinates[0]);
+
+  if (data.features[0].geometry.coordinates[0].length <= 2) {
+    return;
+  }
+  //console.log(1);
+
+  //console.log(data.features.length);
   let polyCoordinates = [];
   let polyCoordinatesLat = [];
   let polyCoordinatesLog = [];
@@ -131,7 +46,10 @@ export function updateArea(e) {
     [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
   ];
 
-  let containedMissions = missionsWithinPolygon(missionsWithinBoundingBox(allProducts, boundingBox), polyCoordinates);
+  let containedMissionsInBB = missionsWithinBoundingBox(allProducts, boundingBox);
+  //console.log(containedMissionsInBB);
+  let containedMissions = missionsWithinPolygon(containedMissionsInBB, polyCoordinates);
+  //console.log(containedMissions);
 
   if (data.features.length > 0) {
     const area = turf.area(data) / 1000; //divide by 1000 to get square km
@@ -151,7 +69,7 @@ export function updateArea(e) {
   }
 }
 
-export function updateUkArea() {
+export function updateUkArea(allProducts, UKlandBorder) {
   //diplay new layer of all the missions areas that over lap the uk
   const data = window.map.getSource("uk-land");
 
@@ -176,37 +94,32 @@ export function updateUkArea() {
     [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5], //bottom left (wrap around)
   ];
 
-  console.log(boundingBox[1]);
+  //console.log(boundingBox[1]);
 
-  map.addSource("title", {
-    type: "geojson",
-    data: {
-      type: "Feature",
-      geometry: {
-        type: "Polygon",
-        coordinates: [boundingBox],
-      },
-    },
-  });
-  map.addLayer({
-    id: "title" + "fill",
-    type: "fill",
-    source: "title", // reference the data source
-    layout: {},
-    paint: {
-      "fill-color": "#FF0000",
-      "fill-opacity": 0.3,
-    },
-  });
-
-  console.log(data);
+  // map.addSource("title", {
+  //   type: "geojson",
+  //   data: {
+  //     type: "Feature",
+  //     geometry: {
+  //       type: "Polygon",
+  //       coordinates: [boundingBox],
+  //     },
+  //   },
+  // });
+  // map.addLayer({
+  //   id: "title" + "fill",
+  //   type: "fill",
+  //   source: "title", // reference the data source
+  //   layout: {},
+  //   paint: {
+  //     "fill-color": "#FF0000",
+  //     "fill-opacity": 0.3,
+  //   },
+  // });
 
   //bounding box is currently too big, seems to think there is an island somewhere along the -13.6 lattitude? maybe there is but very small
   let containedMissionsWithinBoundingBox = missionsWithinBoundingBox(allProducts, boundingBox);
-  console.log(containedMissionsWithinBoundingBox);
-
   let containedMissions = missionsWithinPolygon(containedMissionsWithinBoundingBox, polyCoordinates);
-  console.log(2);
 
   const area = turf.area(data) / 1000; //divide by 1000 to get square km
   const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
@@ -225,7 +138,7 @@ export function updateUkArea() {
 
 function missionsWithinBoundingBox(allMissons, polygon) {
   let containedMissions = [];
-  var turfpolygon = turf.polygon([polygon], { name: "poly1" });
+  var turfpolygon = turf.polygon([polygon]);
 
   for (let i = 0; i < allMissons.length; i++) {
     if (allMissons[i].centre != null) {
@@ -244,24 +157,23 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
   //console.log(boundingBoxMissions);
   let containedMissions = [];
   //console.log(0);
-  var turfpolygon = turf.multiPolygon([polygon], { name: "poly1" });
+  var turfpolygon = turf.multiPolygon([[polygon]]);
   //console.log(1);
 
   for (let i = 0; i < boundingBoxMissions.length; i++) {
     if (boundingBoxMissions[i].centre != null) {
       const coordinatesArray = boundingBoxMissions[i].centre.split(",");
       var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]);
-      console.log(i);
+      //console.log(i);
       if (turf.booleanPointInPolygon(point, turfpolygon)) {
-        console.log(i + ": within");
-
+        //console.log(i + ": within");
         containedMissions.push(boundingBoxMissions[i]);
         continue;
       }
     }
-    //console.log(boundingBoxMissions[i].footprint.coordinates[0].length);
+    //console.log(containedMissions);
     for (let k = 0; k < boundingBoxMissions[i].footprint.coordinates[0].length; k++) {
-      console.log(i + " + " + k);
+      //console.log(i + " + " + k);
 
       var point = turf.point(
         boundingBoxMissions[i].footprint.coordinates[0][k],
@@ -269,7 +181,7 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
       );
       //console.log(boundingBoxMissions[i].footprint.coordinates[0][k][0] + ", " + boundingBoxMissions[i].footprint.coordinates[0][k][0]);
       if (turf.booleanPointInPolygon(point, turfpolygon)) {
-        console.log(i + " + " + k + ": within");
+        //console.log(i + " + " + k + ": within");
         containedMissions.push(boundingBoxMissions[i]);
         break;
       }
@@ -322,7 +234,7 @@ function calculateMissionCoverage(allMissons, polygon) {
   //   },
   // });
 
-  var turfpolygon = turf.polygon([polygon]);
+  var turfpolygon = turf.multiPolygon([polygon]);
   var fcMissionsWithinPoly = [];
 
   for (let i = 0; i < fcMissions.length; i++) {
@@ -440,6 +352,7 @@ function calculateMissionCoverage(allMissons, polygon) {
 
   var areaCoveredWithOverlaps = 0;
   for (let i = 0; i < fcMissionsWithinPoly.length; i++) {
+    console.log(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
     areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
   }
 

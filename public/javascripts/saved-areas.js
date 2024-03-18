@@ -9,7 +9,7 @@ const saveSavedAreas = () => {
   sessionStorage.setItem("savedAreas", JSON.stringify(savedAreas));
 };
 
-export function initialiseSavedAreas() {
+export function initialiseSavedAreas(draw) {
   const savedAreasContainerEle = document.querySelector("#saved-areas-container");
   const savedAreasSearch = document.querySelector("#saved-areas-search");
 
@@ -17,7 +17,7 @@ export function initialiseSavedAreas() {
 
   document.querySelector("#saved-areas-upload").oninput = importFiles;
   document.querySelector("#saved-areas-export-button").onclick = exportFiles;
-  
+
   document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
   document.querySelector("#folder-button").onclick = () => {
     if (!savedAreasOpen) openSavedAreas();
