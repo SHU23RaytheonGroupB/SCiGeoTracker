@@ -21,6 +21,7 @@
       };
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   </head>
 
   <body class="m-0 p-0 text-neutral-500 dark:text-neutral-300 fill-neutral-500 h-screen max-h-screen light">
@@ -335,7 +336,7 @@
         class="py-1 px-6 #w-20 #h-10 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center dark:text-neutral-400 text-neutral-500"
       >
         <p id="coords" class="font-medium">-.000, -.000</p>
-        <p id="scale" class="font-normal"></p>
+        <p id="scale" class="font-normal">10km</p>
       </div>
     </div>
 
@@ -355,47 +356,39 @@
           <tbody>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Total area</td>
-              <td id="Total-area-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">0</td>
-              <td id="area-selection-total-area" class="font-light text-right dark:text-neutral-200 text-neutral-500">
+              <td id="selection-total-area-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <td id="selection-total-area-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
                 km²
               </td>
             </tr>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Covered area</td>
-              <td id="Covered-area-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">0</td>
-              <td id="area-selection-covered-area" class="font-light text-right dark:text-neutral-200 text-neutral-500">
+              <td id="selection-covered-area-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <td id="selection-covered-area-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
                 km²
               </td>
             </tr>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Uncovered area</td>
-              <td id="Uncovered-area-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">0</td>
-              <td
-                id="area-selection-uncovered-area"
-                class="font-light text-right dark:text-neutral-200 text-neutral-500"
-              >
+              <td id="selection-uncovered-area-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <td id="selection-uncovered-area-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
                 km²
               </td>
             </tr>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Coverage %</td>
-              <td id="Coverage-percentage-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">
-                0
-              </td>
-              <td
-                id="area-selection-coverage-percentage"
-                class="font-light text-right dark:text-neutral-200 text-neutral-500"
-              >
+              <td id="selection-coverage-percentage-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <td id="selection-coverage-percentage-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
                 %
               </td>
             </tr>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Total missions</td>
-              <td id="Mission-count-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">0</td>
-              <td
-                id="area-selection-total-missions"
+              <td id="selection-total-missions-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <!-- <td
+                id="selection-total-missions-unit"
                 class="font-light text-right dark:text-neutral-200 text-neutral-500"
-              ></td>
+              ></td> -->
             </tr>
           </tbody>
         </table>
@@ -404,6 +397,70 @@
         <button
           type="button"
           id="area-selection-info-view-button"
+          class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
+        >
+          View
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="area-view-info-container"
+      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 right-20"
+      style="display: none"
+    >
+      <div class="flex flex-row gap-2 px-1">
+        <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Area Selection</h2>
+        <button type="button" id="area-selection-info-close-button" class="ml-auto">
+          <img class="h-3 w-3" src="images/icons8-close-90.png" />
+        </button>
+      </div>
+      <div class="my-2 px-1">
+        <table class="table-auto border-separate border-spacing-y-1.5 w-full">
+          <tbody>
+            <tr>
+              <td class="font-light dark:text-neutral-200 text-neutral-500">Total area</td>
+              <td id="view-total-area-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <td id="view-total-area-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
+                km²
+              </td>
+            </tr>
+            <tr>
+              <td class="font-light dark:text-neutral-200 text-neutral-500">Covered area</td>
+              <td id="view-covered-area-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <td id="view-covered-area-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
+                km²
+              </td>
+            </tr>
+            <tr>
+              <td class="font-light dark:text-neutral-200 text-neutral-500">Uncovered area</td>
+              <td id="view-uncovered-area-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <td id="view-uncovered-area-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
+                km²
+              </td>
+            </tr>
+            <tr>
+              <td class="font-light dark:text-neutral-200 text-neutral-500">Coverage %</td>
+              <td id="view-coverage-percentage-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <td id="view-coverage-percentage-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
+                %
+              </td>
+            </tr>
+            <tr>
+              <td class="font-light dark:text-neutral-200 text-neutral-500">Total missions</td>
+              <td id="view-total-missions-value" class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500">0</td>
+              <!-- <td
+                id="view-total-missions-unit"
+                class="font-light text-right dark:text-neutral-200 text-neutral-500"
+              ></td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <button
+          type="button"
+          id="area-view-info-view-button"
           class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
         >
           View
@@ -483,33 +540,36 @@
           class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2 #ring-inset shadow-sm dark:bg-neutral-600/90 bg-neutral-100/90 dark:focus:bg-neutral-650/80 focus:bg-white dark:placeholder:text-neutral-400 placeholder:text-neutral-500 dark:ring-neutral-700/50 ring-neutral-300/90"
           placeholder="Search"
         />
-        <div
-          id="saved-areas-list"
-          class="h-52 overflow-y-scroll dark:text-neutral-300 text-neutral-500 flex flex-col gap-2"
-        ></div>
-        <div class="flex flex-row gap-2 text-xs dark:text-neutral-300 text-neutral-500 pt-2">
-          <button
+        <div id="saved-areas-list" class="h-52 overflow-y-scroll text-gray-500 dark:text-gray-400 flex flex-col gap-2">
+        </div>
+        <div class="flex flex-row gap-2 text-xs text-neutral-400 pt-2">
+            
+            <input type="file" name="file-upload" id='saved-areas-upload' multiple hidden>
+            <button 
             type="button"
-            id="saved-areas-info-view-button"
-            class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
-          >
-            Import GeoJSON
-          </button>
-          <button
+            id="saved-areas-import-button"
+            class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+            onclick="open_file()">
+              Import GEOJSON
+            </button>
+            <script type="text/javascript">
+              function open_file() {
+                document.getElementById('saved-areas-upload').click();
+              }
+            </script>
+            <button
             type="button"
             id="saved-areas-export-button"
-            class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
-          >
+            class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50">
             Export GeoJSON
           </button>
         </div>
       </div>
     </div>
+    
 
-    <div
-      id="timeline-container"
-      class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 shadow-lg rounded-lg opacity-70 dark:bg-black bg-white #dark:bg-neutral-900/90 #bg-white/90"
-    ></div>
+    <div id="timeline-container" class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg">
+    </div>
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
 
