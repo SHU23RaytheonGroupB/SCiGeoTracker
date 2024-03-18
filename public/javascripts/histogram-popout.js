@@ -1,6 +1,8 @@
 export function createHistogramChart(map_) {
   console.log("Creating histogram chart");
 
+  console.log("map_: ", map_);
+
   let data =  map_.getSource("product-polygons")._data.features.map((feature) => {
     return feature.attributes.date_start;
   }); 
