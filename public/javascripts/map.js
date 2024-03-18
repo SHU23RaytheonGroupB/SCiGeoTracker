@@ -36,7 +36,6 @@ map.on("load", async () => {
 
   loaded = true; //used so style is not loaded before data is requested
   createHistogramChart(map);
-
 });
 
 map.on("style.load", async () => {
@@ -51,10 +50,10 @@ function updateScaleBar() {
   const meters = getRoundNum(maxMeters);
   const ratio = meters / maxMeters;
 
-  const scaleBarCont = document.getElementById("scale-bar-container");
+  const scaleBarInner = document.getElementById("scale-bar-inner");
   const scaleBarLabel = document.getElementById("scale-bar-label");
 
-  scaleBarCont.style.width = 100 * ratio + "px";
+  scaleBarInner.style.width = 100 * ratio + "px";
   scaleBarLabel.textContent = meters < 1000 ? meters + " m" : (meters / 1000).toFixed(1) + " km";
 }
 
