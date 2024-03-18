@@ -22,6 +22,7 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   </head>
 
   <body class="m-0 p-0 text-neutral-500 dark:text-neutral-300 fill-neutral-500 h-screen max-h-screen light">
@@ -198,7 +199,7 @@
 
     <div class="absolute top-0 right-0 z-10 m-2 flex flex-col gap-4 pointer-events-none">
       <div id="search-container" class="flex flex-row gap-2">
-        <div class="pointer-events-auto flex flex-col gap-1 h-fit">
+        <div id="search-bar-results-container" class="pointer-events-auto flex flex-col gap-1 h-fit" tabindex="0">
           <input
             type="text"
             name="price"
@@ -363,23 +364,38 @@
           <tbody>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Total area</td>
-              <td id="Total-area-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">0</td>
-              <td id="area-selection-total-area" class="font-light text-right dark:text-neutral-200 text-neutral-500">
+              <td
+                id="selection-total-area-value"
+                class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500"
+              >
+                0
+              </td>
+              <td id="selection-total-area-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
                 km²
               </td>
             </tr>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Covered area</td>
-              <td id="Covered-area-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">0</td>
-              <td id="area-selection-covered-area" class="font-light text-right dark:text-neutral-200 text-neutral-500">
+              <td
+                id="selection-covered-area-value"
+                class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500"
+              >
+                0
+              </td>
+              <td id="selection-covered-area-unit" class="font-light text-right dark:text-neutral-200 text-neutral-500">
                 km²
               </td>
             </tr>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Uncovered area</td>
-              <td id="Uncovered-area-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">0</td>
               <td
-                id="area-selection-uncovered-area"
+                id="selection-uncovered-area-value"
+                class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500"
+              >
+                0
+              </td>
+              <td
+                id="selection-uncovered-area-unit"
                 class="font-light text-right dark:text-neutral-200 text-neutral-500"
               >
                 km²
@@ -387,11 +403,14 @@
             </tr>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Coverage %</td>
-              <td id="Coverage-percentage-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">
+              <td
+                id="selection-coverage-percentage-value"
+                class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500"
+              >
                 0
               </td>
               <td
-                id="area-selection-coverage-percentage"
+                id="selection-coverage-percentage-unit"
                 class="font-light text-right dark:text-neutral-200 text-neutral-500"
               >
                 %
@@ -399,11 +418,16 @@
             </tr>
             <tr>
               <td class="font-light dark:text-neutral-200 text-neutral-500">Total missions</td>
-              <td id="Mission-count-value-container" class="font-medium dark:text-neutral-200 text-neutral-500">0</td>
               <td
-                id="area-selection-total-missions"
+                id="selection-total-missions-value"
+                class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500"
+              >
+                0
+              </td>
+              <!-- <td
+                id="selection-total-missions-unit"
                 class="font-light text-right dark:text-neutral-200 text-neutral-500"
-              ></td>
+              ></td> -->
             </tr>
           </tbody>
         </table>
@@ -425,8 +449,8 @@
       style="display: none"
     >
       <div class="flex flex-row gap-2 px-1">
-        <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Area Selection</h2>
-        <button type="button" id="area-selection-info-close-button" class="ml-auto">
+        <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Area View</h2>
+        <button type="button" id="area-view-info-close-button" class="ml-auto">
           <img class="h-3 w-3" src="images/icons8-close-90.png" />
         </button>
       </div>
