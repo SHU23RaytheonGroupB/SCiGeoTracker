@@ -1,5 +1,3 @@
-import { draw } from "./area-calculations.js";
-
 let selectedAreas = [];
 
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
@@ -8,7 +6,7 @@ const saveSavedAreas = () => {
   sessionStorage.setItem("savedAreas", JSON.stringify(savedAreas));
 };
 
-export function initialiseSavedAreas() {
+export function initialiseSavedAreas(draw) {
   const savedAreasContainerEle = document.querySelector("#saved-areas-container");
   const savedAreasSearch = document.querySelector("#saved-areas-search");
 
