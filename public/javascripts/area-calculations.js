@@ -74,15 +74,15 @@ export function updateUkArea() {
   //diplay new layer of all the missions areas that over lap the uk
   const data = window.map.getSource("uk-land")._data;
 
-  //console.log(data.features[0].geometry.coordinates)
-  let polyCoordinatesArr = data.features[0].geometry.coordinates;
+  console.log(data.features[0].geometry.coordinates)
+  let polyCoordinates = [];
   let polyCoordinatesLat = [];
   let polyCoordinatesLog = [];
 
   for (let i = 0; i < data.features[0].geometry.coordinates.length; i++) {
     //bcs the uk is a multigon we need to iterate through each island
     for (let k = 0; k < data.features[0].geometry.coordinates[i][0].length; k++) {
-      //polyCoordinates.push(data.features[0].geometry.coordinates[i][0][k]);
+      polyCoordinates.push(data.features[0].geometry.coordinates[i][0][k]);
       polyCoordinatesLog.push(data.features[0].geometry.coordinates[i][0][k][1]);
       polyCoordinatesLat.push(data.features[0].geometry.coordinates[i][0][k][0]);
     }
@@ -121,11 +121,11 @@ export function updateUkArea() {
 
   //bounding box is currently too big, seems to think there is an island somewhere along the -13.6 lattitude? maybe there is but very small
   let containedMissionsWithinBoundingBox = missionsWithinBoundingBox(allProducts, boundingBox);
-  let containedMissions = missionsWithinPolygon(containedMissionsWithinBoundingBox, polyCoordinatesArr);
+  let containedMissions = missionsWithinPolygon(containedMissionsWithinBoundingBox, data.features[0].geometry.coordinates);
 
   const area = turf.area(data) / 1000; //divide by 1000 to get square km
   const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-  const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinatesArr);
+  const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinates);
   const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
   const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
   const Mission_count = containedMissions.length;
@@ -158,7 +158,7 @@ function missionsWithinBoundingBox(allMissons, polygon) {
 function missionsWithinPolygon(boundingBoxMissions, polygon) {
   //console.log(boundingBoxMissions);
   let containedMissions = [];
-  //console.log(0);
+  console.log(0);
 
   map.addSource("title", {
     type: "geojson",
@@ -170,6 +170,8 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
       },
     },
   });
+  console.log(1);
+
   map.addLayer({
     id: "title" + "fill",
     type: "fill",
@@ -181,14 +183,16 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
     },
   });
 
-  var turfpolygon = turf.multiPolygon([[polygon]]);
-  //console.log(1);
+  console.log(2);
+
+
+  var turfpolygon = turf.multiPolygon([polygon]);
+  console.log(3);
 
   for (let i = 0; i < boundingBoxMissions.length; i++) {
     if (boundingBoxMissions[i].centre != null) {
       const coordinatesArray = boundingBoxMissions[i].centre.split(",");
       var point = turf.point([parseFloat(coordinatesArray[1]), parseFloat(coordinatesArray[0])]);
-      //console.log(i);
       if (turf.booleanPointInPolygon(point, turfpolygon)) {
         //console.log(i + ": within");
         containedMissions.push(boundingBoxMissions[i]);
@@ -210,7 +214,10 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
         break;
       }
     }
+    console.log(i);
   }
+  console.log("done");
+
   //console.log(containedMissions);
 
   return containedMissions;
@@ -258,7 +265,7 @@ function calculateMissionCoverage(allMissons, polygon) {
     },
   });
 
-  var turfpolygon = turf.multiPolygon([[polygon]]);
+  var turfpolygon = turf.multiPolygon([polygon]);
 
   var fcMissionsWithinPoly = [];
 
