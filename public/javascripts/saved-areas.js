@@ -1,3 +1,5 @@
+import { draw } from "./area-calculations.js";
+
 let selectedAreas = [];
 
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
@@ -12,8 +14,12 @@ export function initialiseSavedAreas() {
 
   savedAreasSearch.addEventListener("change", savedSearchChanged);
 
-  document.querySelector("#saved-areas-upload").oninput = importFiles;
-  document.querySelector("#saved-areas-export-button").onclick = exportFiles;
+  
+  //document.addEventListener('DOMContentLoaded', function() {
+    //document.querySelector("#saved-areas-upload").oninput = importFiles;
+    document.querySelector("#saved-areas-export-button").onclick = exportFiles;
+  //});
+
 
   document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
   document.querySelector("#folder-button").onclick = () => {
@@ -355,6 +361,8 @@ const savedSearchChanged = () => {
     }
   }
 };
+
+var openedBefore = false;
 
 let savedAreasOpen = false;
 const openSavedAreas = () => {

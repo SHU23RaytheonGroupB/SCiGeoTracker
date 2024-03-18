@@ -4,6 +4,7 @@ import { mapStyle, MapStyle, minZoom, maxZoom, CursorMode } from "./config.js";
 import { initialiseSavedAreas } from "./saved-areas.js";
 import { initialiseSearchBar } from "./search-bar.js";
 
+
 let cursorMode;
 let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
 
@@ -36,7 +37,7 @@ export function initialiseControls() {
   initialiseCursorButtons();
   initialiseZoomButtons();
   initialiseSearchBar();
-  //initialiseSavedAreas();
+  initialiseSavedAreas();
 }
 
 export function renderOverlaysZoom() {
