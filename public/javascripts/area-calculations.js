@@ -23,12 +23,16 @@ export function updateArea(allProducts, data) {
   //const data = draw.getAll();
   console.log(data.features[0].geometry.coordinates[0]);
 
-  if (data.features[0].type = "MultiPolygon"){
-
+  if (data.type = "FeatureCollection"){
+    data.features[0].geometry.coordinates.forEach(c => {
+      if (c.length <= 2) {
+        console.log("here2");
+        return;
+      }
+    });
   }
   else{
     if (data.features[0].geometry.coordinates[0].length <= 2) {
-      console.log("here2");
       return;
     }
   }
