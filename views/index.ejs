@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <title>Sci-GeoTracker</title>
-    
+
     <meta name="viewport" content="initial-scale=1,maximum-scale=5,user-scalable=yes" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css" rel="stylesheet" />
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"></script>
-    
+
     <link
-    rel="stylesheet"
+      rel="stylesheet"
       href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css"
       type="text/css"
     />
@@ -342,15 +342,15 @@
     <div class="absolute bottom-0 right-0 z-10 m-2 flex flex-col gap-2">
       <div
         id="coords-container"
-        class="py-1 px-6 #w-20 #h-10 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center dark:text-neutral-400 text-neutral-500"
+        class="py-1 px-6 min-w-40 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center dark:text-neutral-400 text-neutral-500"
       >
         <p id="coords" class="font-medium">-.000, -.000</p>
       </div>
       <div
         id="scale-bar-container"
-        class="py-1 px-6 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center dark:text-neutral-400 text-neutral-500"
+        class="py-1 px-4 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center dark:text-neutral-400 text-neutral-500 inline-flex items-center"
       >
-        <div id="scale-bar">
+        <div id="scale-bar" class="w-full">
           <div id="scale-bar-inner" class="h-1 bg-neutral-500 dark:bg-neutral-400"></div>
           <div id="scale-bar-label" class="font-medium mt-1"></div>
         </div>
@@ -661,7 +661,7 @@
         <button type="button" id="histogram-popout-close-button" class="ml-auto">
           <img class="h-3 w-3" src="images/icons8-close-90.png" />
         </button>
-        <canvas id="histogram-chart" ></canvas>
+        <canvas id="histogram-chart"></canvas>
       </div>
     </div>
 
@@ -671,7 +671,6 @@
     ></div>
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
-
 
     <style type="text/css">
       .timeline-axis {

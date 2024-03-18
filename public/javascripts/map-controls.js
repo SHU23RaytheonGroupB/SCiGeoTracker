@@ -6,6 +6,11 @@ import { initialiseSearchBar } from "./search-bar.js";
 
 let cursorMode;
 let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
+setDarkMode(darkMode);
+const styleMenuButtonEle = document.querySelector("#style-menu-button");
+const styleMenuItemsContainerEle = document.querySelector("#style-menu-items-container");
+const styleMenuButtonTextEle = document.querySelector("#style-menu-button-text");
+let styleMenuOpen = false;
 
 const moveButtonEle = document.querySelector("#move-button");
 const rectangleButtonEle = document.querySelector("#rectangle-button");
@@ -168,65 +173,59 @@ function closeInfo() {
 }
 
 function initialiseStyleMenu() {
-  const styleMenuButtonEle = document.querySelector("#style-menu-button");
-  const styleMenuItemsContainerEle = document.querySelector("#style-menu-items-container");
-  const styleMenuButtonTextEle = document.querySelector("#style-menu-button-text");
-  let styleMenuOpen = false;
-  const openStyleMenu = () => {
-    styleMenuOpen = true;
-    styleMenuItemsContainerEle.style.display = null;
-    styleMenuItemsContainerEle.focus();
-  };
-  const closeStyleMenu = () => {
-    styleMenuOpen = false;
-    styleMenuItemsContainerEle.style.display = "none";
-  };
-  styleMenuButtonEle.onclick = () => {
-    if (!styleMenuOpen) openStyleMenu();
-    else closeStyleMenu();
-  };
-  styleMenuItemsContainerEle.focusout = () => {
-    closeStyleMenu();
-  };
-
-  const darkStyle = () => {
-    mapStyle.currentStyle = MapStyle.Dark;
-    styleMenuButtonTextEle.textContent = "Dark";
-    closeStyleMenu();
-    window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
-  };
-
-  const lightStyle = () => {
-    mapStyle.currentStyle = MapStyle.Light;
-    styleMenuButtonTextEle.textContent = "Light";
-    closeStyleMenu();
-    window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
-  };
-
-  const satelliteStyle = () => {
-    mapStyle.currentStyle = MapStyle.Satellite;
-    styleMenuButtonTextEle.textContent = "Satellite";
-    closeStyleMenu();
-    window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
-  };
-
-  const topoStyle = () => {
-    mapStyle.currentStyle = MapStyle.Outdoors;
-    styleMenuButtonTextEle.textContent = "Topology";
-    closeStyleMenu();
-    window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
-  };
-
   document.querySelector("#dark-item").onclick = darkStyle;
   document.querySelector("#light-item").onclick = lightStyle;
   document.querySelector("#satellite-item").onclick = satelliteStyle;
   document.querySelector("#topo-item").onclick = topoStyle;
 
   document.querySelector("#theme-button").onclick = () => setDarkMode(!darkMode);
-
-  setDarkMode(darkMode);
   darkStyle();
 }
+
+const openStyleMenu = () => {
+  styleMenuOpen = true;
+  styleMenuItemsContainerEle.style.display = null;
+  styleMenuItemsContainerEle.focus();
+};
+const closeStyleMenu = () => {
+  styleMenuOpen = false;
+  styleMenuItemsContainerEle.style.display = "none";
+};
+styleMenuButtonEle.onclick = () => {
+  if (!styleMenuOpen) openStyleMenu();
+  else closeStyleMenu();
+};
+styleMenuItemsContainerEle.focusout = () => {
+  closeStyleMenu();
+};
+
+const darkStyle = () => {
+  mapStyle.currentStyle = MapStyle.Dark;
+  styleMenuButtonTextEle.textContent = "Dark";
+  closeStyleMenu();
+  window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
+};
+
+const lightStyle = () => {
+  mapStyle.currentStyle = MapStyle.Light;
+  styleMenuButtonTextEle.textContent = "Light";
+  closeStyleMenu();
+  window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
+};
+
+const satelliteStyle = () => {
+  mapStyle.currentStyle = MapStyle.Satellite;
+  styleMenuButtonTextEle.textContent = "Satellite";
+  closeStyleMenu();
+  window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
+};
+
+const topoStyle = () => {
+  mapStyle.currentStyle = MapStyle.Outdoors;
+  styleMenuButtonTextEle.textContent = "Topology";
+  closeStyleMenu();
+  window.map.setStyle(`mapbox://styles/mapbox/${mapStyle.currentStyle}`);
+};
 
 function setDarkMode(enabled) {
   darkMode = enabled;
