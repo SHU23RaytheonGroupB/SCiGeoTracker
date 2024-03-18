@@ -128,9 +128,9 @@ export function updateArea(allProducts, data) {
   ];
     
   let containedMissionsInBB = missionsWithinBoundingBox(allProducts, boundingBox);
-  console.log(containedMissionsInBB);
+  //console.log(containedMissionsInBB);
   let containedMissions = missionsWithinPolygon(containedMissionsInBB, polyCoordinates);
-  console.log(containedMissions);
+  //console.log(containedMissions);
 
 
   if (data.features.length > 0) {
