@@ -1008,7 +1008,7 @@ const updateSearchResults = () => {
 
 
 const areaViewInfoContainerEle = document.querySelector("#area-view-info-container");
-document.querySelector("#area-selection-info-close-button").onclick = () => {
+document.querySelector("#area-view-info-close-button").onclick = () => {
   areaViewInfoContainerEle.style.display = "none";
   map.setMaxBounds(null);
   map.removeLayer("mask-fill");
@@ -1054,7 +1054,7 @@ const gotoFeatureByResult = (result) => {
     animate: false
   });
   map.setMaxBounds(map.getBounds());
-  areaSelectionInfoContainerEle.style.display = "inline";
+  areaViewInfoContainerEle.style.display = "inline";
   const totalAreaContainerEle = document.querySelector("#view-total-area-value");
   const coveredAreaContainerEle = document.querySelector("#view-covered-area-value");
   const uncoveredAreaContainerEle = document.querySelector("#view-uncovered-area-value");
