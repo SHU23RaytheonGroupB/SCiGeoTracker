@@ -34,14 +34,23 @@ map.on("load", async () => {
   loaded = true; //used so style is not loaded before data is requested
 });
 
-map.on("style.load", () => {
+map.on("style.load", async () => {
   if (loaded) {
-    initialiseProducts();
+    await initialiseProducts();
   }
 });
 
-const coordEle = document.querySelector("#coords");
+const scale = new mapboxgl.ScaleControl({
+  maxWidth: 80,
+  unit: "metric",
+  position: "bottom-right",
+});
+map.addControl(scale);
 
+const coordEle = document.querySelector("#coords");
+const scaleEle = document.querySelector("#scale");
+
+scaleEle.textContent = `${scale}`;
 map.on("mousemove", (ev) => {
   const { lng, lat } = ev.lngLat;
   coordEle.textContent = `${lng.toFixed(3)}, ${lat.toFixed(3)}`;
