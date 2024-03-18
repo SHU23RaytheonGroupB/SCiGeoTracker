@@ -316,7 +316,7 @@ function calculateMissionCoverage(allMissons, polygon) {
   //   },
   // });
 
-  var turfpolygon = turf.polygon([polygon]);
+  var turfpolygon = turf.multiPolygon([polygon]);
   var fcMissionsWithinPoly = [];
 
   for (let i = 0; i < fcMissions.length; i++) {
