@@ -1,4 +1,3 @@
-import { draw } from "./area-calculations.js";
 import { productFillColours, productOutlineColours, mapStyle } from "./config.js";
 
 let selectedAreas = [];
