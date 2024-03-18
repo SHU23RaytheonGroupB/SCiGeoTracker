@@ -35,7 +35,7 @@ export function initialiseControls() {
     },
     // Set mapbox-gl-draw to draw by default.
     // The user does not have to click the polygon control button first.
-    defaultMode: "draw_polygon",
+    defaultMode: "simple_select",
     userProperties: true,
     styles: [
       {
@@ -126,7 +126,7 @@ export function initialiseControls() {
   infoCloseButton.addEventListener("click", closeInfo);
 
   let infoMoveButton = document.getElementById("move-button");
-  infoMoveButton.addEventListener("click", moveMap);
+  infoMoveButton.addEventListener("click", () => moveMap(draw));
 
   initialiseStyleMenu();
   initialiseLayerMenu();

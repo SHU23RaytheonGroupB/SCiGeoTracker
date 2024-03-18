@@ -5,18 +5,12 @@ export function moveMap(draw) {
 }
 
 export function drawPoly(draw) {
-  console.log(draw);
   draw.changeMode("draw_polygon");
-  console.log(1);
-  window.map.on("draw.create", updateArea);
-  window.map.on("draw.delete", updateArea);
-  window.map.on("draw.update", updateArea);
-  window.map.on("draw.selectionchange", updateArea);
+  window.map.on("draw.create", () => updateArea(allProducts, draw.getAll()));
+  window.map.on("draw.delete", () => updateArea(allProducts, draw.getAll()));
+  window.map.on("draw.update", () => updateArea(allProducts, draw.getAll()));
+  window.map.on("draw.selectionchange", () => updateArea(allProducts, draw.getAll()));
 }
-
-
-
-
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
 const totalAreaContainerEle = document.querySelector("#Total-area-value-container");
 const coveredAreaContainerEle = document.querySelector("#Covered-area-value-container");
@@ -27,8 +21,7 @@ const missionCountContainerEle = document.querySelector("#Mission-count-value-co
 export function updateArea(allProducts, data) {
   //USED FOR DRAW POLYGOn
   //const data = draw.getAll();
-  console.log(1);
-  //console.log(data.features[0].geometry.coordinates[0]);
+  console.log(data.features[0].geometry.coordinates[0]);
 
   if (data.features[0].geometry.coordinates[0].length <= 2) {
     return;
