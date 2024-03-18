@@ -1,9 +1,8 @@
-import { drawPoly, moveMap } from "./area-calculations.js";
+import { drawPoly, moveMap, draw } from "./area-calculations.js";
 import { initialiseLayerMenu } from "./products-and-layers.js";
 import { mapStyle, MapStyle, minZoom, maxZoom, CursorMode } from "./config.js";
 import { initialiseSavedAreas } from "./saved-areas.js";
 import { initialiseSearchBar } from "./search-bar.js";
-
 
 let cursorMode;
 let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
@@ -24,7 +23,7 @@ var barTop = 0,
 
 export function initialiseControls() {
   let polygonButton = document.getElementById("polygon-button");
-  polygonButton.addEventListener("click", drawPoly);
+  polygonButton.addEventListener("click", () => drawPoly(draw));
 
   let infoCloseButton = document.getElementById("area-selection-info-close-button");
   infoCloseButton.addEventListener("click", closeInfo);

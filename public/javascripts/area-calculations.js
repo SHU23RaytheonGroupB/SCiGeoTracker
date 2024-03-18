@@ -1,9 +1,13 @@
+import { allProducts } from "./products-and-layers.js";
+
 export function moveMap() {
   draw.changeMode("simple_select");
 }
 
-export function drawPoly() {
+export function drawPoly(draw) {
+  console.log(draw);
   draw.changeMode("draw_polygon");
+  console.log(1);
   window.map.on("draw.create", updateArea);
   window.map.on("draw.delete", updateArea);
   window.map.on("draw.update", updateArea);
@@ -11,7 +15,7 @@ export function drawPoly() {
 }
 
 //Polygon style properties
-export const draw = new MapboxDraw({
+const draw = new MapboxDraw({
   //USED FOR DRAW POLYGON
   displayControlsDefault: false,
   // Select which mapbox-gl-draw control buttons to add to the map.
@@ -103,6 +107,9 @@ export const draw = new MapboxDraw({
   ],
 });
 
+//export {draw as draw}
+
+
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
 const totalAreaContainerEle = document.querySelector("#Total-area-value-container");
 const coveredAreaContainerEle = document.querySelector("#Covered-area-value-container");
@@ -113,7 +120,7 @@ const missionCountContainerEle = document.querySelector("#Mission-count-value-co
 export function updateArea(allProducts, data) {
   //USED FOR DRAW POLYGOn
   //const data = draw.getAll();
-
+  console.log(1);
   //console.log(data.features[0].geometry.coordinates[0]);
 
   if (data.features[0].geometry.coordinates[0].length <= 2) {
