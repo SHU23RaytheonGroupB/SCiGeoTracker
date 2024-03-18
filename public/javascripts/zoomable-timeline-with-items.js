@@ -20,7 +20,7 @@ export function Timeline(map_, options) {
     until: new Date().setFullYear(new Date().getFullYear() + 1),
     margin: { top: 80, right: 20, bottom: 20, left: 20 },
     width: 800,
-    height: 200,
+    height: 120,
     onClickItem: () => {},
     onZoomEnd: () => {},
     zoomFilter: () => {},
@@ -186,7 +186,7 @@ export function Timeline(map_, options) {
     el.selectAll("text").remove();
 
     el.selectAll("line")
-      .attr("stroke-width", 0.5)
+      .attr("stroke-width", 10)
       .attr("y1", 0)
       .attr("y2", height - margin.top - margin.bottom);
   };
@@ -230,7 +230,7 @@ export function Timeline(map_, options) {
       nodes[part] = rootNode.append("g").classed(part, true);
     });
 
-    const radius = 4;
+    const radius = 1;
 
     //letradius = (1/xsize)*10;
 
@@ -306,9 +306,8 @@ export function Timeline(map_, options) {
             enter
               .append("circle")
               .on("click", onClickItem)
-              .style("stroke", "white")
-              .style("stroke-width", 1)
               .style("fill", "red")
+              .style("fill-opacity", 0.4)
               .style("cursor", "pointer")
               .on("click", function (event, d) {
                 circleLinkZoom(d.id);
@@ -316,11 +315,11 @@ export function Timeline(map_, options) {
               })
               .attr("r", 4)
               .attr("cx", (d, i) => X[i]) 
-              .attr("cy", (d, i) => Y[i] + 120)
+              .attr("cy", (d, i) => Y[i] + 100)
               .append("title")
               .text((d) => d.title),
           (update) =>
-            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130),
+            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 100),
         );
 
       const density =
