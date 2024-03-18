@@ -73,6 +73,7 @@ export function createHistogramChart(map_) {
 
 
 const button = document.getElementById("histogram-button");
+document.getElementById("histogram-popout-container").style.display = "none";
 
 button.addEventListener("click", () => {
   const chart = document.getElementById("histogram-popout-container");

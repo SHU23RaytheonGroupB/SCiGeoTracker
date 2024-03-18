@@ -361,3 +361,18 @@ export function Timeline(options) {
 }
 
 
+const button = document.getElementById("timeline-button");
+document.getElementById("timeline-container").style.display = "none";
+
+button.addEventListener("click", () => {
+  const chart = document.getElementById("timeline-container");
+  chart.style.display = chart.style.display === "none" ? "block" : "none";
+});
+
+const button2 = document.getElementById("histogram-popout-close-button");
+
+button2.addEventListener("click", () => {
+  const chart = document.getElementById("histogram-popout-container");
+  chart.style.display = chart.style.display === "none" ? "block" : "none";
+});
+
