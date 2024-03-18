@@ -23,8 +23,14 @@ export function updateArea(allProducts, data) {
   //const data = draw.getAll();
   console.log(data.features[0].geometry.coordinates[0]);
 
-  if (data.features[0].geometry.coordinates[0].length <= 2) {
-    return;
+  if (data.features[0].type = "MultiPolygon"){
+
+  }
+  else{
+    if (data.features[0].geometry.coordinates[0].length <= 2) {
+      console.log("here2");
+      return;
+    }
   }
   //console.log(1);
 
@@ -51,9 +57,10 @@ export function updateArea(allProducts, data) {
   //console.log(containedMissionsInBB);
   let containedMissions = missionsWithinPolygon(containedMissionsInBB, polyCoordinates);
   //console.log(containedMissions);
-
+  console.log("here1");
   if (data.features.length > 0) {
     const totalArea = turf.area(data) / 1000; //divide by 1000 to get square km
+    console.log("here");
     const totalAreaRounded = Math.round(totalArea * 100) / 100; //convert area to 2 d.p.
     const coveredArea = calculateMissionCoverage(containedMissions, polyCoordinates);
     const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
