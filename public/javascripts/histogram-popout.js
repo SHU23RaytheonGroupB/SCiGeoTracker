@@ -53,6 +53,8 @@ export function createHistogramChart(map_) {
       ],
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       scales: {
         x: {
           type: "time",
