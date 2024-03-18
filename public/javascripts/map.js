@@ -16,6 +16,7 @@ window.map = new mapboxgl.Map({
 });
 
 import { Timeline } from "./zoomable-timeline-with-items.js";
+import { createHistogramChart } from "./histogram-popout.js";
 
 let loaded = false;
 
@@ -34,6 +35,8 @@ map.on("load", async () => {
   document.querySelector("#timeline-container").appendChild(timeline.element);
 
   loaded = true; //used so style is not loaded before data is requested
+  createHistogramChart(map);
+
 });
 
 map.on("style.load", async () => {

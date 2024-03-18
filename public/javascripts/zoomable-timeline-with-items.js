@@ -8,8 +8,6 @@ export function Timeline(options) {
   const nodes = {};
   let myData = window.map.getSource("product-polygons")._data.features;
 
-  console.log("myData", myData);
-
   myData = Array.from({ length: myData.length }, (x, i) => ({
     title:
       "Mission: " +
@@ -32,7 +30,7 @@ export function Timeline(options) {
     until: new Date().setFullYear(new Date().getFullYear() + 1),
     margin: { top: 80, right: 20, bottom: 20, left: 20 },
     width: 800,
-    height: 200,
+    height: 120,
     onClickItem: () => {},
     onZoomEnd: () => {},
     zoomFilter: () => {},
@@ -59,6 +57,7 @@ export function Timeline(options) {
 
   const zoomScaleExtent = [1, Math.round(MS_PER_YEAR * 10)];
   //.log("zoomScaleExtent", zoomScaleExtent);
+  //console.log("zoomScaleExtent", zoomScaleExtent);
 
   const findDensityConfig = (myData, value) => {
     for (const [limit, config] of myData) {
@@ -179,7 +178,7 @@ export function Timeline(options) {
     el.selectAll("text").remove();
 
     el.selectAll("line")
-      .attr("stroke-width", 0.5)
+      .attr("stroke-width", 10)
       .attr("y1", 0)
       .attr("y2", height - margin.top - margin.bottom);
   };
@@ -221,7 +220,7 @@ export function Timeline(options) {
       nodes[part] = rootNode.append("g").classed(part, true);
     });
 
-    const radius = 4;
+    const radius = 1;
 
     //letradius = (1/xsize)*10;
 
@@ -294,20 +293,19 @@ export function Timeline(options) {
             enter
               .append("circle")
               .on("click", onClickItem)
-              .style("stroke", "white")
-              .style("stroke-width", 1)
               .style("fill", "red")
+              .style("fill-opacity", 0.4)
               .style("cursor", "pointer")
               .on("click", function (event, d) {
                 circleLinkZoom(d.id);
               })
               .attr("r", 4)
-              .attr("mission", (d) => d.missionGroup)
-              .attr("cx", (d, i) => X[i])
-              .attr("cy", (d, i) => Y[i] + 120)
+              .attr("cx", (d, i) => X[i]) 
+              .attr("cy", (d, i) => Y[i] + 100)
               .append("title")
               .text((d) => d.title),
-          (update) => update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 130)
+          (update) =>
+            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 100),
         );
 
       const density = Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
