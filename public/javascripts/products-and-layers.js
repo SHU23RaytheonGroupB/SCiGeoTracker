@@ -331,8 +331,8 @@ const borderSelectionMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
-  window.map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
+  //window.map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
+  //window.map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
   updateUkArea();
 };
 

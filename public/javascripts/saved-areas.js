@@ -1,7 +1,7 @@
 let selectedAreas = [];
 
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
-console.log(savedAreas);
+//console.log(savedAreas);
 const saveSavedAreas = () => {
   sessionStorage.setItem("savedAreas", JSON.stringify(savedAreas));
 };

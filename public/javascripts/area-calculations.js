@@ -21,7 +21,7 @@ const missionCountContainerEle = document.querySelector("#Mission-count-value-co
 export function updateArea(allProducts, data) {
   //USED FOR DRAW POLYGOn
   //const data = draw.getAll();
-  console.log(data.features[0].geometry.coordinates[0]);
+  console.log(data);
 
   if (data.features[0].geometry.coordinates[0].length <= 2) {
     return;
@@ -55,7 +55,7 @@ export function updateArea(allProducts, data) {
   if (data.features.length > 0) {
     const area = turf.area(data) / 1000; //divide by 1000 to get square km
     const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-    const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinates);
+    const Covered_area = Math.min(calculateMissionCoverage(containedMissions, polyCoordinates), rounded_area);
     const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
     const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
     const Mission_count = containedMissions.length;
@@ -70,18 +70,19 @@ export function updateArea(allProducts, data) {
   }
 }
 
-export function updateUkArea(allProducts, UKlandBorder) {
+export function updateUkArea() {
   //diplay new layer of all the missions areas that over lap the uk
-  const data = window.map.getSource("uk-land");
+  const data = window.map.getSource("uk-land")._data;
 
-  let polyCoordinates = [];
+  //console.log(data.features[0].geometry.coordinates)
+  let polyCoordinatesArr = data.features[0].geometry.coordinates;
   let polyCoordinatesLat = [];
   let polyCoordinatesLog = [];
 
   for (let i = 0; i < data.features[0].geometry.coordinates.length; i++) {
     //bcs the uk is a multigon we need to iterate through each island
     for (let k = 0; k < data.features[0].geometry.coordinates[i][0].length; k++) {
-      polyCoordinates.push(data.features[0].geometry.coordinates[i][0][k]);
+      //polyCoordinates.push(data.features[0].geometry.coordinates[i][0][k]);
       polyCoordinatesLog.push(data.features[0].geometry.coordinates[i][0][k][1]);
       polyCoordinatesLat.push(data.features[0].geometry.coordinates[i][0][k][0]);
     }
@@ -102,8 +103,8 @@ export function updateUkArea(allProducts, UKlandBorder) {
   //   data: {
   //     type: "Feature",
   //     geometry: {
-  //       type: "Polygon",
-  //       coordinates: [boundingBox],
+  //       type: "MultiPolygon",
+  //       coordinates: data.features[0].geometry.coordinates,
   //     },
   //   },
   // });
@@ -120,11 +121,11 @@ export function updateUkArea(allProducts, UKlandBorder) {
 
   //bounding box is currently too big, seems to think there is an island somewhere along the -13.6 lattitude? maybe there is but very small
   let containedMissionsWithinBoundingBox = missionsWithinBoundingBox(allProducts, boundingBox);
-  let containedMissions = missionsWithinPolygon(containedMissionsWithinBoundingBox, polyCoordinates);
+  let containedMissions = missionsWithinPolygon(containedMissionsWithinBoundingBox, polyCoordinatesArr);
 
   const area = turf.area(data) / 1000; //divide by 1000 to get square km
   const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-  const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinates);
+  const Covered_area = calculateMissionCoverage(containedMissions, polyCoordinatesArr);
   const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
   const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
   const Mission_count = containedMissions.length;
@@ -158,6 +159,28 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
   //console.log(boundingBoxMissions);
   let containedMissions = [];
   //console.log(0);
+
+  map.addSource("title", {
+    type: "geojson",
+    data: {
+      type: "Feature",
+      geometry: {
+        type: "MultiPolygon",
+        coordinates: [[polygon]],
+      },
+    },
+  });
+  map.addLayer({
+    id: "title" + "fill",
+    type: "fill",
+    source: "title", // reference the data source
+    layout: {},
+    paint: {
+      "fill-color": "#FF0000",
+      "fill-opacity": 0.3,
+    },
+  });
+
   var turfpolygon = turf.multiPolygon([[polygon]]);
   //console.log(1);
 
@@ -217,25 +240,26 @@ function calculateMissionCoverage(allMissons, polygon) {
     fcMissions.push(feature);
   }
 
-  // map.addSource('test1', {
-  //   'type': 'geojson',
-  //   'data': {
-  //     'type': 'FeatureCollection',
-  //     'features': fcMissions
-  //   }
-  // });
-  // map.addLayer({
-  //   id: 'test1' + "fill",
-  //   type: "fill",
-  //   source: "test1", // reference the data source
-  //   layout: {},
-  //   paint: {
-  //     "fill-color": "#00FF00",
-  //     "fill-opacity": 0.7,
-  //   },
-  // });
+  map.addSource('test1', {
+    'type': 'geojson',
+    'data': {
+      'type': 'FeatureCollection',
+      'features': fcMissions
+    }
+  });
+  map.addLayer({
+    id: 'test1' + "fill",
+    type: "fill",
+    source: "test1", // reference the data source
+    layout: {},
+    paint: {
+      "fill-color": "#00FF00",
+      "fill-opacity": 0.7,
+    },
+  });
 
-  var turfpolygon = turf.multiPolygon([polygon]);
+  var turfpolygon = turf.multiPolygon([[polygon]]);
+
   var fcMissionsWithinPoly = [];
 
   for (let i = 0; i < fcMissions.length; i++) {
@@ -253,24 +277,24 @@ function calculateMissionCoverage(allMissons, polygon) {
     }
   }
 
-  // map.addSource('test2', {
-  //     'type': 'geojson',
-  //     'data': {
-  //         'type': 'FeatureCollection',
-  //         'features': fcMissionsWithinPoly
-  //     }
-  // });
+  map.addSource('test2', {
+      'type': 'geojson',
+      'data': {
+          'type': 'FeatureCollection',
+          'features': fcMissionsWithinPoly
+      }
+  });
 
-  // map.addLayer({
-  //     id: 'test2' + "fill",
-  //     type: "fill",
-  //     source: "test2", // reference the data source
-  //     layout: {},
-  //     paint: {
-  //         "fill-color": "#FF0000",
-  //         "fill-opacity": 0.7,
-  //     },
-  // });
+  map.addLayer({
+      id: 'test2' + "fill",
+      type: "fill",
+      source: "test2", // reference the data source
+      layout: {},
+      paint: {
+          "fill-color": "#FF0000",
+          "fill-opacity": 0.7,
+      },
+  });
 
   var fcMissionIntersects = [];
 
@@ -294,24 +318,24 @@ function calculateMissionCoverage(allMissons, polygon) {
     }
   }
 
-  // map.addSource('test3', {
-  //   'type': 'geojson',
-  //   'data': {
-  //       'type': 'FeatureCollection',
-  //       'features': fcMissionIntersects
-  //   }
-  // });
+  map.addSource('test3', {
+    'type': 'geojson',
+    'data': {
+        'type': 'FeatureCollection',
+        'features': fcMissionIntersects
+    }
+  });
 
-  // map.addLayer({
-  //     id: 'test3' + "fill",
-  //     type: "fill",
-  //     source: "test3", // reference the data source
-  //     layout: {},
-  //     paint: {
-  //         "fill-color": "#0000FF",
-  //         "fill-opacity": 0.7,
-  //     },
-  // });
+  map.addLayer({
+      id: 'test3' + "fill",
+      type: "fill",
+      source: "test3", // reference the data source
+      layout: {},
+      paint: {
+          "fill-color": "#0000FF",
+          "fill-opacity": 0.7,
+      },
+  });
 
   var fcMissionIntersectsWithinPoly = [];
 
@@ -332,38 +356,40 @@ function calculateMissionCoverage(allMissons, polygon) {
     }
   }
 
-  // map.addSource('test4', {
-  //   'type': 'geojson',
-  //   'data': {
-  //       'type': 'FeatureCollection',
-  //       'features': fcMissionIntersectsWithinPoly
-  //   }
-  // });
+  window.map.addSource('test4', {
+    'type': 'geojson',
+    'data': {
+        'type': 'FeatureCollection',
+        'features': fcMissionIntersectsWithinPoly
+    }
+  });
 
-  // map.addLayer({
-  //     id: 'test4' + "fill",
-  //     type: "fill",
-  //     source: "test4", // reference the data source
-  //     layout: {},
-  //     paint: {
-  //         "fill-color": "#FFFFFF",
-  //         "fill-opacity": 0.7,
-  //     },
-  // });
+  window.map.addLayer({
+      id: 'test4' + "fill",
+      type: "fill",
+      source: "test4", // reference the data source
+      layout: {},
+      paint: {
+          "fill-color": "#FFFFFF",
+          "fill-opacity": 0.7,
+      },
+  });
 
   var areaCoveredWithOverlaps = 0;
   for (let i = 0; i < fcMissionsWithinPoly.length; i++) {
-    console.log(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
+    console.log(fcMissionsWithinPoly[i].geometry.coordinates);
     areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
   }
 
   var areaCoveredByOverlaps = 0;
   for (let i = 0; i < fcMissionIntersectsWithinPoly.length; i++) {
-    areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionIntersectsWithinPoly[i].geometry.coordinates));
+    //console.log(turf.area(turf.polygon(fcMissionIntersectsWithinPoly[i].geometry.coordinates)));
+    areaCoveredByOverlaps += turf.area(turf.polygon(fcMissionIntersectsWithinPoly[i].geometry.coordinates));
   }
-
   var area = areaCoveredWithOverlaps - areaCoveredByOverlaps; //currently in m^2
   area /= 1000; //divide by 1000 to get square km
+  //console.log(area);
+
   var rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
 
   //console.log(rounded_area);
