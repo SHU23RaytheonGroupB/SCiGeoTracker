@@ -265,7 +265,7 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
         continue;
       }
     }
-    console.log(containedMissions);
+    //console.log(containedMissions);
     for (let k = 0; k < boundingBoxMissions[i].footprint.coordinates[0].length; k++) {
       //console.log(i + " + " + k);
 
@@ -446,6 +446,7 @@ function calculateMissionCoverage(allMissons, polygon) {
 
   var areaCoveredWithOverlaps = 0;
   for (let i = 0; i < fcMissionsWithinPoly.length; i++) {
+    console.log(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
     areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
   }
 
