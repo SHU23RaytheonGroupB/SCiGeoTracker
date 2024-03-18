@@ -69,3 +69,16 @@ export function createHistogramChart(map_) {
     },
   });
 }
+
+
+
+const button = document.getElementById("histogram-button");
+
+button.addEventListener("click", () => {
+  const chart = document.getElementById("histogram-popout-container");
+  chart.style.display = chart.style.display === "none" ? "block" : "none";
+});
+
+
+
+
