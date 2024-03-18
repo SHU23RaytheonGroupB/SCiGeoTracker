@@ -45,12 +45,11 @@ export function updateArea(allProducts, data) {
     [Math.max(...polyCoordinatesLat) + 0.8, Math.min(...polyCoordinatesLog) - 0.5],
     [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
   ];
-    
+
   let containedMissionsInBB = missionsWithinBoundingBox(allProducts, boundingBox);
   //console.log(containedMissionsInBB);
   let containedMissions = missionsWithinPolygon(containedMissionsInBB, polyCoordinates);
   //console.log(containedMissions);
-
 
   if (data.features.length > 0) {
     const area = turf.area(data) / 1000; //divide by 1000 to get square km

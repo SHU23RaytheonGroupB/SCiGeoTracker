@@ -51,6 +51,7 @@ const coordEle = document.querySelector("#coords");
 const scaleEle = document.querySelector("#scale");
 
 scaleEle.textContent = `${scale}`;
+
 map.on("mousemove", (ev) => {
   const { lng, lat } = ev.lngLat;
   coordEle.textContent = `${lng.toFixed(3)}, ${lat.toFixed(3)}`;

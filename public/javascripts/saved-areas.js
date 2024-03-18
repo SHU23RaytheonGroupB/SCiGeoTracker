@@ -14,7 +14,7 @@ export function initialiseSavedAreas(draw) {
 
   document.querySelector("#saved-areas-upload").oninput = importFiles;
   document.querySelector("#saved-areas-export-button").onclick = exportFiles;
-  
+
   document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
   document.querySelector("#folder-button").onclick = () => {
     if (!savedAreasOpen) openSavedAreas();
