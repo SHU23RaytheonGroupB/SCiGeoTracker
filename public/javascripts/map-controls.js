@@ -4,8 +4,6 @@ import { mapStyle, MapStyle, minZoom, maxZoom, CursorMode } from "./config.js";
 import { initialiseSavedAreas } from "./saved-areas.js";
 import { initialiseSearchBar } from "./search-bar.js";
 
-
-
 let cursorMode;
 let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
 
@@ -24,7 +22,7 @@ var barTop = 0,
   barBottom = 0;
 
 export function initialiseControls() {
-    //Polygon style properties
+  //Polygon style properties
   const draw = new MapboxDraw({
     //USED FOR DRAW POLYGON
     displayControlsDefault: false,
