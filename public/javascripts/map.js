@@ -1,6 +1,7 @@
 import { displayMissionMenu } from "./mission-popout-menu.js";
 import { initialiseProducts, allProducts } from "./products-and-layers.js";
 import { mapStyle, minZoom, maxZoom } from "./config.js";
+import { getRoundNum, getDistance } from "./utils.js";
 import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
@@ -20,6 +21,7 @@ let loaded = false;
 
 map.on("load", async () => {
   renderOverlaysZoom();
+  updateScaleBar();
   initialiseControls();
   await initialiseProducts();
 
@@ -40,17 +42,20 @@ map.on("style.load", async () => {
   }
 });
 
-const scale = new mapboxgl.ScaleControl({
-  maxWidth: 80,
-  unit: "metric",
-  position: "bottom-right",
-});
-map.addControl(scale);
+function updateScaleBar() {
+  const y = map.getCanvas().clientHeight / 2;
+  const maxMeters = getDistance(map.unproject([0, y]), map.unproject([100, y]));
+  const meters = getRoundNum(maxMeters);
+  const ratio = meters / maxMeters;
+
+  const scaleBarCont = document.getElementById("scale-bar-container");
+  const scaleBarLabel = document.getElementById("scale-bar-label");
+
+  scaleBarCont.style.width = 100 * ratio + "px";
+  scaleBarLabel.textContent = meters < 1000 ? meters + " m" : (meters / 1000).toFixed(1) + " km";
+}
 
 const coordEle = document.querySelector("#coords");
-const scaleEle = document.querySelector("#scale");
-
-scaleEle.textContent = `${scale}`;
 
 map.on("mousemove", (ev) => {
   const { lng, lat } = ev.lngLat;
@@ -59,6 +64,7 @@ map.on("mousemove", (ev) => {
 
 map.on("zoom", (ev) => {
   renderOverlaysZoom();
+  updateScaleBar();
 });
 
 export async function circleLinkZoom(d) {
