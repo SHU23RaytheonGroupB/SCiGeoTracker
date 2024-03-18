@@ -1,3 +1,5 @@
+import { productFillColours, productOutlineColours, mapStyle } from "./config.js";
+
 let selectedAreas = [];
 
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
@@ -29,12 +31,13 @@ if (savedAreas.length == 0) {
   for (let i = 0; i < 10; i++) {
     savedAreas.push({
       name: `Test area ${i + 1}`,
+      datetime_created: new Date().toString(),
       type: "geojson",
       geometry: {
         type: "FeatureCollection",
         name: "united_kingdom_Country_Boundary_level_1",
         crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-        features: [
+        features: [  
           {
             type: "Feature",
             properties: {
@@ -356,8 +359,6 @@ const savedSearchChanged = () => {
   }
 };
 
-var openedBefore = false;
-
 let savedAreasOpen = false;
 const openSavedAreas = () => {
   savedAreasListEle.replaceChildren();
@@ -413,36 +414,66 @@ const openSavedAreas = () => {
         savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
         savedAreaViewButtonImageEle.src = "images/icons8-map-90.png";
         savedAreaNameEle.textContent = tempContent;
-      } else {
-        map.addSource(savedArea.name + "-CUSTOM", {
-          type: "geojson",
-          data: savedArea.geometry,
-        });
-        map.addLayer({
-          id: `${savedArea.name + "-CUSTOM"}-frames-fill`,
-          type: "fill",
-          source: savedArea.name + "-CUSTOM",
-          layout: {
-            visibility: "visible",
-          },
-          paint: {
-            "fill-color": productFillColours[mapStyle]["SCENE"],
-            "fill-opacity": 0.2,
-          },
-        });
-        map.addLayer({
-          id: `${savedArea.name + "-CUSTOM"}-frames-outline`,
-          type: "line",
-          source: savedArea.name + "-CUSTOM",
-          layout: {
-            visibility: "visible",
-          },
-          paint: {
-            "line-color": productOutlineColours["SCENE"],
-            "line-width": 1,
-          },
-        });
+      } 
+      else {
+        try{
+          map.addSource(savedArea.name + "-CUSTOM", {
+            type: "geojson",
+            data: savedArea.geometry,
+          });
+          map.addLayer({
+            id: `${savedArea.name + "-CUSTOM"}-frames-fill`,
+            type: "fill",
+            source: savedArea.name + "-CUSTOM",
+            layout: {
+              visibility: "visible",
+            },
+            paint: {
+              "fill-color": productFillColours[mapStyle.currentStyle]["SCENE"],
+              "fill-opacity": 0.2,
+            },
+          });
+          map.addLayer({
+            id: `${savedArea.name + "-CUSTOM"}-frames-outline`,
+            type: "line",
+            source: savedArea.name + "-CUSTOM",
+            layout: {
+              visibility: "visible",
+            },
+            paint: {
+              "line-color": productOutlineColours["SCENE"],
+              "line-width": 1,
+            },
+          });
+        }
+        catch{
+          (savedArea.name+"-CUSTOM-frames-fill").layout.visibility = "visible";
+          (savedArea.name+"-CUSTOM-frames-outline").layout.visibility = "visible";
+        }
         closeSavedAreas();
+        try{
+          var xCoords = 0;
+          var arrCount = 0;
+          var yCoords = 0;
+          for(var a = 0; a < savedArea.geometry.features[0].geometry.coordinates.length; a++){
+            for(var b = 0; b < savedArea.geometry.features[0].geometry.coordinates[a].length; b++){
+              for(var c = 0; c < savedArea.geometry.features[0].geometry.coordinates[a][b].length; c++){
+                xCoords += savedArea.geometry.features[0].geometry.coordinates[a][b][c][0];
+                arrCount++;
+                yCoords += savedArea.geometry.features[0].geometry.coordinates[a][b][c][1];
+              }
+            }
+          }
+          var xAverage = xCoords / arrCount;
+          var yAverage = yCoords / arrCount;
+
+          map.flyTo({
+            center: [xAverage, yAverage],
+            zoom: 7.5,
+            essential: true,
+          });
+        }
+        catch{}
       }
     };
     savedAreaEditButtonEle.onclick = () => {

@@ -90,7 +90,7 @@ export async function circleLinkZoom(d) {
   circleGroup.forEach((circle) => {
     circle.style.fill = "blue";
   });
-  displayMissionMenu(currentProduct);
+  displayMissionMenu(currentProduct, true);
 
   // allProducts.forEach((product) => {
 

@@ -517,7 +517,7 @@
       style="display: none"
     >
       <div class="flex flex-row gap-2 px-1">
-        <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Mission Data</h2>
+        <h2 id="flyto-mission-title" class="dark:text-neutral-300 text-neutral-500 grow font-bold">Mission Data</h2>
         <button type="button" id="flyto-mission-info-close-button" class="ml-auto">
           <img class="h-3 w-3" src="images/icons8-close-90.png" />
         </button>
@@ -526,33 +526,40 @@
         <table class="table-auto border-separate border-spacing-y-1.5 w-full">
           <tbody>
             <tr>
-              <td class="font-light dark:text-neutral-400 text-neutral-500">Scene Name</td>
+              <td id="flyto-mission-scene-title" class="font-light dark:text-neutral-400 text-neutral-500">
+                Scene Name
+              </td>
               <td
                 id="flyto-mission-scene-name"
                 class="font-medium text-right dark:text-neutral-200 text-neutral-500"
               ></td>
             </tr>
             <tr>
-              <td class="font-light dark:text-neutral-400 text-neutral-500">Mission Name</td>
+              <td id="flyto-mission-mission-title" class="font-light dark:text-neutral-400 text-neutral-500">
+                Mission Name
+              </td>
               <td
                 id="flyto-mission-mission-name"
                 class="font-medium text-right dark:text-neutral-200 text-neutral-500"
               ></td>
             </tr>
             <tr>
-              <td class="font-light dark:text-neutral-400 text-neutral-500">Mission ID</td>
+              <td id="flyto-mission-id-title" class="font-light dark:text-neutral-400 text-neutral-500">Mission ID</td>
               <td
                 id="flyto-mission-mission-id"
                 class="font-medium text-right dark:text-neutral-200 text-neutral-500"
               ></td>
             </tr>
             <tr>
-              <td class="font-light dark:text-neutral-400 text-neutral-500">Creator</td>
+              <td id="flyto-mission-creator-title" class="font-light dark:text-neutral-400 text-neutral-500">
+                Creator
+              </td>
               <td id="flyto-mission-creator" class="font-medium text-right dark:text-neutral-200 text-neutral-500"></td>
             </tr>
           </tbody>
         </table>
       </div>
+
       <div>
         <button
           type="button"
