@@ -1069,3 +1069,36 @@ const gotoFeatureByResult = (result) => {
 
 searchBarEle.oninput = updateSearchResults;
 document.querySelector("#search-button").onclick = updateSearchResults;
+
+
+const searchBarResultsContainer = document.querySelector("#search-bar-results-container");
+searchBarResultsContainer.addEventListener("keydown", (e) => {
+  console.log(e.target);
+  switch(e.keyCode) {
+    case 38:
+      // up arrow
+      if (e.target == searchResultsContainerEle.firstElementChild) {
+        searchBarEle.focus();
+      } else {
+        const previous = e.target.previousElementSibling;
+        if (previous) {
+          previous.focus();
+        }
+      }
+      break;
+    case 40:
+      // down arrow
+      const next = e.target.nextElementSibling;
+      e.preventDefault();
+      if (next) {
+        if (next == searchResultsContainerEle) {
+          searchResultsContainerEle.firstElementChild.focus();
+        } else {
+          next.focus();
+        }
+      }
+      break;
+    default:
+      break;
+ }
+});
