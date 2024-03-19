@@ -20,13 +20,13 @@ import { createHistogramChart } from "./histogram-popout.js";
 
 let loaded = false;
 let sceneIDs = [];
+let missionID;
 
 map.on("load", async () => {
   renderOverlaysZoom();
   updateScaleBar();
   initialiseControls();
   await initialiseProducts();
-  console.log(allProducts);
 
   const START_DATE = new Date(1558231200000);
   const END_DATE = new Date(1593914400000);
@@ -71,18 +71,19 @@ map.on("zoom", (ev) => {
   updateScaleBar();
 });
 
-export async function circleLinkZoom(uniqueID) {
+export async function circleLinkZoom(productID) {
   let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {
     reset.style.fill = "red";
   });
 
-  let missionGroup;
+  let missionName;
   let currentProduct;
   sceneIDs.length = 0;
   allProducts.forEach((product) => {
-    if (product.identifier === uniqueID) {
-      missionGroup = product.title.split(" ")[0];
+    if (product.identifier === productID) {
+      missionName = product.title.split(" ")[0];
+      missionID = product.missionid;
       currentProduct = product;
       map.flyTo({
         center: product.centre.split(",").reverse(),
@@ -91,31 +92,19 @@ export async function circleLinkZoom(uniqueID) {
       });
     }
   });
-  let circleGroup = document.querySelectorAll('circle[mission="' + missionGroup + '"]');
-  console.log(circleGroup);
+  let circleGroup = document.querySelectorAll('circle[mission="' + missionName + '"]');
   circleGroup.forEach((circle) => {
     circle.style.fill = "blue";
-    sceneIDs.push(circle.getAttribute("sceneID"));
   });
 
   displayMissionMenu(currentProduct);
-
-  for (let i = 0; i <= sceneIDs.length - 1; i++) {
-    console.log(`sceneID: ${sceneIDs[i]}`);
-  }
 }
 
 let viewMissionButton = document.getElementById("flyto-mission-info-view-button");
-viewMissionButton.addEventListener("click", viewSelectedMission);
+viewMissionButton.addEventListener("click", () => viewSelectedMission());
 
+//TO DO - CLEAN UP CODEBASE, MOVE API CALLS TO BACKEND, RESTRUCTURE. CHECK IF TIMELINE CODE CAN BE CLEANED UP (DONT WASTE TOO MUCH TIME ON)
 function viewSelectedMission() {
-  let missionID = document.getElementById("flyto-mission-mission-id").textContent;
-
-  console.log("Mission Group:", missionID);
-  for (let i = 0; i <= sceneIDs.length - 1; i++) {
-    console.log(`sceneID: ${sceneIDs[i]}`);
-  }
-
   fetch("/api/getMissionInfo", {
     method: "POST",
     headers: {
@@ -132,21 +121,4 @@ function viewSelectedMission() {
       // Handle any errors
       console.error("Error:", error);
     });
-
-  // fetch("/api/getFrames", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({ missionID, sceneIDs }),
-  // })
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     // Handle the response data from the backend
-  //     console.log(data);
-  //   })
-  //   .catch((error) => {
-  //     // Handle any errors
-  //     console.error("Error:", error);
-  //   });
 }

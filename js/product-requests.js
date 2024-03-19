@@ -98,7 +98,25 @@ class ProductService {
       if (!response.ok) {
         console.log("response:");
         console.log(response);
-        throw new Error("error getting mission info");
+        throw new Error("Error fetching mission info");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getMissionFootprint(missionID) {
+    try {
+      const response = await fetch(`${API_ORIGIN}/v1/missionfeed/missions/${missionID}/footprint`, {
+        method: "GET",
+        headers: this.headers,
+      });
+      if (!response.ok) {
+        console.log("response:");
+        console.log(response);
+        throw new Error("Error fetching mission footprint");
       }
 
       return await response.json();

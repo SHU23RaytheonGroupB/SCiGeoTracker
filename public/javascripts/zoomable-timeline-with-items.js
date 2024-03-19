@@ -22,8 +22,8 @@ export function Timeline(options) {
     id: myData[i].attributes.id,
     start: new Date(myData[i].attributes.date_start),
     end: new Date(myData[i].attributes.date_end),
-    missionGroup: myData[i].attributes.title.split(" ")[0],
-    sceneID: myData[i].attributes.title.split(" ")[1],
+    missionName: myData[i].attributes.title.split(" ")[0],
+    sceneName: myData[i].attributes.title.split(" ")[1],
   }));
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
@@ -301,8 +301,8 @@ export function Timeline(options) {
                 circleLinkZoom(d.id);
               })
               .attr("r", 4)
-              .attr("mission", (d) => d.missionGroup)
-              .attr("sceneID", (d) => d.sceneID)
+              .attr("mission", (d) => d.missionName)
+              .attr("scene", (d) => d.sceneName)
               .attr("cx", (d, i) => X[i])
               .attr("cy", (d, i) => Y[i] + 100)
               .append("title")
