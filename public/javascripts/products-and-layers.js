@@ -15,9 +15,7 @@ export const LayerMode = {
   Frames: "Frames",
   Heatmap: "Heatmap",
   Choropleth: "Choropleth",
-  Isarithmic: "Isarithmic",
-  DotDensity: "Dot Density",
-  FrameOverlaps: "Frame Overlaps",
+  Cluster: "Cluster",
   BorderSelection: "Border Selection",
 };
 
@@ -32,9 +30,7 @@ export function initialiseLayerMenu() {
   document.querySelector("#frames-item").onclick = framesMode;
   document.querySelector("#heatmap-item").onclick = heatmapMode;
   document.querySelector("#choropleth-item").onclick = choroplethMode;
-  document.querySelector("#isarithmic-item").onclick = isarithmicMode;
-  document.querySelector("#dot-density-item").onclick = dotDensityMode;
-  document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
+  document.querySelector("#dot-density-item").onclick = clusterMode;
   document.querySelector("#border-selection-item").onclick = borderSelectionMode;
 
   window.map.on("mousemove", "region-boundaries-choropleth", (e) => {
@@ -311,8 +307,8 @@ const isarithmicMode = () => {
   hideAllLayers();
 };
 
-const dotDensityMode = () => {
-  layerMode = LayerMode.DotDensity;
+const clusterMode = () => {
+  layerMode = LayerMode.Cluster;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();

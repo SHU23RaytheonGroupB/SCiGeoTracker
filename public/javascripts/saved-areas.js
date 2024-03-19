@@ -1,4 +1,4 @@
-import { updateArea, updateUkArea } from "./area-calculations.js";
+import { polygonData, updateArea } from "./area-calculations.js";
 import { productFillColours, productOutlineColours, mapStyle } from "./config.js";
 import { allProducts } from "./products-and-layers.js";
 
@@ -10,7 +10,6 @@ const saveSavedAreas = () => {
 };
 
 export function initialiseSavedAreas(draw) {
-  const savedAreasContainerEle = document.querySelector("#saved-areas-container");
   const savedAreasSearch = document.querySelector("#saved-areas-search");
 
   savedAreasSearch.addEventListener("change", savedSearchChanged);
@@ -24,6 +23,12 @@ export function initialiseSavedAreas(draw) {
     else closeSavedAreas();
   };
 
+  document.querySelector("#area-selection-info-save-button").onclick = saveNewPolygon;
+  document.querySelector("#name-new-area-close-button").onclick = closeNameBox;
+  let nameTextBox = document.getElementById("name-area-textbox");
+  let createPoly = document.getElementById("confirm-name-button");
+  createPoly.addEventListener("click", () => createNewPoly(nameTextBox.value, polygonData));
+  
   const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
   areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
 }
@@ -244,7 +249,7 @@ if (savedAreas.length == 0) {
   for (let i = 0; i < 10; i++) {    
     savedAreas.push({
       type: "FeatureCollection",
-      properties: { name: `Test area ${i + 1}`, datetime_created: new Date().toString() },
+      properties: { name: "Test File " + i, datetime_created: new Date().toString() },
       features: [{
         type: "Feature",
         geometry: {
@@ -253,8 +258,8 @@ if (savedAreas.length == 0) {
         },
       }]
     });
+    saveSavedAreas();
   }
-  saveSavedAreas();
 }
 
 const savedAreasContainerEle = document.querySelector("#saved-areas-container");
@@ -394,6 +399,7 @@ const openSavedAreas = () => {
           var xCoords = 0;
           var arrCount = 0;
           var yCoords = 0;
+          console.log(savedArea);
           for(var a = 0; a < savedArea.features[0].geometry.coordinates[0].length; a++){
             xCoords += savedArea.features[0].geometry.coordinates[0][a][0];
             arrCount++;
@@ -508,6 +514,51 @@ const exportFiles = () => {
     });
   }
 };
+
+function saveNewPolygon() {
+  let namingBox = document.getElementById("name-area-container");
+  let namingTextBox = document.getElementById("name-area-textbox");
+  if(namingBox.classList.contains("hidden")){
+    namingBox.classList.remove("hidden");
+    namingTextBox.textContent = "";
+  }
+}
+
+function createNewPoly(nameStr, coords) {
+  console.log(coords.features[0].geometry);
+  if(nameStr.length != 0 && coords != ""){
+    var tempNum = 0;
+    var tempName = nameStr;
+    for(var x = 0; x < savedAreas.length; x++){
+      if(tempName == savedAreas[x].properties.name){
+        tempNum++;
+        tempName = nameStr + "(" + tempNum + ")";
+        x = -1;
+      }
+    }
+    if(tempName != nameStr) {nameStr = tempName;}
+    savedAreas.push({
+      type: "FeatureCollection",
+      properties: { name: nameStr, datetime_created: new Date().toString() },
+      features: [{
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: coords.features[0].geometry.coordinates    
+        },
+      }]
+    });
+    saveSavedAreas();
+    closeNameBox();
+  }
+}
+
+function closeNameBox(){
+  let box = document.getElementById("name-area-container");
+  box.classList.add("hidden");
+  let text = document.getElementById("name-area-textbox");
+  text.value = "";
+}
 
 const refreshSavedScreen = () => {
   saveSavedAreas();
