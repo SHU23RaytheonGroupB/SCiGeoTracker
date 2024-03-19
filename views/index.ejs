@@ -673,14 +673,15 @@
 
     <div
       id="timeline-container"
-      class="absolute w-fit h-40 bottom-0 left-0 right-0 px-2 py-2 z-10 dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 opacity-70 shadow-lg rounded-lg"
-      style="top: auto; left: 30%; height: 160px; width: 800px;"
-      
+      class="absolute h-40 w-[800px] bottom-0 left-1/2 -translate-x-2/4 z-10 dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 opacity-70 shadow-lg rounded-lg overflow-hidden"
     >
-      <div id="timeline-containerheader" style="background-color: rgb(125, 125, 125); width: auto; height: 10px; cursor: move;"></div>
-      <button type="button" id="timeline-popout-close-button">
-        <img class="h-3 w-3" src="images/icons8-close-90.png" />
-      </button>
+      <div id="timeline-header" class="absolute w-full h-4 cursor-move flex #bg-neutral-200">
+        <button type="button" id="timeline-popout-close-button" class="ml-auto mb-auto p-1.5">
+          <img class="h-3 w-3" src="images/icons8-close-90.png" />
+        </button>
+      </div>
+      <div class="px-2 py-2" id="timeline">
+      </div>
     </div>
 
 

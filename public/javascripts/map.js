@@ -32,7 +32,7 @@ map.on("load", async () => {
   const from = START_DATE;
   const until = END_DATE;
   const timeline = Timeline({ from, until });
-  document.querySelector("#timeline-container").appendChild(timeline.element);
+  document.querySelector("#timeline").appendChild(timeline.element);
 
   loaded = true; //used so style is not loaded before data is requested
   createHistogramChart(map);
