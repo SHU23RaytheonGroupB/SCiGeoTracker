@@ -12,22 +12,20 @@ export function drawPoly(draw) {
   window.map.on("draw.selectionchange", () => updateArea(allProducts, draw.getAll()));
 }
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
-const totalAreaContainerEle = document.querySelector("#Total-area-value-container");
-const coveredAreaContainerEle = document.querySelector("#Covered-area-value-container");
-const uncoveredAreaContainerEle = document.querySelector("#Uncovered-area-value-container");
-const coveragePercentageContainerEle = document.querySelector("#Coverage-percentage-value-container");
-const missionCountContainerEle = document.querySelector("#Mission-count-value-container");
+const totalAreaContainerEle = document.querySelector("#selection-total-area-value");
+const coveredAreaContainerEle = document.querySelector("#selection-covered-area-value");
+const uncoveredAreaContainerEle = document.querySelector("#selection-uncovered-area-value");
+const coveragePercentageContainerEle = document.querySelector("#selection-coverage-percentage-value");
+const missionCountContainerEle = document.querySelector("#selection-total-missions-value");
 
 export function updateArea(allProducts, data) {
   //USED FOR DRAW POLYGOn
   //const data = draw.getAll();
-  console.log(data.features[0].geometry.coordinates[0]);
-
   if (data.features[0].geometry.coordinates[0].length <= 2) {
     return;
   }
+  
   //console.log(1);
-
   //console.log(data.features.length);
 
   let polyCoordinates = [];
@@ -51,7 +49,6 @@ export function updateArea(allProducts, data) {
   //console.log(containedMissionsInBB);
   let containedMissions = missionsWithinPolygon(containedMissionsInBB, polyCoordinates);
   //console.log(containedMissions);
-
   if (data.features.length > 0) {
     const totalArea = turf.area(data) / 1000; //divide by 1000 to get square km
     const totalAreaRounded = Math.round(totalArea * 100) / 100; //convert area to 2 d.p.
