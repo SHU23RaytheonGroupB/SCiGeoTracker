@@ -3,6 +3,7 @@ import { initialiseLayerMenu } from "./products-and-layers.js";
 import { mapStyle, MapStyle, minZoom, maxZoom, CursorMode } from "./config.js";
 import { initialiseSavedAreas } from "./saved-areas.js";
 import { initialiseSearchBar } from "./search-bar.js";
+import { initialiseFilterMenu } from "./filter-menu.js";
 
 let cursorMode;
 let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
@@ -137,6 +138,7 @@ export function initialiseControls() {
   initialiseZoomButtons();
   initialiseSearchBar();
   initialiseSavedAreas(draw);
+  initialiseFilterMenu();
 }
 
 export function renderOverlaysZoom() {

@@ -203,6 +203,44 @@
             >
           </div>
         </div>
+
+        <div
+          id="filter-menu-container"
+          class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-12 left-12"
+          style="display: none"
+        >
+          <div class="flex flex-row gap-2 px-1">
+            <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Filter</h2>
+            <button type="button" id="filter-menu-close-button" class="ml-auto">
+              <img class="h-3 w-3" src="images/icons8-close-90.png" />
+            </button>
+          </div>
+          <div class="my-2 px-1">
+            <table class="table-auto border-separate border-spacing-y-1.5 w-full">
+              <tbody>
+                <tr>
+                  <td class="font-light dark:text-neutral-200 text-neutral-500">Total area</td>
+                  <td
+                    id="view-total-area-value"
+                    class="font-light text-neutral-400 #font-medium #dark:text-neutral-200 #text-neutral-500"
+                  >
+                    0
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- <div>
+            <button
+              type="button"
+              id="area-view-info-view-button"
+              class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
+            >
+              View
+            </button>
+          </div> -->
+        </div>
+        
       </div>
     </div>
 
