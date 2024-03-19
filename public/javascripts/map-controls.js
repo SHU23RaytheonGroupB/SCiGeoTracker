@@ -170,6 +170,10 @@ function closeDragElement() {
 
 function closeInfo() {
   document.getElementById("area-selection-info-container").style.display = "none";
+  document.getElementById("name-area-container").classList.add("hidden");
+  let text = document.getElementById("name-area-textbox");
+  text.value = "";
+  document.getElementById("area-selection-info-save-button").classList.add("hidden");
 }
 
 function initialiseStyleMenu() {

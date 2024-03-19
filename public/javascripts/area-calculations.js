@@ -1,5 +1,4 @@
 import { allProducts } from "./products-and-layers.js";
-import { saveNewPolygon } from "./saved-areas.js";
 
 export function moveMap(draw) {
   draw.changeMode("simple_select");
@@ -13,15 +12,14 @@ export function drawPoly(draw) {
   window.map.on("draw.selectionchange", () => updateArea(allProducts, draw.getAll()));
 }
 const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
+const areaSaveContainerEle = document.querySelector("#name-area-container");
 const totalAreaContainerEle = document.querySelector("#selection-total-area-value");
 const coveredAreaContainerEle = document.querySelector("#selection-covered-area-value");
 const uncoveredAreaContainerEle = document.querySelector("#selection-uncovered-area-value");
 const coveragePercentageContainerEle = document.querySelector("#selection-coverage-percentage-value");
 const missionCountContainerEle = document.querySelector("#selection-total-missions-value");
 
-var polygonData = "";
-const areaSaveButton = document.getElementById("area-selection-info-save-button");
-areaSaveButton.addEventListener("click", () => saveNewPolygon(polygonData));
+export var polygonData = "";
 
 export function updateArea(allProducts, data) {
   //USED FOR DRAW POLYGOn
@@ -69,6 +67,8 @@ export function updateArea(allProducts, data) {
     missionCountContainerEle.innerHTML = `<td class="font-light text-neutral-400">${missionCount}</td>`;
   } else {
     areaSelectionInfoContainerEle.style.display = "none";
+    areaSaveContainerEle.classList.add("hidden");
+
   }
 }
 

@@ -446,35 +446,19 @@
           type="button"
           id="area-selection-info-view-button"
           class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
-          onclick="viewButton()"
           >
           View
         </button>
       </div>
-      <div id="area-selection-info-spacer" class="py-1 hidden"></div>
+      <div id="area-selection-info-spacer" class="py-1"></div>
       <button
           type="button"
           id="area-selection-info-save-button"
-          class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 hidden"
+          class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
           >
           Save polygon
         </button>
     </div>
-    <script>
-      function viewButton(){
-        console.log("hello");
-        var saveButton = document.getElementById("area-selection-info-save-button");
-        var spacer = document.getElementById("area-selection-info-spacer");
-        if(saveButton.classList.contains("hidden")){
-          saveButton.classList.remove("hidden");
-          spacer.classList.remove("hidden");
-        }
-        else{
-          saveButton.classList.add("hidden");
-          spacer.classList.add("hidden");
-        }
-      }
-    </script>
     <div
       id="area-view-info-container"
       class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 right-20"
@@ -692,6 +676,33 @@
       id="timeline-container"
       class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg"
     ></div>
+
+    <div
+      id="name-area-container"
+      class="absolute z-30 w-96 h-fit px-2 py-2 hidden rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-0 bottom-0 right-0 left-0 m-auto"
+    >
+      <div class="flex flex-row gap-2 px-1">
+        <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Save polygon</h2>
+        <button type="button" id="name-new-area-close-button" class="ml-auto">
+          <img class="h-3 w-3" src="images/icons8-close-90.png" />
+        </button>
+      </div>
+      <div>
+        <input
+          type="text"
+          name="name-area-textbox"
+          id="name-area-textbox"
+          class="inline w-80 rounded-xl py-1.5 px-3 #border-0 text-sm my-2 #ring-inset shadow-sm dark:bg-neutral-600/90 bg-neutral-100/90 dark:focus:bg-neutral-650/80 focus:bg-white dark:placeholder:text-neutral-400 placeholder:text-neutral-500 dark:ring-neutral-700/50 ring-neutral-300/90"
+          placeholder="Name"
+        />
+        <button id="confirm-name-button" class="px-2 py-1 rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90">
+          <img class="inline h-5 w-5" src="images/icons8-tick-30.png" alt="Confirm name choice tick">
+        </button>
+      </div>
+    </div>
+
+    </div>
+   
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
 
