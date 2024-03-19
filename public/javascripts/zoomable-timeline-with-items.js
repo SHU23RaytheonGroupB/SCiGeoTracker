@@ -359,20 +359,19 @@ export function Timeline(options) {
 
   return setup();
 }
+const chart = document.getElementById("timeline-container");
 
+const menuButton = document.getElementById("timeline-button");
+document.getElementById("timeline-container").style.display = "block";
 
-const button = document.getElementById("timeline-button");
-document.getElementById("timeline-container").style.display = "none";
-
-button.addEventListener("click", () => {
-  const chart = document.getElementById("timeline-container");
+menuButton.addEventListener("click", () => {
   chart.style.display = chart.style.display === "none" ? "block" : "none";
 });
 
-const button2 = document.getElementById("histogram-popout-close-button");
+const closeButton = document.getElementById("timeline-popout-close-button");
 
-button2.addEventListener("click", () => {
-  const chart = document.getElementById("histogram-popout-container");
-  chart.style.display = chart.style.display === "none" ? "block" : "none";
+closeButton.addEventListener("click", () => {
+  console.log("closeButton");
+  chart.style.display = chart.style.display = "none";
 });
 

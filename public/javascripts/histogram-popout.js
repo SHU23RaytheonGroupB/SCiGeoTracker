@@ -70,15 +70,20 @@ export function createHistogramChart(map_) {
   });
 }
 
+const closeButton = document.getElementById("histogram-popout-close-button");
 
-
-const button = document.getElementById("histogram-button");
-document.getElementById("histogram-popout-container").style.display = "none";
-
-button.addEventListener("click", () => {
+closeButton.addEventListener("click", () => {
   const chart = document.getElementById("histogram-popout-container");
   chart.style.display = chart.style.display === "none" ? "block" : "none";
 });
+
+const menuButton = document.getElementById("histogram-button");
+
+menuButton.addEventListener("click", () => {
+  const chart = document.getElementById("histogram-popout-container");
+  chart.style.display = chart.style.display === "none" ? "block" : "none";
+});
+
 
 
 

@@ -549,6 +549,7 @@
       class="absolute z-20 w-100 px-4 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 start-20"
       style="display: none"
     >
+      <div id="flyto-mission-info-containerheader" style="background-color: rgb(125, 125, 125); width: auto; height: 10px; cursor: move;"></div>
       <div class="flex flex-row gap-2 px-1">
         <h2 id="flyto-mission-title" class="dark:text-neutral-300 text-neutral-500 grow font-bold">Mission Data</h2>
         <button type="button" id="flyto-mission-info-close-button" class="ml-auto">
@@ -606,11 +607,14 @@
 
     <div
       id="saved-areas-container"
-      class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-0 bottom-0 right-0 left-0 m-auto"
-      style="display: none"
+      class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-0 bottom-0 right-0 left-0"
+      style="display: none; top: 92px; left: 110px;"
     >
+      <div class="flex flex-row gap-2 px-1" style="background-color: grey; cursor: move; height: 10px;">
+        </div>
       <div class="flex flex-row gap-2 px-1">
-        <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Saved Areas</h2>
+
+        <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold z:20">Saved Areas</h2>
         <button type="button" id="saved-areas-close-button" class="ml-auto">
           <img class="h-3 w-3" src="images/icons8-close-90.png" />
         </button>
@@ -655,11 +659,13 @@
 
     <div
       id="histogram-popout-container"
-      class="absolute z-30 w-2/4 h-1/4 px-2 py-2 rounded-xl overflow-visable text-sm bg-neutral-950/80 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-0 m-auto"
-    >
+      class="absolute z-30 w-2/4 h-1/4 px-2 py-2 rounded-xl overflow-visable text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-80"
+      style="height: 220; width: 950; display: none;"
+      >
+      <div id="histogram-popout-containerheader" style="background-color: rgb(125, 125, 125); width: auto; height: 10px; cursor: move; width: 960;"></div>
+      <button type="button" id="histogram-popout-close-button" class="ml-auto">
+        <img class="h-3 w-3" src="images/icons8-close-90.png" />
       <div class="flex flex-col flex justify-center gap-2 px-1 w-full h-full">
-        <button type="button" id="histogram-popout-close-button" class="ml-auto">
-          <img class="h-3 w-3" src="images/icons8-close-90.png" />
         </button>
         <canvas id="histogram-chart"></canvas>
       </div>
@@ -667,8 +673,17 @@
 
     <div
       id="timeline-container"
-      class="absolute mx-auto my-2 w-fit bottom-0 left-0 right-0 z-10 bg-black opacity-70 shadow-lg rounded-lg"
-    ></div>
+      class="absolute w-fit h-40 bottom-0 left-0 right-0 px-2 py-2 z-10 dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 opacity-70 shadow-lg rounded-lg"
+      style="top: auto; left: 30%; height: 160px; width: 800px;"
+      
+    >
+      <div id="timeline-containerheader" style="background-color: rgb(125, 125, 125); width: auto; height: 10px; cursor: move;"></div>
+      <button type="button" id="timeline-popout-close-button">
+        <img class="h-3 w-3" src="images/icons8-close-90.png" />
+      </button>
+    </div>
+
+
 
     <div id="map" class="absolute top-0 bottom-0 w-full z-0"></div>
 
@@ -721,7 +736,8 @@
         stroke: var(--yearly-gridline-color);
       }
     </style>
-  </body>
+  </body>   
+  <script src="./javascripts/dragging-divs.js"></script>
   <script type="module" src="./javascripts/map.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
