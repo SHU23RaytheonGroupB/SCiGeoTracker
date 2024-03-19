@@ -25,7 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   </head>
 
-  <body class="m-0 p-0 text-neutral-500 dark:text-neutral-300 fill-neutral-500 h-screen max-h-screen light">
+  <body class="m-0 p-0 h-screen max-h-screen text-neutral-600 dark:text-neutral-200 fill-neutral-600 dark:fill-neutral-200">
     <div class="absolute top-0 left-0 z-20 m-2 flex flex-row gap-2 pointer-events-none">
       <div id="tray" class="flex flex-col gap-2 pointer-events-auto">
         <div
@@ -42,7 +42,9 @@
             id="move-button"
             class="p-1.5 dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 bg-neutral-100/90 hover:bg-neutral-100/60"
           >
-            <img class="h-6 w-6" src="images/icons8-move-90.png" alt="Drag and move map tool" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+              <path d="M 14.984375 2.9863281 A 1.0001 1.0001 0 0 0 14.207031 3.3769531 A 1.0001 1.0001 0 0 0 14.203125 3.3828125 L 11.292969 6.2929688 A 1.0001 1.0001 0 1 0 12.707031 7.7070312 L 14 6.4140625 L 14 11 A 1.0001 1.0001 0 1 0 16 11 L 16 6.4140625 L 17.292969 7.7070312 A 1.0001 1.0001 0 1 0 18.707031 6.2929688 L 15.791016 3.3769531 A 1.0001 1.0001 0 0 0 14.984375 2.9863281 z M 6.9804688 10.990234 A 1.0001 1.0001 0 0 0 6.2929688 11.292969 L 3.3808594 14.205078 A 1.0001 1.0001 0 0 0 3.3769531 15.792969 A 1.0001 1.0001 0 0 0 3.3828125 15.796875 L 6.2929688 18.707031 A 1.0001 1.0001 0 1 0 7.7070312 17.292969 L 6.4140625 16 L 11 16 A 1.0001 1.0001 0 1 0 11 14 L 6.4140625 14 L 7.7070312 12.707031 A 1.0001 1.0001 0 0 0 6.9804688 10.990234 z M 22.990234 10.990234 A 1.0001 1.0001 0 0 0 22.292969 12.707031 L 23.585938 14 L 19 14 A 1.0001 1.0001 0 1 0 19 16 L 23.585938 16 L 22.292969 17.292969 A 1.0001 1.0001 0 1 0 23.707031 18.707031 L 26.619141 15.794922 A 1.0001 1.0001 0 0 0 26.623047 14.207031 A 1.0001 1.0001 0 0 0 26.617188 14.203125 L 23.707031 11.292969 A 1.0001 1.0001 0 0 0 22.990234 10.990234 z M 14.984375 17.986328 A 1.0001 1.0001 0 0 0 14 19 L 14 23.585938 L 12.707031 22.292969 A 1.0001 1.0001 0 0 0 11.990234 21.990234 A 1.0001 1.0001 0 0 0 11.292969 23.707031 L 14.205078 26.619141 A 1.0001 1.0001 0 0 0 15.796875 26.617188 L 18.707031 23.707031 A 1.0001 1.0001 0 0 0 17.990234 21.986328 A 1.0001 1.0001 0 0 0 17.292969 22.292969 L 16 23.585938 L 16 19 A 1.0001 1.0001 0 0 0 14.984375 17.986328 z"></path>
+            </svg>
           </button>
           <button
             type="button"
@@ -50,7 +52,9 @@
             id="rectangle-button"
             class="p-1.5 dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 bg-neutral-100/90 hover:bg-neutral-100/60"
           >
-            <img class="h-6 w-6" src="images/icons8-rectangle-90.png" alt="Draw custom rectangle tool" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+              <path d="M 4 5 A 2 2 0 0 0 2 7 A 2 2 0 0 0 3 8.7304688 L 3 21.271484 A 2 2 0 0 0 2 23 A 2 2 0 0 0 4 25 A 2 2 0 0 0 5.7304688 24 L 24.271484 24 A 2 2 0 0 0 26 25 A 2 2 0 0 0 28 23 A 2 2 0 0 0 27 21.269531 L 27 8.7285156 A 2 2 0 0 0 28 7 A 2 2 0 0 0 26 5 A 2 2 0 0 0 24.269531 6 L 5.7285156 6 A 2 2 0 0 0 4 5 z M 5.7304688 8 L 24.271484 8 A 2 2 0 0 0 25 8.7304688 L 25 21.271484 A 2 2 0 0 0 24.269531 22 L 5.7285156 22 A 2 2 0 0 0 5 21.269531 L 5 8.7285156 A 2 2 0 0 0 5.7304688 8 z"></path>
+            </svg>
           </button>
           <button
             type="button"
@@ -58,7 +62,9 @@
             id="polygon-button"
             class="p-1.5 dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 bg-neutral-100/90 hover:bg-neutral-100/60"
           >
-            <img class="h-6 w-6" src="images/icons8-radar-plot-90.png" alt="Draw custom polygon tool" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+              <path d="M 12 3 A 2 2 0 0 0 10 5 A 2 2 0 0 0 10.068359 5.5175781 L 7.515625 8.0703125 A 2 2 0 0 0 7 8 A 2 2 0 0 0 5 10 A 2 2 0 0 0 5.5039062 11.324219 L 3.5976562 17.042969 A 2 2 0 0 0 2 19 A 2 2 0 0 0 4 21 A 2 2 0 0 0 5.390625 20.4375 L 9.0605469 21.486328 A 2 2 0 0 0 11 23 A 2 2 0 0 0 11.517578 22.931641 L 14.070312 25.484375 A 2 2 0 0 0 14 26 A 2 2 0 0 0 16 28 A 2 2 0 0 0 18 26 A 2 2 0 0 0 17.994141 25.871094 L 24.115234 21.791016 A 2 2 0 0 0 25 22 A 2 2 0 0 0 27 20 A 2 2 0 0 0 26 18.269531 L 26 12.728516 A 2 2 0 0 0 27 11 A 2 2 0 0 0 25 9 A 2 2 0 0 0 24.660156 9.0292969 L 21.875 5.6875 A 2 2 0 0 0 22 5 A 2 2 0 0 0 20 3 A 2 2 0 0 0 18.269531 4 L 13.728516 4 A 2 2 0 0 0 12 3 z M 13.730469 6 L 18.271484 6 A 2 2 0 0 0 20 7 A 2 2 0 0 0 20.339844 6.9707031 L 23.125 10.3125 A 2 2 0 0 0 23 11 A 2 2 0 0 0 24 12.730469 L 24 18.271484 A 2 2 0 0 0 23 20 A 2 2 0 0 0 23.005859 20.126953 L 16.884766 24.208984 A 2 2 0 0 0 16 24 A 2 2 0 0 0 15.482422 24.068359 L 12.929688 21.515625 A 2 2 0 0 0 13 21 A 2 2 0 0 0 11 19 A 2 2 0 0 0 9.609375 19.5625 L 5.9394531 18.513672 A 2 2 0 0 0 5.4960938 17.675781 L 7.4023438 11.957031 A 2 2 0 0 0 9 10 A 2 2 0 0 0 8.9316406 9.484375 L 11.484375 6.9296875 A 2 2 0 0 0 12 7 A 2 2 0 0 0 13.730469 6 z"></path>
+            </svg>
           </button>
         </div>
         <button
@@ -67,7 +73,9 @@
           id="filter-button"
           class="rounded-lg p-1.5 ring-1 shadow-sm dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 dark:ring-neutral-700/50 bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
-          <img class="h-6 w-6" src="images/icons8-filter-90.png" alt="Filter map tool" />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+            <path d="M 4 4 A 1.0001 1.0001 0 1 0 4 6 L 4.8007812 6 L 12 15 L 18 15 L 25.199219 6 L 26 6 A 1.0001 1.0001 0 1 0 26 4 L 4 4 z M 12 17 L 12 26 L 18 24 L 18 17 L 12 17 z"></path>
+          </svg>
         </button>
         <button
           type="button"
@@ -75,7 +83,9 @@
           id="folder-button"
           class="rounded-lg p-1.5 ring-1 shadow-sm dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 dark:ring-neutral-700/50 bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
-          <img class="h-6 w-6" src="images/icons8-folder-90.png" alt="Saved areas folder" />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+            <path d="M 5 4 C 3.895 4 3 4.895 3 6 L 3 9 L 3 11 L 22 11 L 27 11 L 27 8 C 27 6.895 26.105 6 25 6 L 12.199219 6 L 11.582031 4.9707031 C 11.221031 4.3687031 10.570187 4 9.8671875 4 L 5 4 z M 2.5019531 13 C 1.4929531 13 0.77040625 13.977406 1.0664062 14.941406 L 4.0351562 24.587891 C 4.2941563 25.426891 5.0692656 26 5.9472656 26 L 15 26 L 24.052734 26 C 24.930734 26 25.705844 25.426891 25.964844 24.587891 L 28.933594 14.941406 C 29.229594 13.977406 28.507047 13 27.498047 13 L 15 13 L 2.5019531 13 z"></path>
+          </svg>
         </button>
         <button
           type="button"
@@ -83,7 +93,9 @@
           id="histogram-button"
           class="rounded-lg p-1.5 ring-1 shadow-sm dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 dark:ring-neutral-700/50 bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
-          <img class="h-6 w-6" src="images/icons8-futures-90.png" alt="Display histogram" />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+            <path d="M 11 4 C 10.448 4 10 4.448 10 5 L 10 22 L 14 22 L 14 5 C 14 4.448 13.552 4 13 4 L 11 4 z M 5 6 C 4.448 6 4 6.448 4 7 L 4 22 L 8 22 L 8 7 C 8 6.448 7.552 6 7 6 L 5 6 z M 23 8 C 22.448 8 22 8.448 22 9 L 22 22 L 26 22 L 26 9 C 26 8.448 25.552 8 25 8 L 23 8 z M 17 10 C 16.448 10 16 10.448 16 11 L 16 22 L 20 22 L 20 11 C 20 10.448 19.552 10 19 10 L 17 10 z M 3 24 A 1.0001 1.0001 0 1 0 3 26 L 27 26 A 1.0001 1.0001 0 1 0 27 24 L 3 24 z"></path>
+          </svg>
         </button>
         <button
           type="button"
@@ -91,18 +103,31 @@
           id="theme-button"
           class="rounded-lg p-1.5 ring-1 shadow-sm dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 dark:ring-neutral-700/50 bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
-          <img class="h-6 w-6" src="images/moon-4-64.png" alt="Change map theme" />
-          <!-- Temp icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+            <path class="visible dark:invisible" d="M22,21c-6.627,0-12-5.373-12-12c0-1.95,0.475-3.785,1.3-5.412C6.485,5.148,3,9.665,3,15c0,6.627,5.373,12,12,12 c4.678,0,8.72-2.682,10.7-6.588C24.534,20.79,23.292,21,22,21z"></path>
+            <path class="invisible dark:visible" d="M 14.984375 0.98632812 A 1.0001 1.0001 0 0 0 14 2 L 14 5 A 1.0001 1.0001 0 1 0 16 5 L 16 2 A 1.0001 1.0001 0 0 0 14.984375 0.98632812 z M 5.796875 4.7988281 A 1.0001 1.0001 0 0 0 5.1015625 6.515625 L 7.2226562 8.6367188 A 1.0001 1.0001 0 1 0 8.6367188 7.2226562 L 6.515625 5.1015625 A 1.0001 1.0001 0 0 0 5.796875 4.7988281 z M 24.171875 4.7988281 A 1.0001 1.0001 0 0 0 23.484375 5.1015625 L 21.363281 7.2226562 A 1.0001 1.0001 0 1 0 22.777344 8.6367188 L 24.898438 6.515625 A 1.0001 1.0001 0 0 0 24.171875 4.7988281 z M 15 8 A 7 7 0 0 0 8 15 A 7 7 0 0 0 15 22 A 7 7 0 0 0 22 15 A 7 7 0 0 0 15 8 z M 2 14 A 1.0001 1.0001 0 1 0 2 16 L 5 16 A 1.0001 1.0001 0 1 0 5 14 L 2 14 z M 25 14 A 1.0001 1.0001 0 1 0 25 16 L 28 16 A 1.0001 1.0001 0 1 0 28 14 L 25 14 z M 7.9101562 21.060547 A 1.0001 1.0001 0 0 0 7.2226562 21.363281 L 5.1015625 23.484375 A 1.0001 1.0001 0 1 0 6.515625 24.898438 L 8.6367188 22.777344 A 1.0001 1.0001 0 0 0 7.9101562 21.060547 z M 22.060547 21.060547 A 1.0001 1.0001 0 0 0 21.363281 22.777344 L 23.484375 24.898438 A 1.0001 1.0001 0 1 0 24.898438 23.484375 L 22.777344 21.363281 A 1.0001 1.0001 0 0 0 22.060547 21.060547 z M 14.984375 23.986328 A 1.0001 1.0001 0 0 0 14 25 L 14 28 A 1.0001 1.0001 0 1 0 16 28 L 16 25 A 1.0001 1.0001 0 0 0 14.984375 23.986328 z"></path>
+          </svg>
         </button>
         <button
           type="button"
-          alt="Change map theme"
+          alt="Toggle timeline 1"
           id="timeline-button"
           class="rounded-lg p-1.5 ring-1 shadow-sm dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 dark:ring-neutral-700/50 bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
         >
-          <img class="h-6 w-6" src="images/moon-4-64.png" alt="Display timeline" />
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+            <path d="M15,3C8.373,3,3,8.373,3,15c0,6.627,5.373,12,12,12s12-5.373,12-12C27,8.373,21.627,3,15,3z M16,16H7.995 C7.445,16,7,15.555,7,15.005v-0.011C7,14.445,7.445,14,7.995,14H14V5.995C14,5.445,14.445,5,14.995,5h0.011 C15.555,5,16,5.445,16,5.995V16z"></path>
+          </svg>
         </button>
-        
+        <button
+          type="button"
+          alt="Toggle timeline 2"
+          id="timeline-button-2"
+          class="rounded-lg p-1.5 ring-1 shadow-sm dark:bg-neutral-900/90 dark:hover:bg-neutral-800/70 dark:ring-neutral-700/50 bg-neutral-100/90 hover:bg-neutral-100/60 ring-neutral-300/90"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-6 w-6">
+            <path d="M 11 4 C 10.448 4 10 4.448 10 5 L 10 22 L 14 22 L 14 5 C 14 4.448 13.552 4 13 4 L 11 4 z M 5 6 C 4.448 6 4 6.448 4 7 L 4 22 L 8 22 L 8 7 C 8 6.448 7.552 6 7 6 L 5 6 z M 23 8 C 22.448 8 22 8.448 22 9 L 22 22 L 26 22 L 26 9 C 26 8.448 25.552 8 25 8 L 23 8 z M 17 10 C 16.448 10 16 10.448 16 11 L 16 22 L 20 22 L 20 11 C 20 10.448 19.552 10 19 10 L 17 10 z M 3 24 A 1.0001 1.0001 0 1 0 3 26 L 27 26 A 1.0001 1.0001 0 1 0 27 24 L 3 24 z"></path>
+          </svg>
+        </button>        
       </div>
 
       <div class="w-40 pointer-events-auto h-fit grow-0">
@@ -342,13 +367,13 @@
     <div class="absolute bottom-0 right-0 z-10 m-2 flex flex-col gap-2">
       <div
         id="coords-container"
-        class="py-1 px-6 min-w-40 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center dark:text-neutral-400 text-neutral-500"
+        class="py-1 px-6 min-w-40 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center"
       >
         <p id="coords" class="font-medium">-.000, -.000</p>
       </div>
       <div
         id="scale-bar-container"
-        class="py-1 px-4 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center dark:text-neutral-400 text-neutral-500 inline-flex items-center"
+        class="py-1 px-4 rounded-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 text-[11px] font-mono text-center inline-flex items-center"
       >
         <div id="scale-bar" class="w-full">
           <div id="scale-bar-inner" class="h-1 bg-neutral-500 dark:bg-neutral-400"></div>
