@@ -231,39 +231,57 @@ function addDotLayer(title) {
 }
 
 function addChoroplethLayers(countryPolygons, regionPolygons) {
-  map.addLayer({
-    id: `${regionPolygons}-borders`,
-    type: "line",
-    source: regionPolygons,
-    layout: {
-      visibility: "none",
-    },
-    paint: {
-      "line-width": 0.5,
-      "line-opacity": 0.4,
-      "line-color": "#ffffff",
-    },
+  map.addSource("boundaries", {
+    "type": "vector",
+    "tiles": [ "https://api.os.uk/maps/vector/v1/vts/boundaries/tile/{z}/{y}/{x}.pbf?srs=3857&key=gTXSkXECR40pbBJn8mZ1ZVYKitE240TC" ]
   });
+
   map.addLayer({
-    id: `${regionPolygons}-choropleth`,
-    type: "fill",
-    source: regionPolygons,
-    layout: {
-      visibility: "none",
+    "id": "boundaries-layer",
+    "type": "fill",
+    "source": "boundaries",
+    "source-layer": "Boundary_line",
+    "layout": {},
+    "paint": {
+        "fill-color": "rgba(175, 88, 186, 0.3)",
+        "fill-outline-color": "rgba(175, 88, 186, 1)"
     },
-    paint: {
-      "fill-color": [
-        "interpolate",
-        ["linear"],
-        ["get", "total_missions"], // assign product count property within geojson to use instead of density
-        0,
-        "#FFFFFF",
-        100,
-        "#2AFF25",
-      ],
-      "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.8, 0.7],
-    },
+    "filter": [ "in", "AREA_CODE", "CTY", "GLA" ]
   });
+
+  // map.addLayer({
+  //   id: `${regionPolygons}-borders`,
+  //   type: "line",
+  //   source: regionPolygons,
+  //   layout: {
+  //     visibility: "none",
+  //   },
+  //   paint: {
+  //     "line-width": 0.5,
+  //     "line-opacity": 0.4,
+  //     "line-color": "#ffffff",
+  //   },
+  // });
+  // map.addLayer({
+  //   id: `${regionPolygons}-choropleth`,
+  //   type: "fill",
+  //   source: regionPolygons,
+  //   layout: {
+  //     visibility: "none",
+  //   },
+  //   paint: {
+  //     "fill-color": [
+  //       "interpolate",
+  //       ["linear"],
+  //       ["get", "total_missions"], // assign product count property within geojson to use instead of density
+  //       0,
+  //       "#FFFFFF",
+  //       100,
+  //       "#2AFF25",
+  //     ],
+  //     "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.8, 0.7],
+  //   },
+  // });
 }
 
 function updateChoroplethSource() {
