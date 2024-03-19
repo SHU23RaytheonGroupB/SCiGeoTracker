@@ -1,4 +1,5 @@
 import { allProducts } from "./products-and-layers.js";
+import { saveNewPolygon } from "./saved-areas.js";
 
 export function moveMap(draw) {
   draw.changeMode("simple_select");
@@ -18,6 +19,10 @@ const uncoveredAreaContainerEle = document.querySelector("#selection-uncovered-a
 const coveragePercentageContainerEle = document.querySelector("#selection-coverage-percentage-value");
 const missionCountContainerEle = document.querySelector("#selection-total-missions-value");
 
+var polygonData = "";
+const areaSaveButton = document.getElementById("area-selection-info-save-button");
+areaSaveButton.addEventListener("click", () => saveNewPolygon(polygonData));
+
 export function updateArea(allProducts, data) {
   //USED FOR DRAW POLYGOn
   //const data = draw.getAll();
@@ -27,7 +32,7 @@ export function updateArea(allProducts, data) {
   
   //console.log(1);
   //console.log(data.features.length);
-
+  polygonData = data;
   let polyCoordinates = [];
   let polyCoordinatesLat = [];
   let polyCoordinatesLog = [];
@@ -365,4 +370,8 @@ function calculateMissionCoverage(allMissons, polygon) {
 
   //console.log(rounded_area);
   return rounded_area;
+}
+
+function savePolygon(){
+  
 }

@@ -10,7 +10,6 @@ const saveSavedAreas = () => {
 };
 
 export function initialiseSavedAreas(draw) {
-  const savedAreasContainerEle = document.querySelector("#saved-areas-container");
   const savedAreasSearch = document.querySelector("#saved-areas-search");
 
   savedAreasSearch.addEventListener("change", savedSearchChanged);
@@ -242,19 +241,7 @@ if (savedAreas.length == 0) {
   ]];
 
   for (let i = 0; i < 10; i++) {    
-    savedAreas.push({
-      type: "FeatureCollection",
-      properties: { name: `Test area ${i + 1}`, datetime_created: new Date().toString() },
-      features: [{
-        type: "Feature",
-        geometry: {
-          type: "Polygon",
-          coordinates: coordCol          
-        },
-      }]
-    });
-  }
-  saveSavedAreas();
+    createNewPoly("test area " + (x + 1), coordCol);
 }
 
 const savedAreasContainerEle = document.querySelector("#saved-areas-container");
@@ -508,6 +495,28 @@ const exportFiles = () => {
     });
   }
 };
+
+// export function saveNewPolygon(polygon) {
+  
+//   coords = polygon.features[0].geometry.coordinates;
+//   createNewPoly("", coords);
+// }
+
+function createNewPoly(nameStr, coords){
+  savedAreas.push({
+    type: "FeatureCollection",
+    properties: { name: nameStr, datetime_created: new Date().toString() },
+    features: [{
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: coords          
+      },
+    }]
+  });
+  saveSavedAreas();
+}
+}
 
 const refreshSavedScreen = () => {
   saveSavedAreas();

@@ -446,12 +446,35 @@
           type="button"
           id="area-selection-info-view-button"
           class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
-        >
+          onclick="viewButton()"
+          >
           View
         </button>
       </div>
+      <div id="area-selection-info-spacer" class="py-1 hidden"></div>
+      <button
+          type="button"
+          id="area-selection-info-save-button"
+          class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 hidden"
+          >
+          Save polygon
+        </button>
     </div>
-
+    <script>
+      function viewButton(){
+        console.log("hello");
+        var saveButton = document.getElementById("area-selection-info-save-button");
+        var spacer = document.getElementById("area-selection-info-spacer");
+        if(saveButton.classList.contains("hidden")){
+          saveButton.classList.remove("hidden");
+          spacer.classList.remove("hidden");
+        }
+        else{
+          saveButton.classList.add("hidden");
+          spacer.classList.add("hidden");
+        }
+      }
+    </script>
     <div
       id="area-view-info-container"
       class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 right-20"
