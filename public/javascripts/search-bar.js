@@ -1,10 +1,11 @@
-import { boundariesByRegion } from "./products-and-layers.js";
+import { boundariesByRegion, allProducts } from "./products-and-layers.js";
 import { forwardPolyGeocode } from "./geocoder.js";
+import { updateArea } from "./area-calculations.js";
 
 const searchResultsContainerEle = document.querySelector("#search-results-container");
 const searchBarEle = document.querySelector("#search-bar");
 const areaViewInfoContainerEle = document.querySelector("#area-view-info-container");
-const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
+//const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
 
 export function initialiseSearchBar() {
   document.querySelector("#area-view-info-close-button").onclick = () => {
@@ -80,17 +81,18 @@ const gotoFeatureByResult = (result) => {
     animate: false,
   });
   window.map.setMaxBounds(window.map.getBounds());
-  areaViewInfoContainerEle.style.display = "inline";
-  const areaViewInfoTitleEle = document.querySelector("#area-view-info-title");
-  areaViewInfoTitleEle.textContent = result.display_name;
-  const totalAreaContainerEle = document.querySelector("#view-total-area-value");
-  const coveredAreaContainerEle = document.querySelector("#view-covered-area-value");
-  const uncoveredAreaContainerEle = document.querySelector("#view-uncovered-area-value");
-  const coveragePercentageContainerEle = document.querySelector("#view-coverage-percentage-value");
-  const missionCountContainerEle = document.querySelector("#view-total-missions-value");
-  totalAreaContainerEle.textContent = totalAreaRounded;
-  coveredAreaContainerEle.textContent = coveredArea;
-  uncoveredAreaContainerEle.textContent = uncoveredArea;
-  coveragePercentageContainerEle.textContent = coveragePercentage;
-  missionCountContainerEle.textContent = missionCount;
+  //areaSelectionInfoContainerEle.style.display = "inline";
+  // const totalAreaContainerEle = document.querySelector("#view-total-area-value");
+  // const coveredAreaContainerEle = document.querySelector("#view-covered-area-value");
+  // const uncoveredAreaContainerEle = document.querySelector("#view-uncovered-area-value");
+  // const coveragePercentageContainerEle = document.querySelector("#view-coverage-percentage-value");
+  // const missionCountContainerEle = document.querySelector("#view-total-missions-value");
+  //console.log(feature);
+  var fc = turf.featureCollection([feature]);
+  updateArea(allProducts, fc);
+  // totalAreaContainerEle.textContent = totalAreaRounded;
+  // coveredAreaContainerEle.textContent = coveredArea;
+  // uncoveredAreaContainerEle.textContent = uncoveredArea;
+  // coveragePercentageContainerEle.textContent = coveragePercentage;
+  // missionCountContainerEle.textContent = missionCount;
 };
