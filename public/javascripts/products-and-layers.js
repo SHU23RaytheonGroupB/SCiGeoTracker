@@ -30,7 +30,7 @@ export function initialiseLayerMenu() {
   document.querySelector("#frames-item").onclick = framesMode;
   document.querySelector("#heatmap-item").onclick = heatmapMode;
   document.querySelector("#choropleth-item").onclick = choroplethMode;
-  document.querySelector("#dot-density-item").onclick = clusterMode;
+  document.querySelector("#cluster-density-item").onclick = clusterMode;
   document.querySelector("#border-selection-item").onclick = borderSelectionMode;
 
   window.map.on("mousemove", "region-boundaries-choropleth", (e) => {
@@ -127,8 +127,8 @@ async function addProductsToMap() {
   addHeatmapLayer("product-points");
   // CHOROPLETH LAYER
   addChoroplethLayers("country-boundaries", "region-boundaries");
-  // DOT LAYER
-  addDotLayer("product-points");
+  // CLUSTER LAYER
+  addClusterLayer("product-points");
   // BORDER LAYER - TEMP
   addBorderLayer("uk-land");
 }
@@ -208,9 +208,9 @@ function addBorderLayer(title) {
   });
 }
 
-function addDotLayer(title) {
+function addClusterLayer(title) {
   map.addLayer({
-    id: `${title}-dot-density`,
+    id: `${title}-cluster-density`,
     type: "circle",
     source: title,
     paint: {
@@ -312,7 +312,7 @@ const clusterMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("product-points-dot-density", "visibility", "visible");
+  window.map.setLayoutProperty("product-points-cluster-density", "visibility", "visible");
 };
 
 const frameOverlapsMode = () => {
@@ -336,7 +336,7 @@ const hideAllLayers = () => {
   window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "none");
   window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
   window.map.setLayoutProperty("product-points-heatmap", "visibility", "none");
-  window.map.setLayoutProperty("product-points-dot-density", "visibility", "none");
+  window.map.setLayoutProperty("product-points-cluster-density", "visibility", "none");
   window.map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
   window.map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
