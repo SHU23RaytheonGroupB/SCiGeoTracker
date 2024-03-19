@@ -355,7 +355,6 @@ function calculateMissionCoverage(allMissons, polygon) {
 
   var areaCoveredWithOverlaps = 0;
   for (let i = 0; i < fcMissionsWithinPoly.length; i++) {
-    console.log(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
     areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates));
   }
 

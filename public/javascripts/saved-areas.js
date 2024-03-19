@@ -399,7 +399,6 @@ const openSavedAreas = () => {
           var xCoords = 0;
           var arrCount = 0;
           var yCoords = 0;
-          console.log(savedArea);
           for(var a = 0; a < savedArea.features[0].geometry.coordinates[0].length; a++){
             xCoords += savedArea.features[0].geometry.coordinates[0][a][0];
             arrCount++;
@@ -525,7 +524,6 @@ function saveNewPolygon() {
 }
 
 function createNewPoly(nameStr, coords) {
-  console.log(coords.features[0].geometry);
   if(nameStr.length != 0 && coords != ""){
     var tempNum = 0;
     var tempName = nameStr;
