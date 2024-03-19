@@ -19,12 +19,14 @@ import { Timeline } from "./zoomable-timeline-with-items.js";
 import { createHistogramChart } from "./histogram-popout.js";
 
 let loaded = false;
+let sceneIDs = [];
 
 map.on("load", async () => {
   renderOverlaysZoom();
   updateScaleBar();
   initialiseControls();
   await initialiseProducts();
+  console.log(allProducts);
 
   const START_DATE = new Date(1558231200000);
   const END_DATE = new Date(1593914400000);
@@ -35,7 +37,7 @@ map.on("load", async () => {
   document.querySelector("#timeline-container").appendChild(timeline.element);
 
   loaded = true; //used so style is not loaded before data is requested
-  createHistogramChart(map);
+  createHistogramChart();
 });
 
 map.on("style.load", async () => {
@@ -69,17 +71,18 @@ map.on("zoom", (ev) => {
   updateScaleBar();
 });
 
-export async function circleLinkZoom(d) {
+export async function circleLinkZoom(uniqueID) {
   let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {
     reset.style.fill = "red";
   });
 
-  let misGroup;
+  let missionGroup;
   let currentProduct;
+  sceneIDs.length = 0;
   allProducts.forEach((product) => {
-    if (product.identifier === d) {
-      misGroup = product.title.split(" ")[0];
+    if (product.identifier === uniqueID) {
+      missionGroup = product.title.split(" ")[0];
       currentProduct = product;
       map.flyTo({
         center: product.centre.split(",").reverse(),
@@ -88,13 +91,62 @@ export async function circleLinkZoom(d) {
       });
     }
   });
-  let circleGroup = document.querySelectorAll('circle[mission="' + misGroup + '"]');
+  let circleGroup = document.querySelectorAll('circle[mission="' + missionGroup + '"]');
+  console.log(circleGroup);
   circleGroup.forEach((circle) => {
     circle.style.fill = "blue";
+    sceneIDs.push(circle.getAttribute("sceneID"));
   });
+
   displayMissionMenu(currentProduct);
 
-  // allProducts.forEach((product) => {
+  for (let i = 0; i <= sceneIDs.length - 1; i++) {
+    console.log(`sceneID: ${sceneIDs[i]}`);
+  }
+}
 
-  // });
+let viewMissionButton = document.getElementById("flyto-mission-info-view-button");
+viewMissionButton.addEventListener("click", viewSelectedMission);
+
+function viewSelectedMission() {
+  let missionID = document.getElementById("flyto-mission-mission-id").textContent;
+
+  console.log("Mission Group:", missionID);
+  for (let i = 0; i <= sceneIDs.length - 1; i++) {
+    console.log(`sceneID: ${sceneIDs[i]}`);
+  }
+
+  fetch("/api/getMissionInfo", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ missionID }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle the response data from the backend
+      console.log(data);
+    })
+    .catch((error) => {
+      // Handle any errors
+      console.error("Error:", error);
+    });
+
+  // fetch("/api/getFrames", {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({ missionID, sceneIDs }),
+  // })
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     // Handle the response data from the backend
+  //     console.log(data);
+  //   })
+  //   .catch((error) => {
+  //     // Handle any errors
+  //     console.error("Error:", error);
+  //   });
 }

@@ -58,6 +58,22 @@ class ProductService {
     }
   }
 
+  async getFrameData(missionId, sceneId) {
+    try {
+      const response = await fetch(`${API_ORIGIN}/v1/missionfeed/missions/${missionId}/scene/${sceneId}/frames`, {
+        method: "GET",
+        headers: this.headers,
+      });
+      if (!response.ok) {
+        console.log(response);
+        throw new Error("Error fetching scene frames");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async getProduct(productID) {
     try {
       const response = await fetch(`${API_ORIGIN}/v1/products/${productID}`, {
@@ -67,6 +83,24 @@ class ProductService {
       if (!response.ok) {
         throw new Error("Error fetching product metadata");
       }
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getMissionInfo(missionID) {
+    try {
+      const response = await fetch(`${API_ORIGIN}/v1/missionfeed/missions/${missionID}`, {
+        method: "GET",
+        headers: this.headers,
+      });
+      if (!response.ok) {
+        console.log("response:");
+        console.log(response);
+        throw new Error("error getting mission info");
+      }
+
       return await response.json();
     } catch (error) {
       console.error(error);

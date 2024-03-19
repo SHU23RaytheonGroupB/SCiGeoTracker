@@ -1,4 +1,4 @@
-export function displayMissionMenu(missionProduct, prodOrCust) {
+export function displayMissionMenu(missionProduct) {
   console.log("displayMissionMenu");
   console.log(missionProduct);
   let missionMenu = document.getElementById("flyto-mission-info-container");
@@ -7,14 +7,15 @@ export function displayMissionMenu(missionProduct, prodOrCust) {
   document.getElementById("flyto-mission-scene-name").innerHTML = missionProduct.title.split(" ")[1];
   document.getElementById("flyto-mission-mission-id").innerHTML = missionProduct.identifier;
   document.getElementById("flyto-mission-creator").innerHTML = missionProduct.creator;
-  
-  // Add event listener to button
+
+  // for (let i = 0; i <= sceneIDs.length - 1; i++) {
+  //   console.log(`sceneID: ${sceneIDs[i]}`);
+  // }
+
   let button = document.getElementById("flyto-mission-info-close-button");
-  button.addEventListener("click", yourButtonClickHandler);
+  button.addEventListener("click", closedisplayMissionMenu);
 }
 
-function yourButtonClickHandler() {
-  // Handle button click event here
-  // console.log("Button clicked!");
+function closedisplayMissionMenu() {
   document.getElementById("flyto-mission-info-container").style.display = "none";
 }
