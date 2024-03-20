@@ -119,17 +119,24 @@ let histogramOpen = false;
 const closeButton = document.getElementById("histogram-popout-close-button");
 const chartEle = document.getElementById("histogram-popout-container");
 
-function toggleHistogram() {
-  if (!histogramOpen) {
-    chartEle.classList.remove("hidden");
-  } else {
-    chartEle.classList.add("hidden");
-  }
-  histogramOpen = !histogramOpen;
+function openHistogram() {
+  histogramOpen = true;
+  chartEle.classList.remove("hidden");
 }
 
-closeButton.addEventListener("click", () => toggleHistogram);
-document.getElementById("histogram-button").addEventListener("click", toggleHistogram);
+function closeHistogram() {
+  histogramOpen = false;
+  chartEle.classList.add("hidden");
+}
+
+closeButton.addEventListener("click", closeHistogram);
+document.getElementById("histogram-button").addEventListener("click", () => {
+  if (histogramOpen) {
+    closeHistogram();
+  } else {
+    openHistogram();
+  }
+});
 
 
 
