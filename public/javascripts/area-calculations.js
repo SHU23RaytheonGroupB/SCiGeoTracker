@@ -70,6 +70,7 @@ export function updateArea(allProducts, data) {
 export function updateUkArea(allProducts, UKlandBorder) {
   //diplay new layer of all the missions areas that over lap the uk
   const data = window.map.getSource("uk-land");
+  console.log(data);
 
   let polyCoordinates = [];
   let polyCoordinatesLat = [];
@@ -190,7 +191,9 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
   return containedMissions;
 }
 
-function calculateMissionCoverage(allMissons, polygon) {
+export function calculateMissionCoverage(allMissons, polygon) {
+
+  
   if (allMissons.length == 0) {
     return 0;
   }

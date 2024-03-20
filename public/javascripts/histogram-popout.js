@@ -1,21 +1,28 @@
-export function createHistogramChart(map_) {
+import { allProducts } from "./products-and-layers.js";
+import { calculateMissionCoverage } from "./area-calculations.js";
+
+export function createHistogramChart() {
   console.log("Creating histogram chart");
 
-  console.log("map_: ", map_);
-
-  let data =  map_.getSource("product-polygons")._data.features.map((feature) => {
-    return feature.attributes.date_start;
+  let data =  allProducts.map((feature) => {
+    return feature;
   }); 
 
-  for (let i = 0; i < data.length; i++) {
-    if (data[i] === null) {
+  let objectstartdate = data.map((feature) => {
+    return feature.objectstartdate;
+  });
+
+
+  for (let i = 0; i < objectstartdate.length; i++) {
+    if (typeof objectstartdate[i] === null) {
       data.splice(i, 1);
+      objectstartdate.splice(i, 1);
       i--;
     }
   }
 
-  const startTime = Math.min(...data);
-  const endTime = Math.max(...data);
+  const startTime = Math.min(...objectstartdate);
+  const endTime = Math.max(...objectstartdate);
 
   const binSize = 24*60*60*1000; // 1 day in milliseconds
   const bins = Math.ceil((endTime - startTime) / binSize);
@@ -24,10 +31,41 @@ export function createHistogramChart(map_) {
 
   const histogram = new Array(bins).fill(0);
 
-  for (let i = 0; i < data.length; i++) {
-    const bin = Math.floor((data[i] - startTime) / binSize);
-    histogram[bin]++; 
+  let featureObjects = new Array(bins).fill().map(() => []);
+
+  for (let i = 0; i < objectstartdate.length; i++) {
+    const bin = Math.floor((objectstartdate[i] - startTime) / binSize);
+    if (featureObjects[bin]) {
+      histogram[bin]++;
+      featureObjects[bin].push(data[i]);
+    }
   }
+
+  const UKmapdata = window.map.getSource("uk-land");
+  console.log("UKmapdata: ", UKmapdata);
+  let polyCoordinates = [];
+
+  for (let i = 0; i < UKmapdata.features[0].geometry.coordinates.length; i++) {
+    //bcs the uk is a multigon we need to iterate through each island
+    for (let k = 0; k < UKmapdata.features[0].geometry.coordinates[i][0].length; k++) {
+      polyCoordinates.push(UKmapdata.features[0].geometry.coordinates[i][0][k]);
+    }
+  }
+
+  let percentageCoverage = new Array(bins).fill(0);
+
+  for (let i = 0; i < featureObjects.length; i++) {
+    if (featureObjects[i].length !== 0) {
+      percentageCoverage[i] = calculateMissionCoverage(featureObjects[i], polyCoordinates);
+    }
+    else {
+      percentageCoverage[i] = 0;
+    }
+  }
+
+  console.log("percentageCoverage: ", percentageCoverage);
+
+  console.log("featureObjects: ", featureObjects);
 
   for (let i = 1; i < histogram.length; i++) {
     histogram[i] = histogram[i-1] + histogram[i];
