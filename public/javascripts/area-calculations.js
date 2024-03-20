@@ -314,10 +314,11 @@ function calculateMissionCoverage(allMissons, polygon) {
     }
 }
 
-  if (map.getSource('mission-area-within-poly') != undefined) {
-    map.removeSource('mission-area-within-poly');
+  if (window.map.getSource('mission-area-within-poly') != undefined) {
+    window.map.removeLayer('mission-area-within-polyfill');
+    window.map.removeSource('mission-area-within-poly');
   } 
-  
+  //console.log(map.getSource('mission-area-within-poly'))
   window.map.addSource('mission-area-within-poly', {
     'type': 'geojson',
     'data': {
@@ -327,8 +328,8 @@ function calculateMissionCoverage(allMissons, polygon) {
   });
 
   //console.log(map.getSource('mission-area-within-poly'));
-  if (map.getLayer('mission-area-within-polyfill') != undefined) {
-    map.removeLayer('mission-area-within-polyfill');
+  if (window.map.getLayer('mission-area-within-polyfill') != undefined) {
+    window.map.removeLayer('mission-area-within-polyfill');
   }
   
   window.map.addLayer({
