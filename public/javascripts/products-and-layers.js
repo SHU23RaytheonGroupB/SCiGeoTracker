@@ -60,12 +60,12 @@ export function initialiseLayerMenu() {
 let layerMenuOpen = false;
 const openLayerMenu = () => {
   layerMenuOpen = true;
-  layerMenuItemsContainerEle.style.display = null;
+  layerMenuItemsContainerEle.classList.remove("hidden");
   layerMenuItemsContainerEle.focus();
 };
 const closeLayerMenu = () => {
   layerMenuOpen = false;
-  layerMenuItemsContainerEle.style.display = "none";
+  layerMenuItemsContainerEle.classList.add("hidden");
 };
 layerMenuButtonEle.onclick = () => {
   if (!layerMenuOpen) openLayerMenu();
@@ -412,8 +412,8 @@ const borderSelectionMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
-  window.map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
+  //window.map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
+  //window.map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
   updateUkArea();
 };
 
@@ -429,6 +429,12 @@ const hideAllLayers = () => {
   window.map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-outline", "visibility", "none");
+  if (map.getLayer("UkLandBorder-border-outline") != undefined) {
+    window.map.setLayoutProperty("UkLandBorder-border-outline", "visibility", "none");
+  }
+  if (map.getLayer("mission-area-within-polyfill") != undefined) {
+    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
+  }
   //window.map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 };
 
