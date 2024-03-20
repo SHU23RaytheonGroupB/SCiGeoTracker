@@ -300,12 +300,12 @@ export function Timeline(options) {
                 circleLinkZoom(d.id);
               })
               .attr("r", 4)
-              .attr("cx", (d, i) => X[i]) 
+              .attr("cx", (d, i) => X[i])
               .attr("cy", (d, i) => Y[i] + 100)
+              .attr("mission", (d) => d.missionGroup)
               .append("title")
               .text((d) => d.title),
-          (update) =>
-            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 100),
+          (update) => update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 100)
         );
 
       const density = Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
@@ -374,4 +374,3 @@ closeButton.addEventListener("click", () => {
   console.log("closeButton");
   chart.style.display = chart.style.display = "none";
 });
-
