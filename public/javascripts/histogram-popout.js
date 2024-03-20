@@ -41,9 +41,8 @@ export function createHistogramChart() {
     }
   }
 
-  const UKmapdata = window.map.getSource("uk-land");
-  console.log("UKmapdata: ", UKmapdata);
-  let polyCoordinates = [];
+  const UKmapdata = window.map.getSource("uk-land")._data;
+  let polyCoordinates = []; 
 
   for (let i = 0; i < UKmapdata.features[0].geometry.coordinates.length; i++) {
     //bcs the uk is a multigon we need to iterate through each island
@@ -56,7 +55,7 @@ export function createHistogramChart() {
 
   for (let i = 0; i < featureObjects.length; i++) {
     if (featureObjects[i].length !== 0) {
-      percentageCoverage[i] = calculateMissionCoverage(featureObjects[i], polyCoordinates);
+      percentageCoverage[i] = calculateMissionCoverage(featureObjects[i], [polyCoordinates]);
     }
     else {
       percentageCoverage[i] = 0;
