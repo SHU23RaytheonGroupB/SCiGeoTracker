@@ -9,12 +9,14 @@ const saveSavedAreas = () => {
   sessionStorage.setItem("savedAreas", JSON.stringify(savedAreas));
 };
 
+const savedAreasUpload = document.querySelector("#saved-areas-upload");
+
 export function initialiseSavedAreas(draw) {
   const savedAreasSearch = document.querySelector("#saved-areas-search");
 
   savedAreasSearch.addEventListener("change", savedSearchChanged);
 
-  document.querySelector("#saved-areas-upload").oninput = importFiles;
+  savedAreasUpload.oninput = importFiles;
   document.querySelector("#saved-areas-export-button").onclick = exportFiles;
 
   document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
@@ -31,6 +33,7 @@ export function initialiseSavedAreas(draw) {
   
   const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
   areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
+  document.querySelector("#saved-areas-import-button").onclick = openFile;
 }
 
 if (savedAreas.length == 0) {
@@ -570,3 +573,7 @@ const closeSavedAreas = () => {
   savedAreasOpen = false;
   savedAreasContainerEle.classList.add("hidden");
 };
+
+function openFile() {
+  savedAreasUpload.click();
+}
