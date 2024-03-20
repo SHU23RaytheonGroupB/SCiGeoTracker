@@ -359,19 +359,24 @@ export function Timeline(options) {
 
   return setup();
 }
-const chart = document.getElementById("timeline-container");
+const timelineContainerEle = document.getElementById("timeline-container");
+let timelineVisible = false;
 
-const menuButton = document.getElementById("timeline-button");
-document.getElementById("timeline-container").style.display = "block";
+function setTimelineVisibility(enabled) {
+  timelineVisible = enabled;
+  if (enabled) {
+    timelineContainerEle.classList.remove("hidden");
+  } else {
+    timelineContainerEle.classList.add("hidden");
+  }
+}
 
-menuButton.addEventListener("click", () => {
-  chart.style.display = chart.style.display === "none" ? "block" : "none";
-});
+function toggleTimelineVisiblity() {
+  setTimelineVisibility(!timelineVisible);
+}
 
-const closeButton = document.getElementById("timeline-popout-close-button");
+setTimelineVisibility(true);
 
-closeButton.addEventListener("click", () => {
-  console.log("closeButton");
-  chart.style.display = chart.style.display = "none";
-});
+document.getElementById("timeline-button").addEventListener("click", toggleTimelineVisiblity);
+document.getElementById("timeline-popout-close-button").addEventListener("click", () => setTimelineVisibility(false));
 

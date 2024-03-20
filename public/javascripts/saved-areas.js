@@ -455,7 +455,7 @@ const openSavedAreas = () => {
     savedAreasListEle.append(savedAreaContainerEle);
   });
   savedAreasOpen = true;
-  savedAreasContainerEle.style.display = null;
+  savedAreasContainerEle.classList.remove("hidden");
   savedAreasContainerEle.focus();
 };
 
@@ -516,5 +516,5 @@ const refreshSavedScreen = () => {
 
 const closeSavedAreas = () => {
   savedAreasOpen = false;
-  savedAreasContainerEle.style.display = "none";
+  savedAreasContainerEle.classList.add("hidden");
 };

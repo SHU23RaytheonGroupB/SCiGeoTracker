@@ -62,12 +62,12 @@ export function initialiseLayerMenu() {
 let layerMenuOpen = false;
 const openLayerMenu = () => {
   layerMenuOpen = true;
-  layerMenuItemsContainerEle.style.display = null;
+  layerMenuItemsContainerEle.classList.remove("hidden");
   layerMenuItemsContainerEle.focus();
 };
 const closeLayerMenu = () => {
   layerMenuOpen = false;
-  layerMenuItemsContainerEle.style.display = "none";
+  layerMenuItemsContainerEle.classList.add("hidden");
 };
 layerMenuButtonEle.onclick = () => {
   if (!layerMenuOpen) openLayerMenu();

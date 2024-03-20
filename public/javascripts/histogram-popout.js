@@ -108,20 +108,21 @@ export function createHistogramChart() {
   });
 }
 
+let histogramOpen = false;
 const closeButton = document.getElementById("histogram-popout-close-button");
+const chartEle = document.getElementById("histogram-popout-container");
 
-closeButton.addEventListener("click", () => {
-  const chart = document.getElementById("histogram-popout-container");
-  chart.style.display = chart.style.display === "none" ? "block" : "none";
-});
+function toggleHistogram() {
+  if (!histogramOpen) {
+    chartEle.classList.remove("hidden");
+  } else {
+    chartEle.classList.add("hidden");
+  }
+  histogramOpen = !histogramOpen;
+}
 
-const menuButton = document.getElementById("histogram-button");
-
-menuButton.addEventListener("click", () => {
-  const chart = document.getElementById("histogram-popout-container");
-  chart.style.display = chart.style.display === "none" ? "block" : "none";
-});
-
+closeButton.addEventListener("click", () => toggleHistogram);
+document.getElementById("histogram-button").addEventListener("click", toggleHistogram);
 
 
 

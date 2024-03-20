@@ -169,7 +169,7 @@ function closeDragElement() {
 }
 
 function closeInfo() {
-  document.getElementById("area-selection-info-container").style.display = "none";
+  document.getElementById("area-selection-info-container").classList.add("hidden");
 }
 
 function initialiseStyleMenu() {
@@ -182,22 +182,25 @@ function initialiseStyleMenu() {
   darkStyle();
 }
 
-const openStyleMenu = () => {
-  styleMenuOpen = true;
-  styleMenuItemsContainerEle.style.display = null;
-  styleMenuItemsContainerEle.focus();
-};
-const closeStyleMenu = () => {
+function closeStyleMenu() {
   styleMenuOpen = false;
-  styleMenuItemsContainerEle.style.display = "none";
-};
+  styleMenuItemsContainerEle.classList.add("hidden");
+}
+
+function openStyleMenu() {
+  styleMenuOpen = true;
+  styleMenuItemsContainerEle.classList.remove("hidden");
+  styleMenuItemsContainerEle.focus();
+}
+
 styleMenuButtonEle.onclick = () => {
-  if (!styleMenuOpen) openStyleMenu();
-  else closeStyleMenu();
+  if (!styleMenuOpen) {
+    openStyleMenu();
+  } else {
+    closeStyleMenu();
+  }
 };
-styleMenuItemsContainerEle.focusout = () => {
-  closeStyleMenu();
-};
+styleMenuItemsContainerEle.focusout = closeStyleMenu;
 
 const darkStyle = () => {
   mapStyle.currentStyle = MapStyle.Dark;

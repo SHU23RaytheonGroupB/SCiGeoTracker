@@ -7,7 +7,7 @@ const areaSelectionInfoContainerEle = document.querySelector("#area-selection-in
 
 export function initialiseSearchBar() {
   document.querySelector("#area-selection-info-close-button").onclick = () => {
-    areaViewInfoContainerEle.style.display = "none";
+    areaViewInfoContainerEle.classList.remove("hidden");
     window.map.setMaxBounds(null);
     window.map.removeLayer("mask-fill");
     window.map.removeLayer("mask-outline");
@@ -89,7 +89,7 @@ const gotoFeatureByResult = (result) => {
     animate: false,
   });
   window.map.setMaxBounds(window.map.getBounds());
-  areaSelectionInfoContainerEle.style.display = "inline";
+  areaSelectionInfoContainerEle.classList.remove("hidden");
   const totalAreaContainerEle = document.querySelector("#view-total-area-value");
   const coveredAreaContainerEle = document.querySelector("#view-covered-area-value");
   const uncoveredAreaContainerEle = document.querySelector("#view-uncovered-area-value");

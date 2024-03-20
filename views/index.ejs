@@ -136,12 +136,11 @@
         -->
         <div
           id="layer-menu-items-container"
-          class="z-20 mt-2 rounded-md overflow-hidden ring-1 focus:outline-none shadow-sm dark:bg-neutral-900/90 dark:ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50"
+          class="z-20 mt-2 rounded-md overflow-hidden ring-1 focus:outline-none shadow-sm dark:bg-neutral-900/90 dark:ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 hidden"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
           tabindex="-1"
-          style="display: none"
         >
           <div class="#py-1" role="none">
             <!-- Active: "bg-neutral-900 text-neutral-200", Not Active: "text-neutral-100" -->
@@ -277,12 +276,11 @@
         -->
         <div
           id="style-menu-items-container"
-          class="z-20 mb-2 rounded-md overflow-hidden ring-1 focus:outline-none shadow-sm dark:bg-neutral-900/90 dark:ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50"
+          class="z-20 mb-2 rounded-md overflow-hidden ring-1 focus:outline-none shadow-sm dark:bg-neutral-900/90 dark:ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 hidden"
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="menu-button"
           tabindex="-1"
-          style="display: none"
         >
           <div class="#py-1" role="none">
             <!-- Active: "bg-neutral-900 text-neutral-200", Not Active: "text-neutral-100" -->
@@ -359,8 +357,7 @@
 
     <div
       id="area-selection-info-container"
-      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 right-20"
-      style="display: none"
+      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 right-20 hidden"
     >
       <div class="flex flex-row gap-2 px-1">
         <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Area Selection</h2>
@@ -454,8 +451,7 @@
 
     <div
       id="area-view-info-container"
-      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 right-20"
-      style="display: none"
+      class="absolute z-20 w-72 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 right-20 hidden"
     >
       <div class="flex flex-row gap-2 px-1">
         <h2 class="dark:text-neutral-300 text-neutral-500 grow font-bold">Area View</h2>
@@ -546,8 +542,7 @@
 
     <div
       id="flyto-mission-info-container"
-      class="absolute z-20 w-100 px-4 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 start-20"
-      style="display: none"
+      class="absolute z-20 w-100 px-4 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 start-20 hidden"
     >
       <div id="flyto-mission-info-containerheader" style="background-color: rgb(125, 125, 125); width: auto; height: 10px; cursor: move;"></div>
       <div class="flex flex-row gap-2 px-1">
@@ -606,9 +601,21 @@
     </div>
 
     <div
+    id="timeline-container"
+    class="absolute h-40 w-[800px] bottom-0 left-1/2 -translate-x-2/4 z-10 dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 opacity-70 shadow-lg rounded-lg overflow-hidden"
+  >
+    <div id="timeline-header" class="absolute w-full h-4 cursor-move flex #bg-neutral-200">
+      <button type="button" id="timeline-popout-close-button" class="ml-auto mb-auto p-1.5">
+        <img class="h-3 w-3" src="images/icons8-close-90.png" />
+      </button>
+    </div>
+    <div class="px-2 py-2" id="timeline">
+    </div>
+  </div>
+
+    <div
       id="saved-areas-container"
-      class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-0 bottom-0 right-0 left-0"
-      style="display: none; top: 92px; left: 110px;"
+      class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-0 bottom-0 right-0 left-0 top-20 left-20 hidden"
     >
       <div class="flex flex-row gap-2 px-1" style="background-color: grey; cursor: move; height: 10px;">
         </div>
@@ -659,8 +666,7 @@
 
     <div
       id="histogram-popout-container"
-      class="absolute z-30 w-2/4 h-1/4 px-2 py-2 rounded-xl overflow-visable text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-80"
-      style="height: 220; width: 950; display: none;"
+      class="absolute z-30 w-[950px] h-[220px] px-2 py-2 rounded-xl overflow-visable text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 ring-1 ring-neutral-800/50 top-0 bottom-0 right-0 left-80 hidden"
       >
       <div id="histogram-popout-containerheader" style="background-color: rgb(125, 125, 125); width: auto; height: 10px; cursor: move; width: 960;"></div>
       <button type="button" id="histogram-popout-close-button" class="ml-auto">
@@ -668,19 +674,6 @@
       <div class="flex flex-col flex justify-center gap-2 px-1 w-full h-full">
         </button>
         <canvas id="histogram-chart"></canvas>
-      </div>
-    </div>
-
-    <div
-      id="timeline-container"
-      class="absolute h-40 w-[800px] bottom-0 left-1/2 -translate-x-2/4 z-10 dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 opacity-70 shadow-lg rounded-lg overflow-hidden"
-    >
-      <div id="timeline-header" class="absolute w-full h-4 cursor-move flex #bg-neutral-200">
-        <button type="button" id="timeline-popout-close-button" class="ml-auto mb-auto p-1.5">
-          <img class="h-3 w-3" src="images/icons8-close-90.png" />
-        </button>
-      </div>
-      <div class="px-2 py-2" id="timeline">
       </div>
     </div>
 
