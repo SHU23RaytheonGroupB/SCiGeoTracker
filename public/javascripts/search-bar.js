@@ -8,10 +8,8 @@ const areaViewInfoContainerEle = document.querySelector("#area-view-info-contain
 //const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
 
 export function initialiseSearchBar() {
-  document.querySelector("#area-view-info-close-button").onclick = () => {
-    console.log(0);
-    areaViewInfoContainerEle.style.display = "none";
-    console.log(1);
+  document.querySelector("#area-selection-info-close-button").onclick = () => {
+    areaViewInfoContainerEle.classList.remove("hidden");
     window.map.setMaxBounds(null);
     window.map.removeLayer("mask-fill");
     window.map.removeLayer("mask-outline");

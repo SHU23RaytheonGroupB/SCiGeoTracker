@@ -22,6 +22,12 @@ const cursorSelectedClasses = [
   "hover:bg-neutral-200/30",
 ];
 
+document.querySelector("#area-selection-info-save-button").onclick = () => activitieCreation;
+
+function activitieCreation() {
+  
+}
+
 const zoomScrollButtonEle = document.querySelector("#zoom-scroll-button");
 var barTop = 0,
   barBottom = 0;
@@ -169,11 +175,14 @@ function closeDragElement() {
 }
 
 function closeInfo() {
-  document.getElementById("area-selection-info-container").style.display = "none";
+  document.getElementById("area-selection-info-container").classList.add("hidden");
   document.getElementById("name-area-container").classList.add("hidden");
   let text = document.getElementById("name-area-textbox");
   text.value = "";
-  document.getElementById("area-selection-info-save-button").classList.add("hidden");
+  //document.getElementById("area-selection-info-save-button").classList.add("hidden");
+  if (map.getLayer("mission-area-within-polyfill") != undefined) {
+    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
+  }
 }
 
 function initialiseStyleMenu() {
@@ -186,22 +195,25 @@ function initialiseStyleMenu() {
   darkStyle();
 }
 
-const openStyleMenu = () => {
-  styleMenuOpen = true;
-  styleMenuItemsContainerEle.style.display = null;
-  styleMenuItemsContainerEle.focus();
-};
-const closeStyleMenu = () => {
+function closeStyleMenu() {
   styleMenuOpen = false;
-  styleMenuItemsContainerEle.style.display = "none";
-};
+  styleMenuItemsContainerEle.classList.add("hidden");
+}
+
+function openStyleMenu() {
+  styleMenuOpen = true;
+  styleMenuItemsContainerEle.classList.remove("hidden");
+  styleMenuItemsContainerEle.focus();
+}
+
 styleMenuButtonEle.onclick = () => {
-  if (!styleMenuOpen) openStyleMenu();
-  else closeStyleMenu();
+  if (!styleMenuOpen) {
+    openStyleMenu();
+  } else {
+    closeStyleMenu();
+  }
 };
-styleMenuItemsContainerEle.focusout = () => {
-  closeStyleMenu();
-};
+styleMenuItemsContainerEle.focusout = closeStyleMenu;
 
 const darkStyle = () => {
   mapStyle.currentStyle = MapStyle.Dark;
