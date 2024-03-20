@@ -264,6 +264,7 @@ function addClusterLayer(title) {
     'source': title,
     filter: ['has', 'point_count'],
     'layout': {
+        'text-opacity': { "stops": [[12.9, 0], [13, 1]] },
         'visibility': "none",
         "text-field": "{point_count_abbreviated}",
         "text-font": ["Arial Unicode MS Bold"],
@@ -283,7 +284,7 @@ map.addLayer({
     'visibility': "none"
   },
   paint: {
-      'circle-color': '#f2f0df',
+      'circle-color': productFillColours[mapStyle.currentStyle]["CLUSTER"],
       'circle-opacity': 0.6,
       'circle-radius': 12
   }
@@ -294,6 +295,7 @@ map.addLayer({
   'source': title,
   filter: ["!=", "cluster", true],
   'layout': {
+      'text-opacity': { "stops": [[12.9, 0], [13, 1]] },
       'visibility': "none",
       "text-field": "1",
       "text-font": ["Arial Unicode MS Bold"],
