@@ -58,7 +58,7 @@ export function updateArea(allProducts, data) {
 
     const totalArea = turf.area(data) / 1000000; //divide by 1000 to get square km
     const totalAreaRounded = Math.round(totalArea * 100) / 100; //convert area to 2 d.p.
-    const coveredArea = Math.min(calculateMissionCoverage(containedMissions, [[polyCoordinates]]), rounded_area);
+    const coveredArea = Math.min(calculateMissionCoverage(containedMissions, [[polyCoordinates]]), totalAreaRounded);
     const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
     const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
     const missionCount = containedMissions.length;
@@ -314,20 +314,18 @@ function calculateMissionCoverage(allMissons, polygon) {
     }
 }
 
-  if (map.getSource('mission-area-within-poly') == undefined) {
-    window.map.addSource('mission-area-within-poly', {
-      'type': 'geojson',
-      'data': {
-          'type': 'FeatureCollection',
-          'features': fcMissionsWithinPoly
-      }
-    });
-  } else {
-    map.getSource('mission-area-within-poly').data = {
-      'type': 'FeatureCollection',
-      'features': fcMissionsWithinPoly
-    };
-  }
+  if (map.getSource('mission-area-within-poly') != undefined) {
+    map.removeSource('mission-area-within-poly');
+  } 
+  
+  window.map.addSource('mission-area-within-poly', {
+    'type': 'geojson',
+    'data': {
+        'type': 'FeatureCollection',
+        'features': fcMissionsWithinPoly
+    }
+  });
+
   //console.log(map.getSource('mission-area-within-poly'));
   if (map.getLayer('mission-area-within-polyfill') != undefined) {
     map.removeLayer('mission-area-within-polyfill');

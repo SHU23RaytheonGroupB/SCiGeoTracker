@@ -174,6 +174,9 @@ function closeInfo() {
   let text = document.getElementById("name-area-textbox");
   text.value = "";
   document.getElementById("area-selection-info-save-button").classList.add("hidden");
+  if (map.getLayer("mission-area-within-polyfill") != undefined) {
+    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
+  }
 }
 
 function initialiseStyleMenu() {
