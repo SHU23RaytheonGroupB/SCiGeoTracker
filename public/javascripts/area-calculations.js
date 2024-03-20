@@ -62,14 +62,14 @@ export function updateArea(allProducts, data) {
     const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
     const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
     const missionCount = containedMissions.length;
-    areaSelectionInfoContainerEle.style.display = "inline";
+    areaSelectionInfoContainerEle.classList.remove("hidden");
     totalAreaContainerEle.textContent = totalAreaRounded.toLocaleString();
     coveredAreaContainerEle.textContent = coveredArea.toLocaleString();
     uncoveredAreaContainerEle.textContent = uncoveredArea.toLocaleString();
     coveragePercentageContainerEle.textContent = coveragePercentage.toLocaleString();
     missionCountContainerEle.textContent = missionCount.toLocaleString();
   } else {
-    areaSelectionInfoContainerEle.style.display = "none";
+    areaSelectionInfoContainerEle.classList.add("hidden");
     areaSaveContainerEle.classList.add("hidden");
 
   }
@@ -166,7 +166,7 @@ export function updateUkArea() {
   const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
   const missionCount = containedMissions.length;
 
-  areaSelectionInfoContainerEle.style.display = "inline";
+  areaSelectionInfoContainerEle.classList.remove("hidden");
 
   totalAreaContainerEle.textContent = totalAreaRounded.toLocaleString();
   coveredAreaContainerEle.textContent = coveredArea.toLocaleString();

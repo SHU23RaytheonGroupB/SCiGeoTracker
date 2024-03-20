@@ -5,11 +5,10 @@ import { updateArea } from "./area-calculations.js";
 const searchResultsContainerEle = document.querySelector("#search-results-container");
 const searchBarEle = document.querySelector("#search-bar");
 const areaViewInfoContainerEle = document.querySelector("#area-view-info-container");
-//const areaSelectionInfoContainerEle = document.querySelector("#area-selection-info-container");
 
 export function initialiseSearchBar() {
-  document.querySelector("#area-selection-info-close-button").onclick = () => {
-    areaViewInfoContainerEle.classList.remove("hidden");
+  document.querySelector("#area-view-info-close-button").onclick = () => {
+    areaViewInfoContainerEle.classList.add("hidden");
     window.map.setMaxBounds(null);
     window.map.removeLayer("mask-fill");
     window.map.removeLayer("mask-outline");
@@ -79,6 +78,7 @@ const gotoFeatureByResult = (result) => {
     animate: false,
   });
   window.map.setMaxBounds(window.map.getBounds());
+  areaViewInfoContainerEle.classList.remove("hidden");
   //areaSelectionInfoContainerEle.style.display = "inline";
   // const totalAreaContainerEle = document.querySelector("#view-total-area-value");
   // const coveredAreaContainerEle = document.querySelector("#view-covered-area-value");
@@ -87,7 +87,7 @@ const gotoFeatureByResult = (result) => {
   // const missionCountContainerEle = document.querySelector("#view-total-missions-value");
   //console.log(feature);
   var fc = turf.featureCollection([feature]);
-  updateArea(allProducts, fc);
+  // updateArea(allProducts, fc);
   // totalAreaContainerEle.textContent = totalAreaRounded;
   // coveredAreaContainerEle.textContent = coveredArea;
   // uncoveredAreaContainerEle.textContent = uncoveredArea;

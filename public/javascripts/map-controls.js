@@ -131,8 +131,8 @@ export function initialiseControls() {
   let polygonButton = document.getElementById("polygon-button");
   polygonButton.addEventListener("click", () => drawPoly(draw));
 
-  let infoCloseButton = document.getElementById("area-selection-info-close-button");
-  infoCloseButton.addEventListener("click", closeInfo);
+  // let infoCloseButton = document.getElementById("area-selection-info-close-button");
+  // infoCloseButton.addEventListener("click", closeInfo);
 
   let infoMoveButton = document.getElementById("move-button");
   infoMoveButton.addEventListener("click", () => moveMap(draw));
@@ -172,17 +172,6 @@ function elementDrag(e) {
 function closeDragElement() {
   document.onmouseup = null;
   document.onmousemove = null;
-}
-
-function closeInfo() {
-  document.getElementById("area-selection-info-container").classList.add("hidden");
-  document.getElementById("name-area-container").classList.add("hidden");
-  let text = document.getElementById("name-area-textbox");
-  text.value = "";
-  //document.getElementById("area-selection-info-save-button").classList.add("hidden");
-  if (map.getLayer("mission-area-within-polyfill") != undefined) {
-    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
-  }
 }
 
 function initialiseStyleMenu() {
