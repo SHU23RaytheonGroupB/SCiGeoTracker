@@ -38,7 +38,14 @@ class ProductService {
   async getAllFrameProducts(missionID) {
     const frameIDs = await this.getAllFrameProductIDs(missionID);
     console.log(frameIDs);
-    let results = await this.getProducts(frameIDs);
+    const chunkSize = 100;
+    let results = [];
+
+    for (let i = 0; i < frameIDs.length; i += chunkSize) {
+      const chunk = frameIDs.slice(i, i + chunkSize);
+      results.push(await this.getProducts(chunk));
+    }
+    return results;
     //console.log(results);
     //return results;
     //return results.map((r) => r.product.result);
@@ -73,7 +80,6 @@ class ProductService {
       if (!response.ok) {
         throw new Error("Error fetching products metadata");
       }
-      console.log(await response.json());
       return await response.json();
     } catch (error) {
       console.error(error);
