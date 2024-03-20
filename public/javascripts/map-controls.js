@@ -173,7 +173,6 @@ function closeInfo() {
   document.getElementById("name-area-container").classList.add("hidden");
   let text = document.getElementById("name-area-textbox");
   text.value = "";
-  document.getElementById("area-selection-info-save-button").classList.add("hidden");
 }
 
 function initialiseStyleMenu() {
