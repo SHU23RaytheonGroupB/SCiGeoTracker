@@ -1,7 +1,10 @@
 // ATTRIBUTION: Julien Colot
 // https://observablehq.com/@jcolot/zoomable-timeline-with-items@955
 
-import { circleLinkZoom } from "./map.js";
+import { allProducts } from "./products-and-layers.js";
+import { displayMissionMenu, viewSelectedMission } from "./mission-popout-menu.js";
+
+let missionID;
 
 export function Timeline(options) {
   const axis = {};
@@ -376,3 +379,34 @@ button2.addEventListener("click", () => {
   const chart = document.getElementById("histogram-popout-container");
   chart.style.display = chart.style.display === "none" ? "block" : "none";
 });
+
+let viewMissionButton = document.getElementById("flyto-mission-info-view-button");
+//viewMissionButton.addEventListener("click", async () => viewSelectedMission(missionID));
+
+async function circleLinkZoom(productID) {
+  let reset = document.querySelectorAll("circle");
+  reset.forEach((reset) => {
+    reset.style.fill = "red";
+  });
+
+  let missionName;
+  let currentProduct;
+  allProducts.forEach((product) => {
+    if (product.identifier === productID) {
+      missionName = product.title.split(" ")[0];
+      missionID = product.missionid;
+      currentProduct = product;
+      map.flyTo({
+        center: product.centre.split(",").reverse(),
+        zoom: 11,
+        essential: true,
+      });
+    }
+  });
+  let circleGroup = document.querySelectorAll('circle[mission="' + missionName + '"]');
+  circleGroup.forEach((circle) => {
+    circle.style.fill = "blue";
+  });
+  viewSelectedMission(missionID);
+  displayMissionMenu(currentProduct);
+}

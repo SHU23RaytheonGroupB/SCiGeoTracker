@@ -53,42 +53,20 @@ router.get("/getProducts", async function (req, res) {
   }
 });
 
-async function getFramesData(selectedMissionInfo) {
-  let selectedMissionFrames = [];
-  const cache = Cache.getInstance();
-  const { id: missionID, scenes } = selectedMissionInfo;
-  const token = await getAuthToken();
-  if (!token) {
-    console.error("ERROR 401: Authentication token is missing or invalid.");
-    return res.status(401).send("Authentication token is missing or invalid.");
-  }
-  const ps = new ProductService(token.access_token);
-  for (let i = 0; i < scenes.length; i++) {
-    selectedMissionFrames.push(await ps.getFrameData(missionID, scenes[i].id));
-    console.log("return mission frames");
-    console.log(selectedMissionFrames[i]);
-  }
-  cache.set("selectedMissionFrames", selectedMissionFrames);
-  return selectedMissionFrames;
-}
-
 router.post("/getMissionInfo", async function (req, res) {
   const { missionID } = req.body;
+
   const token = await getAuthToken();
   if (!token) {
     console.error("ERROR 401: Authentication token is missing or invalid.");
     return res.status(401).send("Authentication token is missing or invalid.");
   }
   const ps = new ProductService(token.access_token);
-  let selectedMissionInfo = await ps.getMissionFootprint(missionID); //await ps.getMissionInfo(missionID);
-
-  console.log("response:");
-  console.log(selectedMissionInfo);
-  //const framesData = await getFramesData(selectedMissionInfo);
-  res.json(selectedMissionInfo);
+  let frameMetadata = await ps.getAllFrameProducts(missionID);
+  console.log("frameMetaData:");
+  console.log(frameMetadata);
+  res.json(frameMetadata);
 });
-
-router.get("/getFramesData", getFramesData);
 
 async function refreshCache() {
   const token = await getAuthToken();

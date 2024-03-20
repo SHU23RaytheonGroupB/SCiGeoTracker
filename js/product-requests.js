@@ -23,6 +23,27 @@ class ProductService {
     return data.results.searchresults.map((item) => item.id);
   }
 
+  async getAllFrameProductIDs(missionID) {
+    let result = [];
+    const selectedMissionInfo = await this.getMissionInfo(missionID);
+    const { scenes } = selectedMissionInfo;
+    for (let scene of scenes) {
+      result.push(await this.getFrameData(missionID, scene.id));
+    }
+    return result.flatMap((r) =>
+      r.scenes.flatMap((scene) => scene.bands.flatMap((band) => band.frames.map((frame) => frame.id)))
+    );
+  }
+
+  async getAllFrameProducts(missionID) {
+    const frameIDs = await this.getAllFrameProductIDs(missionID);
+    console.log(frameIDs);
+    let results = await this.getProducts(frameIDs);
+    //console.log(results);
+    //return results;
+    //return results.map((r) => r.product.result);
+  }
+
   async searchProducts(keywords = "scene", page_size = 150) {
     try {
       const response = await fetch(`${API_ORIGIN}/v1/products/search`, {
@@ -52,6 +73,7 @@ class ProductService {
       if (!response.ok) {
         throw new Error("Error fetching products metadata");
       }
+      console.log(await response.json());
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -81,6 +103,7 @@ class ProductService {
         headers: this.headers,
       });
       if (!response.ok) {
+        console.log(response.json());
         throw new Error("Error fetching product metadata");
       }
       return await response.json();

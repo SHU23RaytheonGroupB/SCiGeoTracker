@@ -17,3 +17,17 @@ export function displayMissionMenu(currentProduct) {
 function closedisplayMissionMenu() {
   document.getElementById("flyto-mission-info-container").style.display = "none";
 }
+
+export async function viewSelectedMission(missionID) {
+  try {
+    const response = await fetch("/api/getMissionInfo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ missionID }),
+    });
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}

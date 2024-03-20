@@ -1,8 +1,9 @@
-import { displayMissionMenu } from "./mission-popout-menu.js";
-import { initialiseProducts, allProducts } from "./products-and-layers.js";
+import { initialiseProducts } from "./products-and-layers.js";
 import { mapStyle, minZoom, maxZoom } from "./config.js";
 import { getRoundNum, getDistance } from "./utils.js";
 import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
+import { Timeline } from "./zoomable-timeline-with-items.js";
+import { createHistogramChart } from "./histogram-popout.js";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 window.map = new mapboxgl.Map({
@@ -15,12 +16,7 @@ window.map = new mapboxgl.Map({
   attributionControl: false,
 });
 
-import { Timeline } from "./zoomable-timeline-with-items.js";
-import { createHistogramChart } from "./histogram-popout.js";
-
 let loaded = false;
-let sceneIDs = [];
-let missionID;
 
 map.on("load", async () => {
   renderOverlaysZoom();
@@ -70,55 +66,3 @@ map.on("zoom", (ev) => {
   renderOverlaysZoom();
   updateScaleBar();
 });
-
-export async function circleLinkZoom(productID) {
-  let reset = document.querySelectorAll("circle");
-  reset.forEach((reset) => {
-    reset.style.fill = "red";
-  });
-
-  let missionName;
-  let currentProduct;
-  sceneIDs.length = 0;
-  allProducts.forEach((product) => {
-    if (product.identifier === productID) {
-      missionName = product.title.split(" ")[0];
-      missionID = product.missionid;
-      currentProduct = product;
-      map.flyTo({
-        center: product.centre.split(",").reverse(),
-        zoom: 12,
-        essential: true,
-      });
-    }
-  });
-  let circleGroup = document.querySelectorAll('circle[mission="' + missionName + '"]');
-  circleGroup.forEach((circle) => {
-    circle.style.fill = "blue";
-  });
-
-  displayMissionMenu(currentProduct);
-}
-
-let viewMissionButton = document.getElementById("flyto-mission-info-view-button");
-viewMissionButton.addEventListener("click", () => viewSelectedMission());
-
-//TO DO - CLEAN UP CODEBASE, MOVE API CALLS TO BACKEND, RESTRUCTURE. CHECK IF TIMELINE CODE CAN BE CLEANED UP (DONT WASTE TOO MUCH TIME ON)
-function viewSelectedMission() {
-  fetch("/api/getMissionInfo", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ missionID }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      // Handle the response data from the backend
-      console.log(data);
-    })
-    .catch((error) => {
-      // Handle any errors
-      console.error("Error:", error);
-    });
-}
