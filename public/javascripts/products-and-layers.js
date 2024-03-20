@@ -11,6 +11,8 @@ const layerMenuButtonEle = document.querySelector("#layer-menu-button");
 const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
 const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text");
 
+const colors = ['#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c'];
+
 export const LayerMode = {
   Frames: "Frames",
   Heatmap: "Heatmap",
@@ -115,63 +117,14 @@ async function addProductsToMap() {
       cluster: true,
       clusterMaxZoom: 9,
       clusterRadius: 50,
-    })),
-
-
-
-    
-  }
+    })),    
   };
 
-  // let clusterFeatureCollection = {
-  //   type: "FeatureCollection",
-  //   features: allProducts.map((product) => ({
-  //     type: "Feature",
-  //     geometry: {
-  //       type: "Point",
-  //       coordinates: product.centre != null ? product.centre.split(",").reverse() : [],
-  //     },
-  //     attributes: {
-  //       id: product.identifier,
-  //       type: product.type,
-  //       title: product.title,
-  //       mission_id: product.missionid,
-  //       date_created: product.datecreated,
-  //       date_start: product.objectstartdate,
-  //       date_end: product.objectenddate,
-  //       mission_group: product.title.split(" ")[0],
-  //       scene_name: product.title.split(" ")[1],
-  //     },
-  //     cluster: true,
-  //     clusterMaxZoom: 9,
-  //     clusterRadius: 50,
-  //     'clusterProperties': {
-  //       // keep separate counts for each magnitude category in a cluster
-  //       'mag1': ['+', ['case', mag1, 1, 0]],
-  //       'mag2': ['+', ['case', mag2, 1, 0]],
-  //       'mag3': ['+', ['case', mag3, 1, 0]],
-  //       'mag4': ['+', ['case', mag4, 1, 0]],
-  //       'mag5': ['+', ['case', mag5, 1, 0]]
-  //     }
-  //   }
-  // )),
 
-
-
-  //   'clusterProperties': {
-  //     // keep separate counts for each magnitude category in a cluster
-  //     'mag1': ['+', ['case', mag1, 1, 0]],
-  //     'mag2': ['+', ['case', mag2, 1, 0]],
-  //     'mag3': ['+', ['case', mag3, 1, 0]],
-  //     'mag4': ['+', ['case', mag4, 1, 0]],
-  //     'mag5': ['+', ['case', mag5, 1, 0]]
-  //}
-  //};
-
-  
   // SOURCES
   addSource("product-polygons", polygonFeatureCollection);
   addSource("product-points", pointFeatureCollection);
+  addClusterSource("product-cluster", pointFeatureCollection);
   addSource("country-boundaries", boundariesByCountry);
   addSource("region-boundaries", boundariesByRegion);
   addSource("uk-land", UKlandBorder);
@@ -183,10 +136,10 @@ async function addProductsToMap() {
   // CHOROPLETH LAYER
   addChoroplethLayers("country-boundaries", "region-boundaries");
   // CLUSTER LAYER
-  addClusterLayer("product-points");
+  addClusterLayer("product-cluster");
   // BORDER LAYER - TEMP
   addBorderLayer("uk-land");
-}
+};
 
 export function addSource(title, data) {
   map.addSource(title, {
@@ -194,6 +147,16 @@ export function addSource(title, data) {
     data: data,
     // tolerance: 3,
     // buffer: 512,
+  });
+}
+
+function addClusterSource(title, data) {
+  map.addSource(title, {
+    type: "geojson",
+    data: data,
+    cluster: true,
+    clusterMaxZoom: 14,
+    clusterRadius: 50,
   });
 }
 
@@ -267,77 +230,78 @@ function addBorderLayer(title) {
 }
 
 function addClusterLayer(title) {
-  // map.addLayer({
-  //   id: `${title}-cluster-density`,
-  //   type: "circle",
-  //   source: title,
-  //   paint: {
-  //     "circle-color": "#FF0000",
-  //     "circle-radius": {
-  //       base: 1.75,
-  //       stops: [
-  //         [12, 2],
-  //         [32, 180],
-  //       ],
-  //     },
-  //   },
-  // });
   map.addLayer({
-    id: `${title}-cluster-density`,
-    type: 'circle',
-    source: title,
-    filter: ['!=', 'cluster', true],
+    'id': `${title}-density`,
+    'type': 'circle',
+    'source': title,
+    filter: ['has', 'point_count'],
     layout: {
       visibility: "none",
     },
-    paint: {
+    'paint': {
         'circle-color': [
-            'step',
-            ['get', 'point_count'],
-            '#51bbd6',
-            100,
-            '#f1f075',
-            750,
-            '#f28cb1'
-        ],
-        'circle-radius': [
-            'step',
-            ['get', 'point_count'],
-            20,
-            100,
-            30,
-            750,
-            40
-        ]
+          'step',
+          ['get', 'point_count_abbreviated'],
+          '#ffffff',
+          2,
+          colors[0],
+          4,
+          colors[1],
+          7,
+          colors[2],
+          10,
+          colors[3],
+          15,
+          colors[4]
+      ],
+        'circle-opacity': 0.6,
+        'circle-radius': 12
+    }
+  });
+  map.addLayer({
+    'id': `${title}-label`,
+    'type': 'symbol',
+    'source': title,
+    filter: ['has', 'point_count'],
+    'layout': {
+        'visibility': "none",
+        "text-field": "{point_count_abbreviated}",
+        "text-font": ["Arial Unicode MS Bold"],
+        "text-size": 12,
+        "text-allow-overlap" : true
+    },
+    'paint': {
+        'text-color': 'black'
     }
 });
 map.addLayer({
-  id: `${title}-cluster-count`,
-  type: 'symbol',
-  source: title,
-  filter: ['has', 'point_count'],
-  layout: {
-    visibility: "none",
-  },
-  layout: {
-      'text-field': ['get', 'point_count_abbreviated'],
-      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-      'text-size': 12
-  }
-});
-map.addLayer({
-  id: `${title}-unclustered-point`,
+  id: title+ '-unclustered',
   type: 'circle',
   source: title,
   filter: ['!', ['has', 'point_count']],
-  layout: {
-    visibility: "none",
+  'layout': {
+    'visibility': "none"
   },
   paint: {
-      'circle-color': '#11b4da',
-      'circle-radius': 4,
-      'circle-stroke-width': 1,
-      'circle-stroke-color': '#fff'
+      'circle-color': '#f2f0df',
+      'circle-opacity': 0.6,
+      'circle-radius': 12
+  }
+});
+map.addLayer({
+  'id': `${title}-unclustered-label`,
+  'type': 'symbol',
+  'source': title,
+  filter: ["!=", "cluster", true],
+  'layout': {
+      'visibility': "none",
+      "text-field": "1",
+      "text-font": ["Arial Unicode MS Bold"],
+      "text-size": 12,
+      "text-allow-overlap" : true
+  },
+  'paint': {
+      'text-color': 'black'
   }
 });
 }
@@ -428,9 +392,10 @@ const clusterMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("product-points-cluster-density", "visibility", "visible");
-  window.map.setLayoutProperty("product-points-cluster-count", "visibility", "visible");
-  window.map.setLayoutProperty("product-points-unclustered-point", "visibility", "visible");
+  window.map.setLayoutProperty("product-cluster-density", "visibility", "visible");
+  window.map.setLayoutProperty("product-cluster-label", "visibility", "visible");
+  window.map.setLayoutProperty("product-cluster-unclustered", "visibility", "visible");
+  window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "visible");  
 };
 
 const frameOverlapsMode = () => {
@@ -454,9 +419,10 @@ const hideAllLayers = () => {
   window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "none");
   window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
   window.map.setLayoutProperty("product-points-heatmap", "visibility", "none");
-  window.map.setLayoutProperty("product-points-cluster-density", "visibility", "none");
-  window.map.setLayoutProperty("product-points-cluster-count", "visibility", "none");
-  window.map.setLayoutProperty("product-points-unclustered-point", "visibility", "none");
+  window.map.setLayoutProperty("product-cluster-density", "visibility", "none");
+  window.map.setLayoutProperty("product-cluster-label", "visibility", "none");
+  window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "none");
+  window.map.setLayoutProperty("product-cluster-unclustered", "visibility", "none");
   window.map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
   window.map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
