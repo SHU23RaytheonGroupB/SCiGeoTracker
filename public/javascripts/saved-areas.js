@@ -310,24 +310,27 @@ const openSavedAreas = () => {
     savedAreaViewButtonEle.name = "saved-area-view-button";
     savedAreaEditButtonEle.name = "saved-area-edit-button";
     savedAreaDeleteButtonEle.name = "saved-area-delete-button";
-    savedAreaViewButtonEle.className =
-      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
-    savedAreaEditButtonEle.className =
-      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
-    savedAreaDeleteButtonEle.className =
-      "ml-auto my-auto p-1 rounded-md dark:bg-neutral-700/70 ring-1 ring-neutral-600/50 bg-neutral-100/90";
-    const savedAreaViewButtonImageEle = document.createElement("img");
-    const savedAreaEditButtonImageEle = document.createElement("img");
-    const savedAreaDeleteButtonImageEle = document.createElement("img");
-    savedAreaViewButtonImageEle.className = "h-4 w-4";
-    savedAreaEditButtonImageEle.className = "h-4 w-4";
-    savedAreaDeleteButtonImageEle.className = "h-4 w-4";
-    savedAreaViewButtonImageEle.src = "images/icons8-map-90.png";
-    savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
-    savedAreaDeleteButtonImageEle.src = "images/icons8-delete-90.png";
-    savedAreaViewButtonEle.append(savedAreaViewButtonImageEle);
-    savedAreaEditButtonEle.append(savedAreaEditButtonImageEle);
-    savedAreaDeleteButtonEle.append(savedAreaDeleteButtonImageEle);
+    const buttonClasses = "ml-auto my-auto p-1 rounded-md bg-neutral-100/90 hover:bg-neutral-100 dark:bg-neutral-700/70 dark:hover:bg-neutral-700 ring-1 ring-neutral-600/50";
+    savedAreaViewButtonEle.className = buttonClasses;
+    savedAreaEditButtonEle.className = buttonClasses;
+    savedAreaDeleteButtonEle.className = buttonClasses;
+    savedAreaViewButtonEle.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+  <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
+</svg>`;
+    savedAreaEditButtonEle.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+  <path d="M 22.828125 3 C 22.316375 3 21.804562 3.1954375 21.414062 3.5859375 L 19 6 L 24 11 L 26.414062 8.5859375 C 27.195062 7.8049375 27.195062 6.5388125 26.414062 5.7578125 L 24.242188 3.5859375 C 23.851688 3.1954375 23.339875 3 22.828125 3 z M 17 8 L 5.2597656 19.740234 C 5.2597656 19.740234 6.1775313 19.658 6.5195312 20 C 6.8615312 20.342 6.58 22.58 7 23 C 7.42 23.42 9.6438906 23.124359 9.9628906 23.443359 C 10.281891 23.762359 10.259766 24.740234 10.259766 24.740234 L 22 13 L 17 8 z M 4 23 L 3.0566406 25.671875 A 1 1 0 0 0 3 26 A 1 1 0 0 0 4 27 A 1 1 0 0 0 4.328125 26.943359 A 1 1 0 0 0 4.3378906 26.939453 L 4.3632812 26.931641 A 1 1 0 0 0 4.3691406 26.927734 L 7 26 L 5.5 24.5 L 4 23 z"></path>
+</svg>`;
+    savedAreaDeleteButtonEle.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4 fill-red-600">
+  <path d="M 13 3 A 1.0001 1.0001 0 0 0 11.986328 4 L 6 4 A 1.0001 1.0001 0 1 0 6 6 L 24 6 A 1.0001 1.0001 0 1 0 24 4 L 18.013672 4 A 1.0001 1.0001 0 0 0 17 3 L 13 3 z M 6 8 L 6 24 C 6 25.105 6.895 26 8 26 L 22 26 C 23.105 26 24 25.105 24 24 L 24 8 L 6 8 z M 12 13 C 12.25575 13 12.511531 13.097469 12.707031 13.292969 L 15 15.585938 L 17.292969 13.292969 C 17.683969 12.901969 18.316031 12.901969 18.707031 13.292969 C 19.098031 13.683969 19.098031 14.316031 18.707031 14.707031 L 16.414062 17 L 18.707031 19.292969 C 19.098031 19.683969 19.098031 20.316031 18.707031 20.707031 C 18.512031 20.902031 18.256 21 18 21 C 17.744 21 17.487969 20.902031 17.292969 20.707031 L 15 18.414062 L 12.707031 20.707031 C 12.512031 20.902031 12.256 21 12 21 C 11.744 21 11.487969 20.902031 11.292969 20.707031 C 10.901969 20.316031 10.901969 19.683969 11.292969 19.292969 L 13.585938 17 L 11.292969 14.707031 C 10.901969 14.316031 10.901969 13.683969 11.292969 13.292969 C 11.488469 13.097469 11.74425 13 12 13 z"></path>
+</svg>`;
+//     savedAreaDeleteButtonEle.innerHTML = `
+// <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4 fill-red-600">
+//   <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"></path>
+// </svg>`;
+
     savedAreaCheckboxEle.onclick = () => {
       if (selectedAreas.includes(savedArea)) {
         selectedAreas.splice(selectedAreas.indexOf(savedArea), 1);
