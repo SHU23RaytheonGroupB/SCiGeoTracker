@@ -2,7 +2,6 @@ import { allProducts } from "./products-and-layers.js";
 import { calculateMissionCoverage } from "./area-calculations.js";
 
 export function createHistogramChart() {
-  console.log("Creating histogram chart");
 
   let data =  allProducts.map((feature) => {
     return feature;
@@ -27,11 +26,11 @@ export function createHistogramChart() {
   const binSize = 24*60*60*1000; // 1 day in milliseconds
   const bins = Math.ceil((endTime - startTime) / binSize);
 
-  console.log("bins: ", bins);
 
   const histogram = new Array(bins).fill(0);
 
   let featureObjects = new Array(bins).fill().map(() => []);
+  let count = 0;
 
   for (let i = 0; i < objectstartdate.length; i++) {
     const bin = Math.floor((objectstartdate[i] - startTime) / binSize);
@@ -41,9 +40,9 @@ export function createHistogramChart() {
     }
   }
 
-  const UKmapdata = window.map.getSource("uk-land");
-  console.log("UKmapdata: ", UKmapdata);
-  let polyCoordinates = [];
+
+  const UKmapdata = window.map.getSource("uk-land")._data;
+  let polyCoordinates = []; 
 
   for (let i = 0; i < UKmapdata.features[0].geometry.coordinates.length; i++) {
     //bcs the uk is a multigon we need to iterate through each island
@@ -55,23 +54,23 @@ export function createHistogramChart() {
   let percentageCoverage = new Array(bins).fill(0);
 
   for (let i = 0; i < featureObjects.length; i++) {
-    if (featureObjects[i].length !== 0) {
-      percentageCoverage[i] = calculateMissionCoverage(featureObjects[i], polyCoordinates);
+    if (featureObjects[i].length != 0) {
+      percentageCoverage[i] = calculateMissionCoverage(featureObjects[i], [polyCoordinates]);
     }
     else {
-      percentageCoverage[i] = 0;
     }
   }
 
-  console.log("percentageCoverage: ", percentageCoverage);
 
-  console.log("featureObjects: ", featureObjects);
 
-  for (let i = 1; i < histogram.length; i++) {
-    histogram[i] = histogram[i-1] + histogram[i];
+  for (let i = 1; i < percentageCoverage.length; i++) {
+    percentageCoverage[i] = percentageCoverage[i-1] + percentageCoverage[i];
   }
 
-  console.log("histogram: ", histogram);
+  const ukArea = 244820;
+  for (let i = 0; i < percentageCoverage.length; i++) {
+    percentageCoverage[i] = percentageCoverage[i] / ukArea * 100;
+  }
 
   const ctx = document.getElementById("histogram-chart");
 
@@ -81,13 +80,13 @@ export function createHistogramChart() {
       labels: new Array(bins).fill().map((_, i) => new Date( startTime + i * binSize)),
       datasets: [
         {
-          label: "Number of Products",
-          data: histogram,
+          label: "Uk Coverage %",
+          data: percentageCoverage,
           backgroundColor: "rgba(0, 123, 255, 0.5)",
           borderColor: "rgba(0, 123, 255, 1)",
           borderWidth: 1,
           barPercentage: 1.0,
-        },
+        }
       ],
     },
     options: {
@@ -99,9 +98,17 @@ export function createHistogramChart() {
           time: {
             unit: "day",
           },
+          title: {
+            display: true,
+            text: "Date",
+          },
         },
         y: {
           beginAtZero: true,
+          title: {
+            display: true,
+            text: "Percentage (%) of UK Covered",
+          }
         },
       },
     },

@@ -15,9 +15,7 @@ export const LayerMode = {
   Frames: "Frames",
   Heatmap: "Heatmap",
   Choropleth: "Choropleth",
-  Isarithmic: "Isarithmic",
-  DotDensity: "Dot Density",
-  FrameOverlaps: "Frame Overlaps",
+  Cluster: "Cluster",
   BorderSelection: "Border Selection",
 };
 
@@ -32,9 +30,7 @@ export function initialiseLayerMenu() {
   document.querySelector("#frames-item").onclick = framesMode;
   document.querySelector("#heatmap-item").onclick = heatmapMode;
   document.querySelector("#choropleth-item").onclick = choroplethMode;
-  document.querySelector("#isarithmic-item").onclick = isarithmicMode;
-  document.querySelector("#dot-density-item").onclick = dotDensityMode;
-  document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
+  document.querySelector("#dot-density-item").onclick = clusterMode;
   document.querySelector("#border-selection-item").onclick = borderSelectionMode;
 
   window.map.on("mousemove", "region-boundaries-choropleth", (e) => {
@@ -311,8 +307,8 @@ const isarithmicMode = () => {
   hideAllLayers();
 };
 
-const dotDensityMode = () => {
-  layerMode = LayerMode.DotDensity;
+const clusterMode = () => {
+  layerMode = LayerMode.Cluster;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
@@ -331,8 +327,8 @@ const borderSelectionMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
-  window.map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
+  //window.map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
+  //window.map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
   updateUkArea();
 };
 
@@ -345,6 +341,12 @@ const hideAllLayers = () => {
   window.map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-outline", "visibility", "none");
+  if (map.getLayer("UkLandBorder-border-outline") != undefined) {
+    window.map.setLayoutProperty("UkLandBorder-border-outline", "visibility", "none");
+  }
+  if (map.getLayer("mission-area-within-polyfill") != undefined) {
+    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
+  }
   //window.map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 };
 

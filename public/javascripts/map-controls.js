@@ -22,6 +22,12 @@ const cursorSelectedClasses = [
   "hover:bg-neutral-200/30",
 ];
 
+document.querySelector("#area-selection-info-save-button").onclick = () => activitieCreation;
+
+function activitieCreation() {
+  
+}
+
 const zoomScrollButtonEle = document.querySelector("#zoom-scroll-button");
 var barTop = 0,
   barBottom = 0;
@@ -170,6 +176,13 @@ function closeDragElement() {
 
 function closeInfo() {
   document.getElementById("area-selection-info-container").classList.add("hidden");
+  document.getElementById("name-area-container").classList.add("hidden");
+  let text = document.getElementById("name-area-textbox");
+  text.value = "";
+  //document.getElementById("area-selection-info-save-button").classList.add("hidden");
+  if (map.getLayer("mission-area-within-polyfill") != undefined) {
+    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
+  }
 }
 
 function initialiseStyleMenu() {
@@ -234,9 +247,9 @@ function setDarkMode(enabled) {
   darkMode = enabled;
   sessionStorage.setItem("dark", darkMode ? "true" : "false");
   if (darkMode) {
-    document.body.classList.add("dark");
+    document.documentElement.classList.add("dark");
   } else {
-    document.body.classList.remove("dark");
+    document.documentElement.classList.remove("dark");
   }
 }
 
