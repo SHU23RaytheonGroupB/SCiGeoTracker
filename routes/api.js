@@ -53,9 +53,9 @@ router.get("/getProducts", async function (req, res) {
   }
 });
 
-router.post("/getMissionInfo", async function (req, res) {
+router.post("/getMissionFrames", async function (req, res) {
   const { missionID } = req.body;
-
+  const cache = Cache.getInstance();
   const token = await getAuthToken();
   if (!token) {
     console.error("ERROR 401: Authentication token is missing or invalid.");
@@ -63,8 +63,7 @@ router.post("/getMissionInfo", async function (req, res) {
   }
   const ps = new ProductService(token.access_token);
   let frameMetadata = await ps.getAllFrameProducts(missionID);
-  console.log("frameMetaData:");
-  console.log(frameMetadata);
+  cache.set("frameMetadata", frameMetadata);
   res.json(frameMetadata);
 });
 

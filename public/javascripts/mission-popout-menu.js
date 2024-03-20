@@ -20,7 +20,7 @@ function closedisplayMissionMenu() {
 
 export async function viewSelectedMission(missionID) {
   try {
-    const response = await fetch("/api/getMissionInfo", {
+    const response = await fetch("/api/getMissionFrames", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ missionID }),
