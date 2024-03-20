@@ -7,7 +7,7 @@ dragElement(document.getElementById("flyto-mission-info-container"));
 
 function dragElement(ele) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  const headerEle = document.querySelector(`#${ele.id}-header`);
+  const headerEle = document.getElementById(ele.id.replace("container", "header"));
   if (headerEle) {
     /* if present, the header is where you move the DIV from:*/
     headerEle.onmousedown = dragMouseDown;
