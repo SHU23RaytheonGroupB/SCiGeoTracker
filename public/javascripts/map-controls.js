@@ -23,6 +23,12 @@ const cursorSelectedClasses = [
   "hover:bg-neutral-200/30",
 ];
 
+document.querySelector("#area-selection-info-save-button").onclick = () => activitieCreation;
+
+function activitieCreation() {
+  
+}
+
 const zoomScrollButtonEle = document.querySelector("#zoom-scroll-button");
 var barTop = 0,
   barBottom = 0;
@@ -126,8 +132,8 @@ export function initialiseControls() {
   let polygonButton = document.getElementById("polygon-button");
   polygonButton.addEventListener("click", () => drawPoly(draw));
 
-  let infoCloseButton = document.getElementById("area-selection-info-close-button");
-  infoCloseButton.addEventListener("click", closeInfo);
+  // let infoCloseButton = document.getElementById("area-selection-info-close-button");
+  // infoCloseButton.addEventListener("click", closeInfo);
 
   let infoMoveButton = document.getElementById("move-button");
   infoMoveButton.addEventListener("click", () => moveMap(draw));
@@ -170,10 +176,6 @@ function closeDragElement() {
   document.onmousemove = null;
 }
 
-function closeInfo() {
-  document.getElementById("area-selection-info-container").style.display = "none";
-}
-
 function initialiseStyleMenu() {
   document.querySelector("#dark-item").onclick = darkStyle;
   document.querySelector("#light-item").onclick = lightStyle;
@@ -184,22 +186,25 @@ function initialiseStyleMenu() {
   darkStyle();
 }
 
-const openStyleMenu = () => {
-  styleMenuOpen = true;
-  styleMenuItemsContainerEle.style.display = null;
-  styleMenuItemsContainerEle.focus();
-};
-const closeStyleMenu = () => {
+function closeStyleMenu() {
   styleMenuOpen = false;
-  styleMenuItemsContainerEle.style.display = "none";
-};
+  styleMenuItemsContainerEle.classList.add("hidden");
+}
+
+function openStyleMenu() {
+  styleMenuOpen = true;
+  styleMenuItemsContainerEle.classList.remove("hidden");
+  styleMenuItemsContainerEle.focus();
+}
+
 styleMenuButtonEle.onclick = () => {
-  if (!styleMenuOpen) openStyleMenu();
-  else closeStyleMenu();
+  if (!styleMenuOpen) {
+    openStyleMenu();
+  } else {
+    closeStyleMenu();
+  }
 };
-styleMenuItemsContainerEle.focusout = () => {
-  closeStyleMenu();
-};
+styleMenuItemsContainerEle.focusout = closeStyleMenu;
 
 const darkStyle = () => {
   mapStyle.currentStyle = MapStyle.Dark;
@@ -233,9 +238,9 @@ function setDarkMode(enabled) {
   darkMode = enabled;
   sessionStorage.setItem("dark", darkMode ? "true" : "false");
   if (darkMode) {
-    document.body.classList.add("dark");
+    document.documentElement.classList.add("dark");
   } else {
-    document.body.classList.remove("dark");
+    document.documentElement.classList.remove("dark");
   }
 }
 

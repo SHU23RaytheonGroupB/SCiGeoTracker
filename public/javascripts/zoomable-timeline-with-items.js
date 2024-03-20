@@ -300,12 +300,12 @@ export function Timeline(options) {
                 circleLinkZoom(d.id);
               })
               .attr("r", 4)
-              .attr("cx", (d, i) => X[i]) 
+              .attr("cx", (d, i) => X[i])
               .attr("cy", (d, i) => Y[i] + 100)
+              .attr("mission", (d) => d.missionGroup)
               .append("title")
               .text((d) => d.title),
-          (update) =>
-            update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 100),
+          (update) => update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 100)
         );
 
       const density = Math.abs(scaleX.invert(0) - scaleX.invert(1)) / MS_PER_HOUR; // in pixels per hour
@@ -359,20 +359,24 @@ export function Timeline(options) {
 
   return setup();
 }
+const timelineContainerEle = document.getElementById("timeline-container");
+let timelineVisible = false;
 
+function setTimelineVisibility(enabled) {
+  timelineVisible = enabled;
+  if (enabled) {
+    timelineContainerEle.classList.remove("hidden");
+  } else {
+    timelineContainerEle.classList.add("hidden");
+  }
+}
 
-const button = document.getElementById("timeline-button");
-document.getElementById("timeline-container").style.display = "none";
+function toggleTimelineVisiblity() {
+  setTimelineVisibility(!timelineVisible);
+}
 
-button.addEventListener("click", () => {
-  const chart = document.getElementById("timeline-container");
-  chart.style.display = chart.style.display === "none" ? "block" : "none";
-});
+setTimelineVisibility(true);
 
-const button2 = document.getElementById("histogram-popout-close-button");
-
-button2.addEventListener("click", () => {
-  const chart = document.getElementById("histogram-popout-container");
-  chart.style.display = chart.style.display === "none" ? "block" : "none";
-});
+document.getElementById("timeline-button").addEventListener("click", toggleTimelineVisiblity);
+document.getElementById("timeline-popout-close-button").addEventListener("click", () => setTimelineVisibility(false));
 

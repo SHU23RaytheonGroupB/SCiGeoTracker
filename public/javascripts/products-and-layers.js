@@ -11,13 +11,13 @@ const layerMenuButtonEle = document.querySelector("#layer-menu-button");
 const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
 const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text");
 
+const colors = ['#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c'];
+
 export const LayerMode = {
   Frames: "Frames",
   Heatmap: "Heatmap",
   Choropleth: "Choropleth",
-  Isarithmic: "Isarithmic",
-  DotDensity: "Dot Density",
-  FrameOverlaps: "Frame Overlaps",
+  Cluster: "Cluster",
   BorderSelection: "Border Selection",
 };
 
@@ -32,9 +32,7 @@ export function initialiseLayerMenu() {
   document.querySelector("#frames-item").onclick = framesMode;
   document.querySelector("#heatmap-item").onclick = heatmapMode;
   document.querySelector("#choropleth-item").onclick = choroplethMode;
-  document.querySelector("#isarithmic-item").onclick = isarithmicMode;
-  document.querySelector("#dot-density-item").onclick = dotDensityMode;
-  document.querySelector("#frame-overlaps-item").onclick = frameOverlapsMode;
+  document.querySelector("#cluster-density-item").onclick = clusterMode;
   document.querySelector("#border-selection-item").onclick = borderSelectionMode;
 
   window.map.on("mousemove", "region-boundaries-choropleth", (e) => {
@@ -62,12 +60,12 @@ export function initialiseLayerMenu() {
 let layerMenuOpen = false;
 const openLayerMenu = () => {
   layerMenuOpen = true;
-  layerMenuItemsContainerEle.style.display = null;
+  layerMenuItemsContainerEle.classList.remove("hidden");
   layerMenuItemsContainerEle.focus();
 };
 const closeLayerMenu = () => {
   layerMenuOpen = false;
-  layerMenuItemsContainerEle.style.display = "none";
+  layerMenuItemsContainerEle.classList.add("hidden");
 };
 layerMenuButtonEle.onclick = () => {
   if (!layerMenuOpen) openLayerMenu();
@@ -116,11 +114,17 @@ async function addProductsToMap() {
         mission_group: product.title.split(" ")[0],
         scene_name: product.title.split(" ")[1],
       },
-    })),
+      cluster: true,
+      clusterMaxZoom: 9,
+      clusterRadius: 50,
+    })),    
   };
+
+
   // SOURCES
   addSource("product-polygons", polygonFeatureCollection);
   addSource("product-points", pointFeatureCollection);
+  addClusterSource("product-cluster", pointFeatureCollection);
   addSource("country-boundaries", boundariesByCountry);
   addSource("region-boundaries", boundariesByRegion);
   addSource("uk-land", UKlandBorder);
@@ -131,11 +135,11 @@ async function addProductsToMap() {
   addHeatmapLayer("product-points");
   // CHOROPLETH LAYER
   addChoroplethLayers("country-boundaries", "region-boundaries");
-  // DOT LAYER
-  addDotLayer("product-points");
+  // CLUSTER LAYER
+  addClusterLayer("product-cluster");
   // BORDER LAYER - TEMP
   addBorderLayer("uk-land");
-}
+};
 
 export function addSource(title, data) {
   map.addSource(title, {
@@ -143,6 +147,16 @@ export function addSource(title, data) {
     data: data,
     // tolerance: 3,
     // buffer: 512,
+  });
+}
+
+function addClusterSource(title, data) {
+  map.addSource(title, {
+    type: "geojson",
+    data: data,
+    cluster: true,
+    clusterMaxZoom: 14,
+    clusterRadius: 50,
   });
 }
 
@@ -174,6 +188,9 @@ function addFramesLayers(title) {
 }
 
 function addHeatmapLayer(title) {
+  // var style = map.getStyle();
+  // style.sources.cluster = false;
+  // map.setStyle(style);
   map.addLayer({
     id: `${title}-heatmap`,
     type: "heatmap",
@@ -212,22 +229,83 @@ function addBorderLayer(title) {
   });
 }
 
-function addDotLayer(title) {
+function addClusterLayer(title) {
   map.addLayer({
-    id: `${title}-dot-density`,
-    type: "circle",
-    source: title,
-    paint: {
-      "circle-color": "#FF0000",
-      "circle-radius": {
-        base: 1.75,
-        stops: [
-          [12, 2],
-          [32, 180],
-        ],
-      },
+    'id': `${title}-density`,
+    'type': 'circle',
+    'source': title,
+    filter: ['has', 'point_count'],
+    layout: {
+      visibility: "none",
     },
+    'paint': {
+        'circle-color': [
+          'step',
+          ['get', 'point_count_abbreviated'],
+          '#ffffff',
+          2,
+          colors[0],
+          4,
+          colors[1],
+          7,
+          colors[2],
+          10,
+          colors[3],
+          15,
+          colors[4]
+      ],
+        'circle-opacity': 0.6,
+        'circle-radius': 12
+    }
   });
+  map.addLayer({
+    'id': `${title}-label`,
+    'type': 'symbol',
+    'source': title,
+    filter: ['has', 'point_count'],
+    'layout': {
+        'text-opacity': { "stops": [[12.9, 0], [13, 1]] },
+        'visibility': "none",
+        "text-field": "{point_count_abbreviated}",
+        "text-font": ["Arial Unicode MS Bold"],
+        "text-size": 12,
+        "text-allow-overlap" : true
+    },
+    'paint': {
+        'text-color': 'black'
+    }
+});
+map.addLayer({
+  id: title+ '-unclustered',
+  type: 'circle',
+  source: title,
+  filter: ['!', ['has', 'point_count']],
+  'layout': {
+    'visibility': "none"
+  },
+  paint: {
+      'circle-color': productFillColours[mapStyle.currentStyle]["CLUSTER"],
+      'circle-opacity': 0.6,
+      'circle-radius': 12
+  }
+});
+map.addLayer({
+  'id': `${title}-unclustered-label`,
+  'type': 'symbol',
+  'source': title,
+  filter: ["!=", "cluster", true],
+  'layout': {
+      'text-opacity': { "stops": [[12.9, 0], [13, 1]] },
+      'visibility': "none",
+      "text-field": "1",
+      "text-font": ["Arial Unicode MS Bold"],
+      "text-size": 12,
+      "text-allow-overlap" : true
+  },
+  'paint': {
+      'text-color': 'black'
+  }
+});
 }
 
 function addChoroplethLayers(countryPolygons, regionPolygons) {
@@ -311,12 +389,15 @@ const isarithmicMode = () => {
   hideAllLayers();
 };
 
-const dotDensityMode = () => {
-  layerMode = LayerMode.DotDensity;
+const clusterMode = () => {
+  layerMode = LayerMode.Cluster;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("product-points-dot-density", "visibility", "visible");
+  window.map.setLayoutProperty("product-cluster-density", "visibility", "visible");
+  window.map.setLayoutProperty("product-cluster-label", "visibility", "visible");
+  window.map.setLayoutProperty("product-cluster-unclustered", "visibility", "visible");
+  window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "visible");  
 };
 
 const frameOverlapsMode = () => {
@@ -331,8 +412,8 @@ const borderSelectionMode = () => {
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
-  window.map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
+  //window.map.setLayoutProperty("uk-land-border-fill", "visibility", "visible");
+  //window.map.setLayoutProperty("uk-land-border-outline", "visibility", "visible");
   updateUkArea();
 };
 
@@ -340,11 +421,20 @@ const hideAllLayers = () => {
   window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "none");
   window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
   window.map.setLayoutProperty("product-points-heatmap", "visibility", "none");
-  window.map.setLayoutProperty("product-points-dot-density", "visibility", "none");
+  window.map.setLayoutProperty("product-cluster-density", "visibility", "none");
+  window.map.setLayoutProperty("product-cluster-label", "visibility", "none");
+  window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "none");
+  window.map.setLayoutProperty("product-cluster-unclustered", "visibility", "none");
   window.map.setLayoutProperty("region-boundaries-borders", "visibility", "none");
   window.map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-outline", "visibility", "none");
+  if (map.getLayer("UkLandBorder-border-outline") != undefined) {
+    window.map.setLayoutProperty("UkLandBorder-border-outline", "visibility", "none");
+  }
+  if (map.getLayer("mission-area-within-polyfill") != undefined) {
+    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
+  }
   //window.map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 };
 
