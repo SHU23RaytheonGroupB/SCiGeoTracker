@@ -181,7 +181,39 @@ function addClusterSource(title, data) {
 
 function addFramesLayers(title) {
   map.addLayer({
-    id: `${title}-frames-fill`,
+
+    id: `${title}-outline`,
+    type: "line",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "line-color": productOutlineColours["SCENE"],
+      "line-width": 1,
+    },
+  });
+}
+
+function addSelectedFrameLayer(title) {
+  map.addLayer({
+    id: `${title}-highlight`,
+    type: "line",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours[mapStyle.currentStyle]["FRAME"],
+      "fill-opacity": 0.2,
+    },
+  });
+}
+
+function addScenesLayers(title) {
+  map.addLayer({
+    id: `${title}-scenes-fill`,
+
     type: "fill",
     source: title,
     layout: {
@@ -193,7 +225,9 @@ function addFramesLayers(title) {
     },
   });
   map.addLayer({
-    id: `${title}-frames-outline`,
+
+    id: `${title}-scenes-outline`,
+
     type: "line",
     source: title,
     layout: {
