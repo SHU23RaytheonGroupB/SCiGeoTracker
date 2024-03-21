@@ -24,12 +24,12 @@ export function Timeline(options) {
       "Publisher: " +
       myData[i].properties.pub +
       "\n",
-    id: myData[i].attributes.id,
-    start: new Date(myData[i].attributes.date_start),
-    end: new Date(myData[i].attributes.date_end),
-    missionName: myData[i].attributes.title.split(" ")[0],
-    missionID: myData[i].attributes.missionid,
-    sceneName: myData[i].attributes.title.split(" ")[1],
+    id: myData[i].properties.id,
+    start: new Date(myData[i].properties.date_start),
+    end: new Date(myData[i].properties.date_end),
+    missionName: myData[i].properties.title.split(" ")[0],
+    missionID: myData[i].properties.missionid,
+    sceneName: myData[i].properties.title.split(" ")[1],
   }));
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
