@@ -4,6 +4,7 @@ dragElement(document.getElementById("timeline-container"));
 dragElement(document.getElementById("histogram-popout-container"));
 dragElement(document.getElementById("saved-areas-container"));
 dragElement(document.getElementById("flyto-mission-info-container"));
+dragElement(document.getElementById("filter-menu-container"));
 
 function dragElement(ele) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;

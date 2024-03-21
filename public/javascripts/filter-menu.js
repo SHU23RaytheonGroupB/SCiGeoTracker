@@ -4,23 +4,23 @@ export function initialiseFilterMenu() {
     let filterMenuOpen = false;
     filterButtonEle.onclick = () => {
       if (!filterMenuOpen) {
-        filterMenuContainerEle.style.display = null;
+        filterMenuContainerEle.classList.remove("hidden");
       } else {
-        filterMenuContainerEle.style.display = "none";
+        filterMenuContainerEle.classList.add("hidden");
       }
       filterMenuOpen = !filterMenuOpen;
     };
     document.querySelector("#filter-menu-close-button").onclick = () => {
-        filterMenuContainerEle.style.display = "none";
+        filterMenuContainerEle.classList.add("hidden");
     };
     const filterMissionListButtonEle = document.querySelector("#filter-mission-list-button");
     const filterMissionListContainerEle = document.querySelector("#filter-mission-list-container");
     let missionListOpen = false;
     filterMissionListButtonEle.onclick = () => {
       if (!missionListOpen) {
-        filterMissionListContainerEle.style.display = null;
+        filterMissionListContainerEle.classList.remove("hidden");
       } else {
-        filterMissionListContainerEle.style.display = "none";
+        filterMissionListContainerEle.classList.add("hidden");
       }
       missionListOpen = !missionListOpen;
     };
