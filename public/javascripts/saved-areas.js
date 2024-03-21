@@ -493,9 +493,9 @@ function displaySavedActivty(savedActivty) {
 
   //name all buttons
   activityMarkEle.name = "activity-mark-Ele";
-  savedAreaViewButtonEle.name = "saved-area-view-button";
-  savedAreaEditButtonEle.name = "saved-area-edit-button";
-  savedAreaDeleteButtonEle.name = "saved-area-delete-button";
+  savedAreaViewButtonEle.name = "activity-view-button";
+  savedAreaEditButtonEle.name = "activity-edit-button";
+  savedAreaDeleteButtonEle.name = "activity-delete-button";
 
   //style all buttons
   const buttonClasses = "ml-auto my-auto p-1 rounded-md bg-neutral-100/90 hover:bg-neutral-100 dark:bg-neutral-700/70 dark:hover:bg-neutral-700 ring-1 ring-neutral-600/50";
@@ -528,7 +528,7 @@ function displaySavedActivty(savedActivty) {
 
   savedAreaCheckboxEle.onclick = () => {
     if (selectedActivties.includes(savedActivty)) {
-      selectedActivties.splice(selectedAreas.indexOf(savedActivty), 1);
+      selectedActivties.splice(selectedActivties.indexOf(savedActivty), 1);
     } else {
       selectedActivties.push(savedActivty);
     }
@@ -671,7 +671,7 @@ function displaySavedActivty(savedActivty) {
     }
 
     if (confirm(message) == true) {
-      selectedActivties.push(savedArea);
+      selectedActivties.push(savedActivty);
       selectedActivties.forEach((Activty) => {
         selectedActivties.splice(selectedActivties.indexOf(Activty), 1);
       });
@@ -983,6 +983,7 @@ function closeNameBoxActivity(){
 
 const refreshSavedScreen = () => {
   saveSavedAreas();
+  updateActivties();
   openSavedAreas();
 };
 
