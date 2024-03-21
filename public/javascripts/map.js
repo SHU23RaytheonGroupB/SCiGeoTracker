@@ -105,7 +105,6 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   map.getCanvas().style.cursor = 'pointer';
   const coordinates = e.features[0].geometry.coordinates[0].slice();
   var eProps = e.features[0].properties;
-  console.log(e.features[0].properties.date_start);
   var start = new Date(eProps.date_start).toString();
   start = start.split(" ").slice(0, -4).join(" ");
   var end = new Date(eProps.date_end).toString();
@@ -144,4 +143,12 @@ map.on('mouseleave', 'product-polygons-frames-fill', () => {
     window.map.removeLayer('mission-area-within-polyfill');
     window.map.removeSource('mission-area-within-poly');
   } 
+});
+
+map.on('click', 'product-polygons-frames-fill', (e) => {
+  map.flyTo({
+    center: e.lngLat,
+    zoom: 10.5,
+    essential: true,
+  });
 });
