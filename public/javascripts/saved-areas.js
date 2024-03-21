@@ -1,16 +1,17 @@
-import { polygonData, updateArea } from "./area-calculations.js";
+import { polygonData, updateArea, updateActivty } from "./area-calculations.js";
 import { productFillColours, productOutlineColours, mapStyle } from "./config.js";
 import { allProducts } from "./products-and-layers.js";
 import { fileDisplayMode } from "./map-controls.js";
 
 class Activity {
-  constructor(Name, Deadline, PolygonArr) {
+  constructor(Name, Deadline, PolygonArr, Comments) {
     //user generated
     this.name = Name;
-    this.deadline = Deadline;
+    this.deadline = Deadline.toLocaleString();
     this.areaPoly = PolygonArr;
     //auto generated
-    this.createdDate = (new Date()).toString();
+    this.createdDate = (new Date()).toLocaleString();
+    this.comments = Comments;
     this.relatedMissions = [];
     this.author = "Data analyst (PLACEHOLDER)";
   }
@@ -353,7 +354,7 @@ if (savedActivties.length == 0) {
   console.log(FCfeatureHallam[0]);
   console.log(0);
 
-  savedActivties.push(new Activity("Mission over Sheff Hallam Uni",new Date("2024-03-22"), FCfeatureHallam));
+  savedActivties.push(new Activity("Mission over Sheff Hallam Uni",new Date("2024-03-22"), FCfeatureHallam, "Hello"));
 
   var featureLondon = {
     type: "Feature",
@@ -371,7 +372,7 @@ if (savedActivties.length == 0) {
   };
   var FCfeatureLondon = [];
   FCfeatureLondon.push(featureLondon);
-  savedActivties.push(new Activity("Incident in London",new Date("2025-12-04"), FCfeatureLondon));
+  savedActivties.push(new Activity("Incident in London",new Date("2025-12-04"), FCfeatureLondon, "good bye"));
 
   updateActivties();
 }
@@ -562,13 +563,41 @@ function displaySavedActivty(savedActivty) {
         var xAverage = xCoords / arrCount;
         var yAverage = yCoords / arrCount;
         
-        savedArea.type = "FeatureCollection";
-        updateArea(allProducts, savedArea);
-        map.flyTo({
-          center: [xAverage, yAverage],
-          zoom: 7.5,
-          essential: true,
+        var savedActivtyAsFC = {
+        type: "FeatureCollection",
+        properties: { name: savedActivty.name },
+        features: [
+          savedActivty.areaPoly[0]
+        ]};
+
+        //var savedActivtyAsFC = savedActivty.areaPoly[0]
+        const activityNameContainerEle = document.querySelector("#activity-Discription-name-value");
+        const activitySetDateContainerEle = document.querySelector("#activity-Discription-set-date-value");
+        const activityDeadLineContainerEle = document.querySelector("#activity-Discription-deadline-value");
+        const activityAuthorContainerEle = document.querySelector("#activity-Discription-author-value");
+        const activityCommentsContainerEle = document.querySelector("#activity-Discription-comments-value");
+
+        activityNameContainerEle.textContent = savedActivty.name;
+        activitySetDateContainerEle.textContent = savedActivty.createdDate;
+        activityDeadLineContainerEle.textContent = savedActivty.deadline;
+        activityAuthorContainerEle.textContent = savedActivty.author;
+        activityCommentsContainerEle.textContent = savedActivties.comments;
+        updateActivty(allProducts, savedActivtyAsFC);
+        //var centerOfActity = turf.center(savedActivty.areaPoly[0]);
+        //var dist = getDistance(centerOfActity[0][0], centerOfActity[0][1]); //use savedActivty's center 
+        //var zoom = getZoomFromDistance(dist);
+
+        const boundingBox = turf.bbox(savedActivty.areaPoly[0]);
+        const bounds = [boundingBox.slice(0, 2), boundingBox.slice(2, 4)];
+        window.map.fitBounds(bounds, {
+          padding: 50,
         });
+
+        // map.flyTo({
+        //   center: [xAverage, yAverage],
+        //   zoom: 7.5,
+        //   essential: true,
+        // });
       //}
       //catch{}
     }
@@ -744,6 +773,13 @@ function displaySavedArea(savedArea) {
           zoom: 7.5,
           essential: true,
         });
+
+        const boundingBox = turf.bbox(savedArea.features[0]);
+        const bounds = [boundingBox.slice(0, 2), boundingBox.slice(2, 4)];
+        window.map.fitBounds(bounds, {
+          padding: 50,
+        });
+
       //}
       //catch{}
     }
