@@ -3,7 +3,6 @@ import { mapStyle, minZoom, maxZoom } from "./config.js";
 import { getRoundNum, getDistance } from "./utils.js";
 import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
 import { Timeline } from "./zoomable-timeline-with-items.js";
-import { createHistogramChart } from "./histogram-popout.js";
 import { calculateMissionCoverage } from "./area-calculations.js";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
@@ -21,7 +20,7 @@ let loaded = false;
 
 var popup = new mapboxgl.Popup({
   closeButton: false,
-  closeOnClick: false
+  closeOnClick: false,
 });
 
 map.on("load", async () => {
@@ -39,6 +38,7 @@ map.on("load", async () => {
   document.querySelector("#timeline").appendChild(timeline.element);
 
   loaded = true; //used so style is not loaded before data is requested
+  console.log("working");
 });
 
 map.on("style.load", async () => {
@@ -78,10 +78,8 @@ export function mapFlyTo(product) {
     zoom: 11,
     essential: true,
   });
+}
 
-};
-
-  
 export async function circleLinkZoom(d) {
   let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {
@@ -108,8 +106,8 @@ export async function circleLinkZoom(d) {
   displayMissionMenu(currentProduct);
 }
 
-map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
-  map.getCanvas().style.cursor = 'pointer';
+map.on("mouseenter", "product-polygons-frames-fill", (e) => {
+  map.getCanvas().style.cursor = "pointer";
   const coordinates = e.features[0].geometry.coordinates[0].slice();
   var eProps = e.features[0].properties;
   var start = new Date(eProps.date_start).toString();
@@ -119,21 +117,21 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   var newE = {
     footprint: {
       type: "Polygon",
-      coordinates: [coordinates]
+      coordinates: [coordinates],
     },
   };
- 
-  var multis = calculateMissionCoverage([newE], window.map.getSource("uk-land")._data.features[0].geometry.coordinates) 
+
+  var multis = calculateMissionCoverage([newE], window.map.getSource("uk-land")._data.features[0].geometry.coordinates);
   const totalArea = turf.area(window.map.getSource("uk-land")._data) / 1000000; //divide by 1000 to get square km
   const coveragePercentage = Math.round((multis / totalArea) * 10000) / 1000;
 
-  var description = `Name: ${eProps.title}<br>Mission started: ${ start }<br>Mission ended: ${ end }<br>Land coverage (%): ${ coveragePercentage }`;
+  var description = `Name: ${eProps.title}<br>Mission started: ${start}<br>Mission ended: ${end}<br>Land coverage (%): ${coveragePercentage}`;
 
   var lng = 0;
   var lat = coordinates[0][1];
-  coordinates.forEach(c => {
+  coordinates.forEach((c) => {
     lng += c[0];
-    if(c[1] > lat){
+    if (c[1] > lat) {
       lat = c[1];
     }
   });
@@ -143,20 +141,19 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   popup.setLngLat(newCoords).setHTML(description).addTo(map);
 });
 
-map.on('mouseleave', 'product-polygons-frames-fill', () => {
-  map.getCanvas().style.cursor = '';
+map.on("mouseleave", "product-polygons-frames-fill", () => {
+  map.getCanvas().style.cursor = "";
   popup.remove();
-  if (window.map.getSource('mission-area-within-poly') != undefined) {
-    window.map.removeLayer('mission-area-within-polyfill');
-    window.map.removeSource('mission-area-within-poly');
-  } 
+  if (window.map.getSource("mission-area-within-poly") != undefined) {
+    window.map.removeLayer("mission-area-within-polyfill");
+    window.map.removeSource("mission-area-within-poly");
+  }
 });
 
-map.on('click', 'product-polygons-frames-fill', (e) => {
+map.on("click", "product-polygons-frames-fill", (e) => {
   map.flyTo({
     center: e.lngLat,
     zoom: 10.5,
     essential: true,
   });
 });
-
