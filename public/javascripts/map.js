@@ -3,6 +3,9 @@ import { initialiseProducts, allProducts } from "./products-and-layers.js";
 import { mapStyle, minZoom, maxZoom } from "./config.js";
 import { getRoundNum, getDistance } from "./utils.js";
 import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
+import { Timeline } from "./zoomable-timeline-with-items.js";
+import { createHistogramChart } from "./histogram-popout.js";
+import { calculateMissionCoverage } from "./area-calculations.js";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
 window.map = new mapboxgl.Map({
@@ -15,10 +18,14 @@ window.map = new mapboxgl.Map({
   attributionControl: false,
 });
 
-import { Timeline } from "./zoomable-timeline-with-items.js";
-import { createHistogramChart } from "./histogram-popout.js";
+
 
 let loaded = false;
+
+var popup = new mapboxgl.Popup({
+  closeButton: false,
+  closeOnClick: false
+});
 
 map.on("load", async () => {
   renderOverlaysZoom();
@@ -92,8 +99,45 @@ export async function circleLinkZoom(d) {
     circle.style.fill = "blue";
   });
   displayMissionMenu(currentProduct);
-
-  // allProducts.forEach((product) => {
-
-  // });
 }
+
+map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
+  const coordinates = e.features[0].geometry.coordinates[0].slice();
+  var eProps = e.features[0].properties;
+  console.log(e.features[0].properties.date_start);
+  var start = new Date(eProps.date_start).toString();
+  start = start.split(" ").slice(0, -4).join(" ");
+  var end = new Date(eProps.date_end).toString();
+  end = end.split(" ").slice(0, -4).join(" ");
+  var newE = {
+    footprint: {
+      type: "Polygon",
+      coordinates: [coordinates]
+    },
+  };
+ 
+  var multis = calculateMissionCoverage([newE], window.map.getSource("uk-land")._data.features[0].geometry.coordinates) 
+  const totalArea = turf.area(window.map.getSource("uk-land")._data) / 1000000; //divide by 1000 to get square km
+  const coveragePercentage = Math.round((multis / totalArea) * 10000) / 1000;
+
+  var description = `Name: ${eProps.title}<br>Mission started: ${ start }<br>Mission ended: ${ end }<br>Land coverage (%): ${ coveragePercentage }`;
+
+  var lng = 0;
+  var lat = coordinates[0][1];
+  coordinates.forEach(c => {
+    lng += c[0];
+    if(c[1] > lat){
+      lat = c[1];
+    }
+  });
+  lng = lng / coordinates.length;
+  const newCoords = [lng, lat];
+
+  popup.setLngLat(newCoords).setHTML(description).addTo(map);
+});
+
+map.on('mouseleave', 'product-polygons-frames-fill', () => {
+  map.getCanvas().style.cursor = '';
+  popup.remove();
+});
