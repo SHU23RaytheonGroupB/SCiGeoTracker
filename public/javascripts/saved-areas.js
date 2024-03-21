@@ -421,38 +421,6 @@ const openSavedAreas = () => {
       displaySavedArea(savedArea)
     });
   }
-<<<<<<< HEAD
-  filesListEle.replaceChildren();
-  searchedAreas.forEach((savedArea) => {
-    var tempContent = "";
-    const filesContainerEle = document.createElement("div");
-    filesContainerEle.className =
-      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
-    const savedAreaContainerEle = document.createElement("div");
-    savedAreaContainerEle.className =
-      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-inset ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
-    const savedAreaCheckboxEle = document.createElement("input");
-    savedAreaCheckboxEle.type = "checkbox";
-    savedAreaCheckboxEle.name = "saved-area-checkbox";
-    savedAreaCheckboxEle.className =
-      "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
-    filesContainerEle.append(savedAreaCheckboxEle);
-    const fileNameEle = document.createElement("span");
-    fileNameEle.className = "grow my-auto";
-    fileNameEle.textContent = savedArea.properties.name;
-    filesContainerEle.append(fileNameEle);
-    const savedAreaViewButtonEle = document.createElement("button");
-    const savedAreaEditButtonEle = document.createElement("button");
-    const savedAreaDeleteButtonEle = document.createElement("button");
-    savedAreaViewButtonEle.name = "saved-area-view-button";
-    savedAreaEditButtonEle.name = "saved-area-edit-button";
-    savedAreaDeleteButtonEle.name = "saved-area-delete-button";
-    const buttonClasses = "ml-auto my-auto p-1 rounded-md bg-neutral-100/90 hover:bg-neutral-100 dark:bg-neutral-700/70 dark:hover:bg-neutral-700 ring-1 ring-neutral-600/50";
-    savedAreaViewButtonEle.className = buttonClasses;
-    savedAreaEditButtonEle.className = buttonClasses;
-    savedAreaDeleteButtonEle.className = buttonClasses;
-    savedAreaViewButtonEle.innerHTML = `
-=======
   filesContainerEle.classList.remove("hidden");
   filesContainerEle.focus();
 }
@@ -498,7 +466,6 @@ function displaySavedActivty(savedActivty) {
   <text x="4" y="25" font-size="30" fill="white">A</text>
   </svg> `;
   savedAreaViewButtonEle.innerHTML = `
->>>>>>> Activities
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
 <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
 </svg>`;
