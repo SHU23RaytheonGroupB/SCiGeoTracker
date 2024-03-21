@@ -35,7 +35,6 @@ map.on("load", async () => {
   document.querySelector("#timeline").appendChild(timeline.element);
 
   loaded = true; //used so style is not loaded before data is requested
-  createHistogramChart(map);
 });
 
 map.on("style.load", async () => {
