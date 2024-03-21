@@ -51,6 +51,14 @@ map.on("style.load", async () => {
   }
 });
 
+export function mapFlyTo(product) {
+  map.flyTo({
+    center: product.centre.split(",").reverse(),
+    zoom: 11,
+    essential: true,
+  });
+}
+
 function updateScaleBar() {
   const y = map.getCanvas().clientHeight / 2;
   const maxMeters = getDistance(map.unproject([0, y]), map.unproject([100, y]));
@@ -76,31 +84,7 @@ map.on("zoom", (ev) => {
   updateScaleBar();
 });
 
-export async function circleLinkZoom(d) {
-  let reset = document.querySelectorAll("circle");
-  reset.forEach((reset) => {
-    reset.style.fill = "red";
-  });
 
-  let misGroup;
-  let currentProduct;
-  allProducts.forEach((product) => {
-    if (product.identifier === d) {
-      misGroup = product.title.split(" ")[0];
-      currentProduct = product;
-      map.flyTo({
-        center: product.centre.split(",").reverse(),
-        zoom: 12,
-        essential: true,
-      });
-    }
-  });
-  let circleGroup = document.querySelectorAll('circle[mission="' + misGroup + '"]');
-  circleGroup.forEach((circle) => {
-    circle.style.fill = "blue";
-  });
-  displayMissionMenu(currentProduct);
-}
 
 map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   map.getCanvas().style.cursor = 'pointer';
