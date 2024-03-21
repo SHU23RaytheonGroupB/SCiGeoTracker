@@ -20,6 +20,12 @@ import { createHistogramChart } from "./histogram-popout.js";
 
 let loaded = false;
 
+var popup = new mapboxgl.Popup({
+  closeButton: false,
+  closeOnClick: false,
+  maxWidth: 500,
+});
+
 map.on("load", async () => {
   renderOverlaysZoom();
   updateScaleBar();
@@ -98,3 +104,62 @@ export async function circleLinkZoom(d) {
 
   // });
 }
+
+map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
+  const coordinates = e.features[0].geometry.coordinates[0].slice();
+  var eProps = e.features[0].properties;
+  console.log(e.features[0].properties.date_start);
+  var start = new Date(eProps.date_start);
+  var end = new Date(eProps.date_end);
+  var newE = {
+    footprint: {
+      type: "Polygon",
+      coordinates: [coordinates]
+    },
+  };
+ 
+  var multis = calculateMissionCoverage([newE], window.map.getSource("uk-land")._data.features[0].geometry.coordinates) 
+  const totalArea = turf.area(window.map.getSource("uk-land")._data) / 1000000; //divide by 1000 to get square km
+  const coveragePercentage = Math.round((multis / totalArea) * 10000) / 1000;
+
+  var description = `
+<table class="table-auto border-separate border-spacing-x-2">
+  <tbody>
+    <tr>
+      <td class="font-semibold">Name</td>
+      <td class="font-regular">${eProps.title}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Mission started</td>
+      <td class="font-regular">${start.toLocaleString()}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Mission ended</td>
+      <td class="font-regular">${end.toLocaleString()}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Land coverage</td>
+      <td class="font-regular">${coveragePercentage}%</td>
+    </tr>
+  </tbody>
+</table>`;
+
+  var lng = 0;
+  var lat = coordinates[0][1];
+  coordinates.forEach(c => {
+    lng += c[0];
+    if(c[1] > lat){
+      lat = c[1];
+    }
+  });
+  lng = lng / coordinates.length;
+  const newCoords = [lng, lat];
+
+  popup.setLngLat(newCoords).setHTML(description).addTo(map);
+});
+
+map.on('mouseleave', 'product-polygons-frames-fill', () => {
+  map.getCanvas().style.cursor = '';
+  popup.remove();
+});
