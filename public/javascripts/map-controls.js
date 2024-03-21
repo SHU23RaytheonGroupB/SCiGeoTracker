@@ -1,9 +1,11 @@
 import { drawPoly, moveMap } from "./area-calculations.js";
 import { initialiseLayerMenu } from "./products-and-layers.js";
 import { mapStyle, MapStyle, minZoom, maxZoom, CursorMode } from "./config.js";
-import { initialiseSavedAreas } from "./saved-areas.js";
+import { initialiseSavedAreas, displayAllFiles, displayActivitiesFiles, displaygeojsonFiles } from "./saved-areas.js";
 import { initialiseSearchBar } from "./search-bar.js";
+import { initialiseFilterMenu } from "./filter-menu.js";
 
+export let fileDisplayMode = 0;
 let cursorMode;
 let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
 setDarkMode(darkMode);
@@ -15,6 +17,11 @@ let styleMenuOpen = false;
 const moveButtonEle = document.querySelector("#move-button");
 const rectangleButtonEle = document.querySelector("#rectangle-button");
 const polygonButtonEle = document.querySelector("#polygon-button");
+
+const displayAllButtonEle = document.querySelector("#files-all-display-button");
+const displayActivitiesButtonEle = document.querySelector("#files-activities-display-button");
+const displayGeojsonButtonEle = document.querySelector("#files-geojson-display-button");
+
 const cursorSelectedClasses = [
   "dark:bg-neutral-700",
   "dark:hover:bg-neutral-600/90",
@@ -140,9 +147,11 @@ export function initialiseControls() {
   initialiseStyleMenu();
   initialiseLayerMenu();
   initialiseCursorButtons();
+  initialiseFileDisplayButtons();
   initialiseZoomButtons();
   initialiseSearchBar();
   initialiseSavedAreas(draw);
+  initialiseFilterMenu();
 }
 
 export function renderOverlaysZoom() {
@@ -278,4 +287,38 @@ function initialiseZoomButtons() {
 
   document.querySelector("#zoom-in-button").onclick = () => window.map.zoomIn();
   document.querySelector("#zoom-out-button").onclick = () => window.map.zoomOut();
+}
+
+function initialiseFileDisplayButtons() {
+  const selectAllDisplay = () => {
+    displayAllFiles();
+    deselectAllFileButtons();
+    displayAllButtonEle.classList.add(...cursorSelectedClasses);
+    fileDisplayMode = 0;
+  };
+
+  const selectActivitesDisplay = () => {
+    displayActivitiesFiles();
+    deselectAllFileButtons();
+    displayActivitiesButtonEle.classList.add(...cursorSelectedClasses);
+    fileDisplayMode = 1;
+  };
+
+  const selectgeojsonDisplay = () => {
+    displaygeojsonFiles();
+    deselectAllFileButtons();
+    displayGeojsonButtonEle.classList.add(...cursorSelectedClasses);
+    fileDisplayMode = 2;
+  };
+  
+  displayAllButtonEle.onclick = selectAllDisplay;
+  displayActivitiesButtonEle.onclick = selectActivitesDisplay;
+  displayGeojsonButtonEle.onclick = selectgeojsonDisplay;
+  selectAllDisplay();
+}
+
+function deselectAllFileButtons() {
+  displayAllButtonEle.classList.remove(...cursorSelectedClasses);
+  displayActivitiesButtonEle.classList.remove(...cursorSelectedClasses);
+  displayGeojsonButtonEle.classList.remove(...cursorSelectedClasses);
 }

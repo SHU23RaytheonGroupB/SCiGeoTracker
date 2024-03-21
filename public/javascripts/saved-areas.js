@@ -1,27 +1,65 @@
 import { polygonData, updateArea } from "./area-calculations.js";
 import { productFillColours, productOutlineColours, mapStyle } from "./config.js";
 import { allProducts } from "./products-and-layers.js";
+import { fileDisplayMode } from "./map-controls.js";
+
+class Activity {
+  constructor(Name, Deadline, Polygon) {
+    //user generated
+    this.name = Name;
+    this.deadline = Deadline;
+    this.areaPoly = Polygon;
+    //auto generated
+    this.createdDate = (new Date()).toString();
+    this.relatedMissions = [];
+    this.author = "Data analyst (PLACEHOLDER)";
+  }
+}
+
 
 let selectedAreas = [];
 
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
+let savedActivties = JSON.parse(sessionStorage.getItem("savedActivties") ?? "[]");
+
 const saveSavedAreas = () => {
   sessionStorage.setItem("savedAreas", JSON.stringify(savedAreas));
 };
+
+const updateActivties = () => {
+  sessionStorage.setItem("savedActivties", JSON.stringify(savedActivties));
+};
+
+export function displayAllFiles() {
+  document.querySelector("#files-all-display-button");
+  console.log("All");
+}
+
+export function displayActivitiesFiles() {
+  document.querySelector("#files-all-display-button");
+  console.log("Activities");
+}
+
+export function displaygeojsonFiles() {
+  document.querySelector("#files-all-display-button");
+  console.log("geoJSON");
+}
 
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
 const savedAreasUpload = document.querySelector("#saved-areas-upload");
 
 export function initialiseSavedAreas(draw) {
-  const savedAreasSearch = document.querySelector("#saved-areas-search");
 
-  savedAreasSearch.addEventListener("change", savedSearchChanged);
+  const filesSearch = document.querySelector("#file-search");
+
+  filesSearch.addEventListener("change", savedSearchChanged);
 
   savedAreasUpload.oninput = importFiles;
   document.querySelector("#saved-areas-export-button").onclick = exportFiles;
 
   document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
   document.querySelector("#folder-button").onclick = () => {
+    console.log(savedAreasOpen);
     if (!savedAreasOpen) openSavedAreas();
     else closeSavedAreas();
   };
@@ -280,20 +318,27 @@ if (savedAreas.length == 0) {
   }
 }
 
-const savedAreasContainerEle = document.querySelector("#saved-areas-container");
-const savedAreasListEle = document.querySelector("#saved-areas-list");
-const savedAreasSearch = document.querySelector("#saved-areas-search");
+//if no activites make some temp ones for demo
+if (savedActivties.length == 0) {
+  savedActivties.push(new Activity("Mission over Sheff Hallam Uni",new Date("2024-03-22"), ));
+  savedActivties.push(new Activity("Incident in London",new Date("2025-12-04"), ));
+  saveSavedAreas();
+}
+
+const filesContainerEle = document.querySelector("#file-container");
+const filesListEle = document.querySelector("#file-list");
+const filesSearch = document.querySelector("#file-search");
 
 let searchedAreas = savedAreas;
 
 const savedSearchChanged = () => {
-  if (savedAreasSearch.value.length == 0) {
+  if (filesSearch.value.length == 0) {
     searchedAreas = savedAreas;
     openSavedAreas();
   } else {
     let tempArray = [];
     savedAreas.forEach((area) => {
-      if (area.name.includes(savedAreasSearch.value) == true) {
+      if (area.name.includes(filesSearch.value) == true) {
         tempArray.push(area);
       }
     });
@@ -306,22 +351,32 @@ const savedSearchChanged = () => {
 
 let savedAreasOpen = false;
 const openSavedAreas = () => {
-  savedAreasListEle.replaceChildren();
+  if (fileDisplayMode == 1) { //Activities
+
+  } else if (fileDisplayMode == 2) { //GeoJSONS
+
+  } else { //All
+
+  }
+  filesListEle.replaceChildren();
   searchedAreas.forEach((savedArea) => {
     var tempContent = "";
+    const filesContainerEle = document.createElement("div");
+    filesContainerEle.className =
+      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
     const savedAreaContainerEle = document.createElement("div");
     savedAreaContainerEle.className =
-      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
+      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-inset ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
     const savedAreaCheckboxEle = document.createElement("input");
     savedAreaCheckboxEle.type = "checkbox";
     savedAreaCheckboxEle.name = "saved-area-checkbox";
     savedAreaCheckboxEle.className =
       "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
-    savedAreaContainerEle.append(savedAreaCheckboxEle);
-    const savedAreaNameEle = document.createElement("span");
-    savedAreaNameEle.className = "grow my-auto";
-    savedAreaNameEle.textContent = savedArea.properties.name;
-    savedAreaContainerEle.append(savedAreaNameEle);
+    filesContainerEle.append(savedAreaCheckboxEle);
+    const fileNameEle = document.createElement("span");
+    fileNameEle.className = "grow my-auto";
+    fileNameEle.textContent = savedArea.properties.name;
+    filesContainerEle.append(fileNameEle);
     const savedAreaViewButtonEle = document.createElement("button");
     const savedAreaEditButtonEle = document.createElement("button");
     const savedAreaDeleteButtonEle = document.createElement("button");
@@ -475,14 +530,14 @@ const openSavedAreas = () => {
         refreshSavedScreen();
       }
     };
-    savedAreaContainerEle.append(savedAreaViewButtonEle);
-    savedAreaContainerEle.append(savedAreaEditButtonEle);
-    savedAreaContainerEle.append(savedAreaDeleteButtonEle);
-    savedAreasListEle.append(savedAreaContainerEle);
+    filesContainerEle.append(savedAreaViewButtonEle);
+    filesContainerEle.append(savedAreaEditButtonEle);
+    filesContainerEle.append(savedAreaDeleteButtonEle);
+    filesListEle.append(filesContainerEle);
   });
   savedAreasOpen = true;
-  savedAreasContainerEle.classList.remove("hidden");
-  savedAreasContainerEle.focus();
+  filesContainerEle.classList.remove("hidden");
+  filesContainerEle.focus();
 };
 
 const importFiles = () => {
@@ -586,7 +641,7 @@ const refreshSavedScreen = () => {
 
 const closeSavedAreas = () => {
   savedAreasOpen = false;
-  savedAreasContainerEle.classList.add("hidden");
+  filesContainerEle.classList.add("hidden");
 };
 
 function openFile() {

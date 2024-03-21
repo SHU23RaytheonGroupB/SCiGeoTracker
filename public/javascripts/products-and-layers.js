@@ -83,7 +83,7 @@ async function addProductsToMap() {
     features: allProducts.map((product) => ({
       type: "Feature",
       geometry: product.footprint,
-      attributes: {
+      properties: {
         id: product.identifier,
         type: product.type,
         title: product.title,
@@ -92,6 +92,7 @@ async function addProductsToMap() {
         date_start: product.objectstartdate,
         date_end: product.objectenddate,
         pub: product.publisher,
+        covered_area_km: turf.area(product.footprint) / 1000000 ?? 0,
       },
     })),
   };
@@ -103,7 +104,7 @@ async function addProductsToMap() {
         type: "Point",
         coordinates: product.centre != null ? product.centre.split(",").reverse() : [],
       },
-      attributes: {
+      properties: {
         id: product.identifier,
         type: product.type,
         title: product.title,
@@ -113,6 +114,7 @@ async function addProductsToMap() {
         date_end: product.objectenddate,
         mission_group: product.title.split(" ")[0],
         scene_name: product.title.split(" ")[1],
+        covered_area_km: turf.area(product.footprint) / 1000000 ?? 0,
       },
       cluster: true,
       clusterMaxZoom: 9,
@@ -140,6 +142,21 @@ async function addProductsToMap() {
   // BORDER LAYER - TEMP
   addBorderLayer("uk-land");
 };
+
+export const layerNames = [
+  "product-polygons-frames-fill",
+  "product-polygons-frames-outline",
+  // "country-boundaries-borders",
+  // "country-boundaries-choropleth",
+  // "region-boundaries-borders",
+  // "region-boundaries-choropleth",
+  // "product-cluster-unclustered-label",
+  // "product-cluster-unclustered",
+  // "product-cluster-label",
+  // "product-cluster-density",
+  // "uk-land-border-fill",
+  // "uk-land-border-outline",
+];
 
 export function addSource(title, data) {
   map.addSource(title, {
