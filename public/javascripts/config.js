@@ -22,7 +22,7 @@ export const productFillColours = {
 
 export const productOutlineColours = {
   SCENE: "#000000", //BLACK
-  DOCUMENT: "#000000", //BLACK
+  FRAME: "#808080", //GREY
 };
 
 export const MapStyle = {

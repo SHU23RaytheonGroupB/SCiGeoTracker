@@ -102,7 +102,6 @@
         >
           <img class="h-6 w-6" src="images/moon-4-64.png" alt="Display timeline" />
         </button>
-        
       </div>
 
       <div class="w-40 pointer-events-auto h-fit grow-0">
@@ -150,8 +149,8 @@
               class="block px-4 py-2 text-sm dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
               role="menuitem"
               tabindex="-1"
-              id="frames-item"
-              >Frames</a
+              id="scenes-item"
+              >Scenes</a
             >
             <a
               href="#"
@@ -543,20 +542,19 @@
         </button>
       </div>
     </div>
-
     <div
       id="flyto-mission-info-container"
       class="absolute z-20 w-100 px-4 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 start-20"
       style="display: none"
     >
       <div class="flex flex-row gap-2 px-1">
-        <h2 id="flyto-mission-title" class="dark:text-neutral-300 text-neutral-500 grow font-bold">Mission Data</h2>
+        <h2 id="flyto-mission-title" class="dark:text-neutral-300 text-neutral-500 grow font-bold"></h2>
         <button type="button" id="flyto-mission-info-close-button" class="ml-auto">
           <img class="h-3 w-3" src="images/icons8-close-90.png" />
         </button>
       </div>
       <div class="my-2 px-1">
-        <table class="table-auto border-separate border-spacing-y-1.5 w-full">
+        <table class="table-auto border-separate border-spacing-1.5 w-full">
           <tbody>
             <tr>
               <td id="flyto-mission-scene-title" class="font-light dark:text-neutral-400 text-neutral-500">
@@ -564,15 +562,6 @@
               </td>
               <td
                 id="flyto-mission-scene-name"
-                class="font-medium text-right dark:text-neutral-200 text-neutral-500"
-              ></td>
-            </tr>
-            <tr>
-              <td id="flyto-mission-mission-title" class="font-light dark:text-neutral-400 text-neutral-500">
-                Mission Name
-              </td>
-              <td
-                id="flyto-mission-mission-name"
                 class="font-medium text-right dark:text-neutral-200 text-neutral-500"
               ></td>
             </tr>
@@ -592,18 +581,37 @@
           </tbody>
         </table>
       </div>
-
+      <div class="mb-2">
+        <div class="relative inline-block w-full">
+          <select
+            id="flyto-mission-scene-select"
+            class="block appearance-none w-full bg-neutral-800 border border-neutral-600 hover:border-neutral-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+          >
+            <option>Select Scene</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
+            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
+      </div>
       <div>
-        <button
-          type="button"
-          id="flyto-mission-info-view-button"
-          class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
-        >
-          View
-        </button>
+        <div class="relative inline-block w-full">
+          <select
+            id="flyto-mission-frame-select"
+            class="block appearance-none w-full bg-neutral-800 border border-neutral-600 hover:border-neutral-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+          >
+            <option>Select Frame within Scene</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
+            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
-
     <div
       id="saved-areas-container"
       class="absolute z-30 w-96 h-fit px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-0 bottom-0 right-0 left-0 m-auto"

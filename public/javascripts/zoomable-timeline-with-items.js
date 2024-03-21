@@ -3,8 +3,10 @@
 
 import { allProducts } from "./products-and-layers.js";
 import { displayMissionMenu, viewSelectedMission } from "./mission-popout-menu.js";
+import { mapFlyTo } from "./map.js";
 
 let missionID;
+let scenes = [];
 
 export function Timeline(options) {
   const axis = {};
@@ -26,6 +28,7 @@ export function Timeline(options) {
     start: new Date(myData[i].attributes.date_start),
     end: new Date(myData[i].attributes.date_end),
     missionName: myData[i].attributes.title.split(" ")[0],
+    missionID: myData[i].attributes.missionid,
     sceneName: myData[i].attributes.title.split(" ")[1],
   }));
 
@@ -301,7 +304,7 @@ export function Timeline(options) {
               .style("fill-opacity", 0.4)
               .style("cursor", "pointer")
               .on("click", function (event, d) {
-                circleLinkZoom(d.id);
+                circleLinkZoom(d.id, d.missionID);
               })
               .attr("r", 4)
               .attr("mission", (d) => d.missionName)
@@ -383,7 +386,7 @@ button2.addEventListener("click", () => {
 let viewMissionButton = document.getElementById("flyto-mission-info-view-button");
 //viewMissionButton.addEventListener("click", async () => viewSelectedMission(missionID));
 
-async function circleLinkZoom(productID) {
+async function circleLinkZoom(productID, missionID) {
   let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {
     reset.style.fill = "red";
@@ -396,17 +399,19 @@ async function circleLinkZoom(productID) {
       missionName = product.title.split(" ")[0];
       missionID = product.missionid;
       currentProduct = product;
-      map.flyTo({
-        center: product.centre.split(",").reverse(),
-        zoom: 11,
-        essential: true,
-      });
+      mapFlyTo(product);
+    }
+    if (product.missionid === missionID) {
+      scenes.push(product);
     }
   });
   let circleGroup = document.querySelectorAll('circle[mission="' + missionName + '"]');
   circleGroup.forEach((circle) => {
     circle.style.fill = "blue";
   });
-  viewSelectedMission(missionID);
-  displayMissionMenu(currentProduct);
+  console.log("scenes");
+  console.log(scenes);
+  const frames = await viewSelectedMission(missionID);
+  //console.log(frames);
+  displayMissionMenu(currentProduct, scenes, frames);
 }

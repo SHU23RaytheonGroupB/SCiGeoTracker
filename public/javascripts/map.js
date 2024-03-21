@@ -66,3 +66,11 @@ map.on("zoom", (ev) => {
   renderOverlaysZoom();
   updateScaleBar();
 });
+
+export function mapFlyTo(product) {
+  map.flyTo({
+    center: product.centre.split(",").reverse(),
+    zoom: 11,
+    essential: true,
+  });
+}
