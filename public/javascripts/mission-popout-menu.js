@@ -1,8 +1,10 @@
-import { addSelectedMissionFramesToMap, hideFrames } from "./products-and-layers.js";
+import { mapFlyTo } from "./map.js";
+import { addSelectedMissionFramesToMap, hideFrames, highlightSelectedFrame } from "./products-and-layers.js";
 
 export function displayMissionMenu(currentProduct, scenes, frames) {
   let missionMenu = document.getElementById("flyto-mission-info-container");
   missionMenu.style.display = null;
+
   document.getElementById("flyto-mission-title").innerHTML = "Mission Data - " + currentProduct.title.split(" ")[0];
   document.getElementById("flyto-mission-scene-name").innerHTML = currentProduct.title.split(" ")[1];
   document.getElementById("flyto-mission-mission-id").innerHTML = currentProduct.identifier;
@@ -17,42 +19,70 @@ export function displayMissionMenu(currentProduct, scenes, frames) {
   const sceneSelect = document.getElementById("flyto-mission-scene-select");
   const frameSelect = document.getElementById("flyto-mission-frame-select");
 
+  // Clear previous scene options
+  sceneSelect.innerHTML = "<option value='' disabled selected hidden>Select Scene</option>";
+
+  // Clear previous frame options
+  frameSelect.innerHTML = "<option value='' disabled selected hidden>Select Frame within Scene</option>";
+  frameSelect.disabled = true;
+
   // Populate scene dropdown
   scenes.forEach((scene) => {
     const option = document.createElement("option");
     option.value = scene.identifier;
     option.textContent = scene.title.split(" ")[1];
+
+    // Set the selected attribute if the scene matches the current product's scene
+    if (scene.title.split(" ")[1] === currentProduct.title.split(" ")[1]) {
+      option.selected = true;
+    }
+
     sceneSelect.appendChild(option);
   });
+
+  // Populate frame dropdown for the initially selected scene
+  populateFrameDropdown(currentProduct.title.split(" ")[1], frames, frameSelect);
 
   // Event listener for scene selection
   sceneSelect.addEventListener("change", () => {
     const selectedSceneId = sceneSelect.value;
     const selectedScene = scenes.find((scene) => scene.identifier === selectedSceneId);
-    console.log("Selected scene:", selectedScene.title);
+    mapFlyTo(selectedScene);
+    // Update the flyto-mission-scene-name element with the selected scene name
+    document.getElementById("flyto-mission-scene-name").innerHTML = selectedScene.title.split(" ")[1];
 
     // Clear previous frame options
-    frameSelect.innerHTML = "<option>Select Frame within Scene</option>";
+    frameSelect.innerHTML = "<option value='' disabled selected hidden>Select Frame within Scene</option>";
     frameSelect.disabled = true;
 
-    if (selectedScene) {
-      // Populate frame dropdown based on selected scene
-      const filteredFrames = frames.filter((frame) => frame.title.includes(selectedScene.title.split(" ")[1]));
-      filteredFrames.forEach((frame) => {
-        const option = document.createElement("option");
-        option.value = frame.identifier;
-        option.textContent = frame.title.split(" ")[3];
-        frameSelect.appendChild(option);
-      });
-      frameSelect.disabled = false;
-    }
+    populateFrameDropdown(selectedScene.title.split(" ")[1], frames, frameSelect);
   });
 
   // Event listener for frame selection
   frameSelect.addEventListener("change", () => {
     const selectedFrameId = frameSelect.value;
-    console.log("Selected frame:", selectedFrameId);
+    highlightSelectedFrame(selectedFrameId);
   });
+}
+
+function populateFrameDropdown(sceneName, frames, frameSelect) {
+  const filteredFrames = frames.filter((frame) => frame.title.includes(sceneName));
+
+  // Sort filtered frames based on the number after "F"
+  filteredFrames.sort((a, b) => {
+    const numA = parseInt(a.title.split("F")[1]);
+    const numB = parseInt(b.title.split("F")[1]);
+    return numA - numB;
+  });
+
+  filteredFrames.forEach((frame) => {
+    const option = document.createElement("option");
+    option.value = frame.identifier;
+    option.textContent = `F${frame.title.split("F")[1]}`;
+    frameSelect.appendChild(option);
+  });
+
+  frameSelect.disabled = false;
 }
 
 function closedisplayMissionMenu() {

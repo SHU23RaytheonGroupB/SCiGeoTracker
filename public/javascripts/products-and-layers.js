@@ -172,6 +172,38 @@ export function addSource(title, data) {
   });
 }
 
+export function highlightSelectedFrame(frame) {
+  let selectedMissionFrames = window.map.getSource("selected-mission-frames");
+
+  let singleFrameFeature = {
+    type: "FeatureCollection",
+    features: [],
+  };
+
+  for (let i = 0; i < selectedMissionFrames.length; i++) {
+    let product = selectedMissionFrames[i];
+    if (product.identifier === frame.identifier) {
+      singleFrameFeature.features.push({
+        type: "Feature",
+        geometry: product.footprint,
+        attributes: {
+          id: product.identifier,
+          type: product.type,
+          title: product.title,
+          mission_id: product.missionid,
+          date_created: product.datecreated,
+          date_start: product.objectstartdate,
+          date_end: product.objectenddate,
+          pub: product.publisher,
+        },
+      });
+      break; // Exit the loop after finding the matching frame
+    }
+  }
+
+  addSelectedFrameLayer(singleFrameFeature);
+}
+
 export function hideFrames() {
   if (window.map.getSource("selected-mission-frames")) {
     window.map.setLayoutProperty("selected-mission-frames-outline", "visibility", "none");
@@ -189,6 +221,21 @@ function addFramesLayers(title) {
     paint: {
       "line-color": productOutlineColours["SCENE"],
       "line-width": 1,
+    },
+  });
+}
+
+function addSelectedFrameLayer(title) {
+  map.addLayer({
+    id: `${title}-highlight`,
+    type: "line",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours[mapStyle.currentStyle]["FRAME"],
+      "fill-opacity": 0.2,
     },
   });
 }
