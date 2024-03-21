@@ -107,3 +107,4 @@ export async function viewSelectedMission(missionID) {
 function closeMissionInfo() {
   missionMenu.classList.add("hidden");
 }
+}

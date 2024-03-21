@@ -7,7 +7,6 @@ import { mapFlyTo } from "./map.js";
 
 let missionID;
 let scenes = [];
-import { circleLinkZoom } from "./map.js";
 
 export function Timeline(options) {
   const axis = {};
