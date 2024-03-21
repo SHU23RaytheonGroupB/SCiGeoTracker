@@ -24,7 +24,8 @@ let loaded = false;
 
 var popup = new mapboxgl.Popup({
   closeButton: false,
-  closeOnClick: false
+  closeOnClick: false,
+  maxWidth: 500,
 });
 
 map.on("load", async () => {
@@ -106,10 +107,9 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   mostRecentHover = e;
   const coordinates = e.features[0].geometry.coordinates[0].slice();
   var eProps = e.features[0].properties;
-  var start = new Date(eProps.date_start).toString();
-  start = start.split(" ").slice(0, -4).join(" ");
-  var end = new Date(eProps.date_end).toString();
-  end = end.split(" ").slice(0, -4).join(" ");
+  console.log(e.features[0].properties.date_start);
+  var start = new Date(eProps.date_start);
+  var end = new Date(eProps.date_end);
   var newE = {
     footprint: {
       type: "Polygon",
@@ -121,7 +121,27 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   const totalArea = turf.area(window.map.getSource("uk-land")._data) / 1000000; //divide by 1000 to get square km
   const coveragePercentage = Math.round((multis / totalArea) * 10000) / 1000;
 
-  var description = `Name: ${eProps.title}<br>Mission started: ${ start }<br>Mission ended: ${ end }<br>Land coverage (%): ${ coveragePercentage }`;
+  var description = `
+<table class="table-auto border-separate border-spacing-x-2">
+  <tbody>
+    <tr>
+      <td class="font-semibold">Name</td>
+      <td class="font-regular">${eProps.title}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Mission started</td>
+      <td class="font-regular">${start.toLocaleString()}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Mission ended</td>
+      <td class="font-regular">${end.toLocaleString()}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Land coverage</td>
+      <td class="font-regular">${coveragePercentage}%</td>
+    </tr>
+  </tbody>
+</table>`;
 
   var lng = 0;
   var lat = coordinates[0][1];
@@ -145,6 +165,7 @@ map.on('mouseleave', 'product-polygons-frames-fill', () => {
     window.map.removeSource('mission-area-within-poly');
   } 
 });
+
 
 map.on('click', 'product-polygons-frames-fill', (e) => {
   var cent = e.lngLat;
