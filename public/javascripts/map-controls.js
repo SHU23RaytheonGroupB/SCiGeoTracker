@@ -271,14 +271,14 @@ function initialiseCursorButtons() {
   };
 
   moveButtonEle.onclick = selectMoveCursor;
-  rectangleButtonEle.onclick = selectRectangleCursor;
+  //rectangleButtonEle.onclick = selectRectangleCursor;
   polygonButtonEle.onclick = selectPolygonCursor;
   selectMoveCursor();
 }
 
 function deselectAllCursors() {
   moveButtonEle.classList.remove(...cursorSelectedClasses);
-  rectangleButtonEle.classList.remove(...cursorSelectedClasses);
+  //rectangleButtonEle.classList.remove(...cursorSelectedClasses);
   polygonButtonEle.classList.remove(...cursorSelectedClasses);
 }
 
