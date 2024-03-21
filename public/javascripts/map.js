@@ -149,6 +149,7 @@ map.on("mouseleave", "product-polygons-frames-fill", () => {
     window.map.removeSource("mission-area-within-poly");
   }
 });
+<<<<<<< HEAD
 
 map.on("click", "product-polygons-frames-fill", (e) => {
   map.flyTo({
@@ -157,3 +158,5 @@ map.on("click", "product-polygons-frames-fill", (e) => {
     essential: true,
   });
 });
+=======
+>>>>>>> parent of 8f35fa3 (Merge pull request #23 from SHU23RaytheonGroupB/onHover-clickFeatures)
