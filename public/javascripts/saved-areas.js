@@ -311,7 +311,7 @@ const openSavedAreas = () => {
     var tempContent = "";
     const savedAreaContainerEle = document.createElement("div");
     savedAreaContainerEle.className =
-      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
+      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-inset ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
     const savedAreaCheckboxEle = document.createElement("input");
     savedAreaCheckboxEle.type = "checkbox";
     savedAreaCheckboxEle.name = "saved-area-checkbox";
