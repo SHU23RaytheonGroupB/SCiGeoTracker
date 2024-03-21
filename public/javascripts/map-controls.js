@@ -25,8 +25,8 @@ const displayGeojsonButtonEle = document.querySelector("#files-geojson-display-b
 const cursorSelectedClasses = [
   "dark:bg-neutral-700",
   "dark:hover:bg-neutral-600/90",
-  "bg-neutral-200/90",
-  "hover:bg-neutral-200/30",
+  "bg-neutral-300/90",
+  "hover:bg-neutral-400/90",
 ];
 
 const zoomScrollButtonEle = document.querySelector("#zoom-scroll-button");
@@ -159,7 +159,7 @@ function setZoomByPercentage(percentage) {
 }
 
 function dragMouseDown(e) {
-  e.preventDefault();
+  // e.preventDefault();
   const boundingRect = zoomScrollButtonEle.parentElement.getBoundingClientRect();
   barTop = boundingRect.top + 12;
   barBottom = boundingRect.bottom - 12;

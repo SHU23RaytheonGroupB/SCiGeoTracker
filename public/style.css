@@ -1,19 +1,5 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
-}
-
-.mapboxgl-popup {
-  max-width: 400px;
-  font:
-      12px/20px 'Helvetica Neue',
-      Arial,
-      Helvetica,
-      sans-serif;
+:root {
+  --bg: #f8f8f8e3;
 }
 
 :root.dark {
