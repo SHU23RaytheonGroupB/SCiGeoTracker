@@ -3,6 +3,7 @@ import { initialiseLayerMenu } from "./products-and-layers.js";
 import { mapStyle, MapStyle, minZoom, maxZoom, CursorMode } from "./config.js";
 import { initialiseSavedAreas, displayAllFiles, displayActivitiesFiles, displaygeojsonFiles } from "./saved-areas.js";
 import { initialiseSearchBar } from "./search-bar.js";
+import { initialiseFilterMenu } from "./filter-menu.js";
 
 export let fileDisplayMode = 0;
 let cursorMode;
@@ -150,6 +151,7 @@ export function initialiseControls() {
   initialiseZoomButtons();
   initialiseSearchBar();
   initialiseSavedAreas(draw);
+  initialiseFilterMenu();
 }
 
 export function renderOverlaysZoom() {

@@ -11,18 +11,18 @@ export function Timeline(options) {
   myData = Array.from({ length: myData.length }, (x, i) => ({
     title:
       "Mission: " +
-      myData[i].attributes.title.split(" ")[0] +
+      myData[i].properties.title.split(" ")[0] +
       "\n" +
       "Scene: " +
-      myData[i].attributes.title.split(" ")[1] +
+      myData[i].properties.title.split(" ")[1] +
       "\n" +
       "Publisher: " +
-      myData[i].attributes.pub +
+      myData[i].properties.pub +
       "\n",
-    id: myData[i].attributes.id,
-    start: new Date(myData[i].attributes.date_start),
-    end: new Date(myData[i].attributes.date_end),
-    missionGroup: myData[i].attributes.title.split(" ")[0],
+    id: myData[i].properties.id,
+    start: new Date(myData[i].properties.date_start),
+    end: new Date(myData[i].properties.date_end),
+    missionGroup: myData[i].properties.title.split(" ")[0],
   }));
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
