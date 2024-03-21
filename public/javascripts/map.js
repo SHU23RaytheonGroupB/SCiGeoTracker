@@ -185,6 +185,7 @@ map.on('click', 'product-polygons-frames-fill', (e) => {
     zoom: 10.5,
     essential: true,
   });
+  //JOBY PUT CODE HERE
 });
 
 map.on('mouseenter', 'product-cluster-density', () => {
