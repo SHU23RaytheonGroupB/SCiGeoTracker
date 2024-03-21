@@ -38,13 +38,12 @@ export function initialiseFilterMenu() {
       endDate = e.target.valueAsDate;
     };
     filterMissionMinCoverageEle.oninput = (e) => {
-      // minCoverage = e.target.valueAsNumber;
-      minCoverage = 0.00001;
+      minCoverage = e.target.valueAsNumber;
       layerNames.forEach((layername) => {
         // const filter = ['>=', ['get', 'covered_area_km'], minCoverage];
         const filter = ['>=', 'covered_area_km', minCoverage];
         window.map.setFilter(layername, filter);
-        console.log(window.map.getSource("product-polygons")._data.features[0].attributes);
+        console.log(window.map.getSource("product-polygons")._data.features[0].properties);
         console.log(layername, ['>=', ['get', 'covered_area_km'], minCoverage]);
       });
     };

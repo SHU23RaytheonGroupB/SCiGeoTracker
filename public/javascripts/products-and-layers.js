@@ -83,7 +83,7 @@ async function addProductsToMap() {
     features: allProducts.map((product) => ({
       type: "Feature",
       geometry: product.footprint,
-      attributes: {
+      properties: {
         id: product.identifier,
         type: product.type,
         title: product.title,
@@ -104,7 +104,7 @@ async function addProductsToMap() {
         type: "Point",
         coordinates: product.centre != null ? product.centre.split(",").reverse() : [],
       },
-      attributes: {
+      properties: {
         id: product.identifier,
         type: product.type,
         title: product.title,
