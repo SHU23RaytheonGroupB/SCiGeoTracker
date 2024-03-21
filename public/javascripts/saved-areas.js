@@ -405,8 +405,6 @@ if (savedActivties.length == 0) {
   };
   var FCfeatureHallam = [];
   FCfeatureHallam.push(featureHallam);
-  console.log(FCfeatureHallam[0]);
-  console.log(0);
 
   savedActivties.push(
     new Activity("Mission over Sheff Hallam Uni", new Date("2024-03-22"), FCfeatureHallam, "Client meeting :)")
@@ -442,22 +440,33 @@ const filesListEle = document.querySelector("#file-list");
 const filesSearch = document.querySelector("#file-search");
 
 let searchedAreas = savedAreas;
+let searchedActivities = savedActivties;
 
 const savedSearchChanged = () => {
   if (filesSearch.value.length == 0) {
+    searchedActivities = savedActivties;
     searchedAreas = savedAreas;
     openSavedAreas();
   } else {
-    let tempArray = [];
+    let tempSavedArray = [];
+    let tempSearchedArray = [];
     savedAreas.forEach((area) => {
-      if (area.name.includes(filesSearch.value) == true) {
-        tempArray.push(area);
+      if (area.properties.name.toLowerCase().includes(filesSearch.value.toLowerCase().trim()) == true) {
+        tempSavedArray.push(area);
       }
     });
-    if (tempArray != searchedAreas) {
-      searchedAreas = tempArray;
-      openSavedAreas();
+    savedActivties.forEach((activity) => {
+      if (activity.name.toLowerCase().includes(filesSearch.value.toLowerCase().trim()) == true) {
+        tempSearchedArray.push(activity);
+      }
+    });
+    if (tempSavedArray != searchedAreas) {
+      searchedAreas = tempSavedArray;
     }
+    if (tempSearchedArray != searchedActivities) {
+      searchedActivities = tempSearchedArray;
+    }
+    openSavedAreas();
   }
 };
 
@@ -468,7 +477,7 @@ const openSavedAreas = () => {
   //console.log(fileDisplayMode);
   if (fileDisplayMode == 1) {
     //Activities
-    savedActivties.forEach((savedActivty) => {
+    searchedActivities.forEach((savedActivty) => {
       displaySavedActivty(savedActivty);
     });
   } else if (fileDisplayMode == 2) {
@@ -478,7 +487,7 @@ const openSavedAreas = () => {
     });
   } else {
     //All
-    savedActivties.forEach((savedActivty) => {
+    searchedActivities.forEach((savedActivty) => {
       displaySavedActivty(savedActivty);
     });
     searchedAreas.forEach((savedArea) => {
@@ -563,7 +572,6 @@ function displaySavedActivty(savedActivty) {
     } else {
       var mapSource = window.map.getSource(savedActivty.name + "-CUSTOM");
       if (mapSource == undefined) {
-        console.log(savedActivty);
         window.map.addSource(savedActivty.name + "-CUSTOM", {
           type: "geojson",
           data: savedActivty.areaPoly[0].geometry,
@@ -715,7 +723,6 @@ function displaySavedArea(savedArea) {
   filesContainerEle.append(savedAreaCheckboxEle);
   const fileNameEle = document.createElement("span");
   fileNameEle.className = "grow my-auto";
-  console.log(savedArea);
   fileNameEle.textContent = savedArea.properties.name;
   filesContainerEle.append(fileNameEle);
   const savedAreaViewButtonEle = document.createElement("button");
@@ -767,7 +774,7 @@ function displaySavedArea(savedArea) {
       fileNameEle.textContent = tempContent;
     } else {
       var mapSource = map.getSource(savedArea.properties.name + "-CUSTOM");
-      console.log(savedArea);
+      
       if (mapSource == undefined) {
         map.addSource(savedArea.properties.name + "-CUSTOM", {
           type: "geojson",
@@ -849,7 +856,6 @@ function displaySavedArea(savedArea) {
     }
   };
   savedAreaEditButtonEle.onclick = () => {
-    console.log(fileNameEle.contentEditable);
     if (fileNameEle.contentEditable == "false" || fileNameEle.contentEditable == "inherit") {
       tempContent = fileNameEle.textContent;
       fileNameEle.contentEditable = "true";
@@ -950,7 +956,6 @@ const exportFiles = () => {
   if (selectedAreas.length == 0) {
     alert("No areas selected"); //maybe change this for something less intrusive
   } else {
-    console.log(selectedAreas);
     selectedAreas.forEach((area) => {
 
       var file = new File([JSON.stringify(area.features[0].geometry)], area.properties.name + ".geojson", { type: "geojson" });

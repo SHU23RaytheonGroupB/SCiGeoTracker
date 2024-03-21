@@ -107,7 +107,6 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   mostRecentHover = e;
   const coordinates = e.features[0].geometry.coordinates[0].slice();
   var eProps = e.features[0].properties;
-  console.log(e.features[0].properties.date_start);
   var start = new Date(eProps.date_start);
   var end = new Date(eProps.date_end);
   var newE = {
@@ -200,7 +199,6 @@ map.on('mouseleave', 'product-cluster-density', () => {
 
 map.on('click', 'product-cluster-density', (e) => {
   var features = map.queryRenderedFeatures(e.point, { layers: ['product-cluster-density'] });
-  console.log(features[0].properties);  
   var points = 14 - features[0].properties.point_count;
   if(points < 5) points = 5;
   if (points != 1){
