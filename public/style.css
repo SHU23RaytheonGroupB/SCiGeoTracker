@@ -16,20 +16,26 @@ a {
       sans-serif;
 }
 
-.calculation-box {
-  height: 75px;
-  width: 150px;
-  position: absolute;
-  bottom: 40px;
-  left: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 15px;
-  text-align: center;
-  }
-   
-  p {
-  font-family: 'Open Sans';
-  margin: 0;
-  font-size: 13px;
+:root.dark {
+  --bg: #151515e3 !important;
+}
 
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip {
+  border-top-color: var(--bg) !important;
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip {
+  border-bottom-color: var(--bg) !important;
+}
+
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: var(--bg) !important;
+}
+
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: var(--bg) !important;
+}
+
+.mapboxgl-popup-content {
+  background: var(--bg) !important;
 }
