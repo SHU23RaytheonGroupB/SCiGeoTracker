@@ -2,11 +2,13 @@
 //add elements here to drag divs, make sure tailwind margis are not set. 'm'
 dragElement(document.getElementById("timeline-container"));  
 dragElement(document.getElementById("histogram-popout-container"));
-dragElement(document.getElementById("saved-areas-container"));
 dragElement(document.getElementById("flyto-mission-info-container"));
 dragElement(document.getElementById("filter-menu-container"));
+dragElement(document.getElementById("file-container"));
+dragElement(document.getElementById("saved-areas-container"));
 
 function dragElement(ele) {
+  if (ele == null) return;
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   const headerEle = document.getElementById(ele.id.replace("container", "header"));
   if (headerEle) {
