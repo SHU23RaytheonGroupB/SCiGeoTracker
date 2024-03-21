@@ -31,20 +31,34 @@ export function initialiseFilterMenu() {
     const filterMissionEndEle = document.querySelector("#filter-end-date");
     const filterMissionMinCoverageEle = document.querySelector("#filter-min-coverage");
     let startDate, endDate, minCoverage;
+    const updateFilter = () => {
+      layerNames.forEach((layername) => {
+        const filter = [
+          'all',
+        ];
+        if (minCoverage && minCoverage > 0) {
+          filter.push(['>=', 'covered_area_km', minCoverage]);
+        }
+        if (startDate) {
+          filter.push(['>=', 'date_end', startDate.getTime()]);
+        }
+        if (endDate) {
+          filter.push(['<=', 'date_start', endDate.getTime()]);
+        }
+        window.map.setFilter(layername, filter);
+      });
+    };
     filterMissionStartEle.onchange = (e) => {
       startDate = e.target.valueAsDate;
+      updateFilter();
     };
     filterMissionEndEle.onchange = (e) => {
       endDate = e.target.valueAsDate;
+      endDate.setUTCHours(23, 59, 59, 999);
+      updateFilter();
     };
     filterMissionMinCoverageEle.oninput = (e) => {
       minCoverage = e.target.valueAsNumber;
-      layerNames.forEach((layername) => {
-        // const filter = ['>=', ['get', 'covered_area_km'], minCoverage];
-        const filter = ['>=', 'covered_area_km', minCoverage];
-        window.map.setFilter(layername, filter);
-        console.log(window.map.getSource("product-polygons")._data.features[0].properties);
-        console.log(layername, ['>=', ['get', 'covered_area_km'], minCoverage]);
-      });
+      updateFilter();
     };
   }
