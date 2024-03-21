@@ -104,4 +104,6 @@ export async function viewSelectedMission(missionID) {
     console.error("Error:", error);
   }
 
+function closeMissionInfo() {
+  missionMenu.classList.add("hidden");
 }

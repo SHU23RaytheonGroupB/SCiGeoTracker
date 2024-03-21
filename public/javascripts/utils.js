@@ -17,6 +17,11 @@ export function getDistance(latlng1, latlng2) {
   return maxMeters;
 }
 
+export function getZoomFromDistance(dist) {
+  var zoom = 10;
+  return zoom
+}
+
 export function getRoundNum(num) {
   const pow10 = Math.pow(10, (Math.floor(num) + "").length - 1);
   let d = num / pow10;

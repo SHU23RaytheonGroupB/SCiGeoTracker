@@ -1,8 +1,10 @@
-import { initialiseProducts } from "./products-and-layers.js";
+import { displayMissionMenu } from "./mission-popout-menu.js";
+import { initialiseProducts, allProducts } from "./products-and-layers.js";
 import { mapStyle, minZoom, maxZoom } from "./config.js";
 import { getRoundNum, getDistance } from "./utils.js";
 import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
 import { Timeline } from "./zoomable-timeline-with-items.js";
+import { createHistogramChart } from "./histogram-popout.js";
 import { calculateMissionCoverage } from "./area-calculations.js";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
@@ -16,11 +18,14 @@ window.map = new mapboxgl.Map({
   attributionControl: false,
 });
 
+
+
 let loaded = false;
 
 var popup = new mapboxgl.Popup({
   closeButton: false,
   closeOnClick: false,
+  maxWidth: 500,
 });
 
 map.on("load", async () => {
@@ -38,7 +43,6 @@ map.on("load", async () => {
   document.querySelector("#timeline").appendChild(timeline.element);
 
   loaded = true; //used so style is not loaded before data is requested
-  console.log("working");
 });
 
 map.on("style.load", async () => {
@@ -106,32 +110,51 @@ export async function circleLinkZoom(d) {
   displayMissionMenu(currentProduct);
 }
 
-map.on("mouseenter", "product-polygons-frames-fill", (e) => {
-  map.getCanvas().style.cursor = "pointer";
+map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
   const coordinates = e.features[0].geometry.coordinates[0].slice();
   var eProps = e.features[0].properties;
-  var start = new Date(eProps.date_start).toString();
-  start = start.split(" ").slice(0, -4).join(" ");
-  var end = new Date(eProps.date_end).toString();
-  end = end.split(" ").slice(0, -4).join(" ");
+  console.log(e.features[0].properties.date_start);
+  var start = new Date(eProps.date_start);
+  var end = new Date(eProps.date_end);
   var newE = {
     footprint: {
       type: "Polygon",
-      coordinates: [coordinates],
+      coordinates: [coordinates]
     },
   };
-
-  var multis = calculateMissionCoverage([newE], window.map.getSource("uk-land")._data.features[0].geometry.coordinates);
+ 
+  var multis = calculateMissionCoverage([newE], window.map.getSource("uk-land")._data.features[0].geometry.coordinates) 
   const totalArea = turf.area(window.map.getSource("uk-land")._data) / 1000000; //divide by 1000 to get square km
   const coveragePercentage = Math.round((multis / totalArea) * 10000) / 1000;
 
-  var description = `Name: ${eProps.title}<br>Mission started: ${start}<br>Mission ended: ${end}<br>Land coverage (%): ${coveragePercentage}`;
+  var description = `
+<table class="table-auto border-separate border-spacing-x-2">
+  <tbody>
+    <tr>
+      <td class="font-semibold">Name</td>
+      <td class="font-regular">${eProps.title}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Mission started</td>
+      <td class="font-regular">${start.toLocaleString()}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Mission ended</td>
+      <td class="font-regular">${end.toLocaleString()}</td>
+    </tr>
+    <tr>
+      <td class="font-semibold">Land coverage</td>
+      <td class="font-regular">${coveragePercentage}%</td>
+    </tr>
+  </tbody>
+</table>`;
 
   var lng = 0;
   var lat = coordinates[0][1];
-  coordinates.forEach((c) => {
+  coordinates.forEach(c => {
     lng += c[0];
-    if (c[1] > lat) {
+    if(c[1] > lat){
       lat = c[1];
     }
   });
@@ -141,16 +164,17 @@ map.on("mouseenter", "product-polygons-frames-fill", (e) => {
   popup.setLngLat(newCoords).setHTML(description).addTo(map);
 });
 
-map.on("mouseleave", "product-polygons-frames-fill", () => {
-  map.getCanvas().style.cursor = "";
+map.on('mouseleave', 'product-polygons-frames-fill', () => {
+  map.getCanvas().style.cursor = '';
   popup.remove();
-  if (window.map.getSource("mission-area-within-poly") != undefined) {
-    window.map.removeLayer("mission-area-within-polyfill");
-    window.map.removeSource("mission-area-within-poly");
-  }
+  if (window.map.getSource('mission-area-within-poly') != undefined) {
+    window.map.removeLayer('mission-area-within-polyfill');
+    window.map.removeSource('mission-area-within-poly');
+  } 
 });
 
-map.on("click", "product-polygons-frames-fill", (e) => {
+
+map.on('click', 'product-polygons-frames-fill', (e) => {
   map.flyTo({
     center: e.lngLat,
     zoom: 10.5,
