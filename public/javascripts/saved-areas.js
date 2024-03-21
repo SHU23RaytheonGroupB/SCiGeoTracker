@@ -17,8 +17,18 @@ class Activity {
   }
 }
 
-//very temp
-sessionStorage.removeItem("savedActivties");
+function activitieCreation(name, deadline, comments, polygonData) {
+  var featureHallam = polygonData.features[0];
+  var FCfeatureHallam = [];
+  FCfeatureHallam.push(featureHallam);
+  savedActivties.push(new Activity(name ,new Date(deadline), FCfeatureHallam, comments));
+
+  updateActivties();
+  closeNameBoxActivity();
+}
+
+//very temp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!e
+//sessionStorage.removeItem("savedActivties");
 
 let selectedAreas = [];
 let selectedActivties = [];
@@ -60,6 +70,7 @@ export function displaygeojsonFiles() {
 }
 
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
+const activitySelectionInfoCloseButtonEle = document.querySelector("#activity-selection-info-close-button");
 const savedAreasUpload = document.querySelector("#saved-areas-upload");
 
 export function initialiseSavedAreas(draw) {
@@ -78,15 +89,25 @@ export function initialiseSavedAreas(draw) {
     else closeSavedAreas();
   };
 
+  document.querySelector("#area-selection-info-activity-button").onclick = saveNewActivity;
   document.querySelector("#area-selection-info-save-button").onclick = saveNewPolygon;
   document.querySelector("#name-new-area-close-button").onclick = closeNameBox;
+  document.querySelector("#name-new-activity-close-button").onclick = closeNameBoxActivity;
+
   let nameTextBox = document.getElementById("name-area-textbox");
   let createPoly = document.getElementById("confirm-name-button");
   createPoly.addEventListener("click", () => createNewPoly(nameTextBox.value, polygonData));
-  
+
+  let createActivity = document.getElementById("confirm-activity-button");
+  let nameTextBoxActivity = document.getElementById("name-activity-textbox");
+  let dateTextBoxActivity = document.getElementById("date-activity-textbox");
+  let commentsTextBoxActivity = document.getElementById("comments-activity-textbox");
+  createActivity.addEventListener("click", () => activitieCreation(nameTextBoxActivity.value, dateTextBoxActivity.value, commentsTextBoxActivity.value, polygonData));
+
   document.querySelector("#saved-areas-import-button").onclick = openFile;
 
   areaSelectionInfoCloseButtonEle.onclick = () => closeSelectionInfo(draw);
+  activitySelectionInfoCloseButtonEle.onclick = () => closeactSelectionInfo();
 }
 
 function closeSelectionInfo(draw) {
@@ -95,6 +116,28 @@ function closeSelectionInfo(draw) {
   document.getElementById("area-selection-info-container").classList.add("hidden");
   //console.log("fjfdasd");
   document.getElementById("name-area-container").classList.add("hidden");
+  // let text = document.getElementById("name-area-textbox");
+  // text.value = "";
+  //document.getElementById("area-selection-info-save-button").classList.add("hidden");
+  if (map.getLayer("mission-area-within-polyfill") != undefined) {
+    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
+  }
+}
+
+var currentActivity;
+
+function closeactSelectionInfo() {
+  //console.log("fjf");
+  var source = window.map.getSource(currentActivity.name + "-CUSTOM");
+  if (source != undefined) {
+    
+      window.map.removeLayer(currentActivity.name + "-CUSTOM-frames-fill");
+      window.map.removeLayer(currentActivity.name + "-CUSTOM-frames-outline");
+      window.map.removeSource(currentActivity.name + "-CUSTOM");
+  }
+  document.getElementById("activity-selection-info-container").classList.add("hidden");
+  //console.log("fjfdasd");
+  //document.getElementById("name-area-container").classList.add("hidden");
   // let text = document.getElementById("name-area-textbox");
   // text.value = "";
   //document.getElementById("area-selection-info-save-button").classList.add("hidden");
@@ -354,7 +397,7 @@ if (savedActivties.length == 0) {
   console.log(FCfeatureHallam[0]);
   console.log(0);
 
-  savedActivties.push(new Activity("Mission over Sheff Hallam Uni",new Date("2024-03-22"), FCfeatureHallam, "Hello"));
+  savedActivties.push(new Activity("Mission over Sheff Hallam Uni",new Date("2024-03-22"), FCfeatureHallam, "Client meeting :)"));
 
   var featureLondon = {
     type: "Feature",
@@ -372,7 +415,7 @@ if (savedActivties.length == 0) {
   };
   var FCfeatureLondon = [];
   FCfeatureLondon.push(featureLondon);
-  savedActivties.push(new Activity("Incident in London",new Date("2025-12-04"), FCfeatureLondon, "good bye"));
+  savedActivties.push(new Activity("Incident in London",new Date("2025-12-04"), FCfeatureLondon, "something has happend"));
 
   updateActivties();
 }
@@ -450,9 +493,9 @@ function displaySavedActivty(savedActivty) {
 
   //name all buttons
   activityMarkEle.name = "activity-mark-Ele";
-  savedAreaViewButtonEle.name = "saved-area-view-button";
-  savedAreaEditButtonEle.name = "saved-area-edit-button";
-  savedAreaDeleteButtonEle.name = "saved-area-delete-button";
+  savedAreaViewButtonEle.name = "activity-view-button";
+  savedAreaEditButtonEle.name = "activity-edit-button";
+  savedAreaDeleteButtonEle.name = "activity-delete-button";
 
   //style all buttons
   const buttonClasses = "ml-auto my-auto p-1 rounded-md bg-neutral-100/90 hover:bg-neutral-100 dark:bg-neutral-700/70 dark:hover:bg-neutral-700 ring-1 ring-neutral-600/50";
@@ -485,7 +528,7 @@ function displaySavedActivty(savedActivty) {
 
   savedAreaCheckboxEle.onclick = () => {
     if (selectedActivties.includes(savedActivty)) {
-      selectedActivties.splice(selectedAreas.indexOf(savedActivty), 1);
+      selectedActivties.splice(selectedActivties.indexOf(savedActivty), 1);
     } else {
       selectedActivties.push(savedActivty);
     }
@@ -498,14 +541,14 @@ function displaySavedActivty(savedActivty) {
       fileNameEle.textContent = tempContent;
     } 
     else {
-      var mapSource = map.getSource(savedActivty.name + "-CUSTOM");
+      var mapSource = window.map.getSource(savedActivty.name + "-CUSTOM");
       if(mapSource == undefined){
         console.log(savedActivty);
-        map.addSource(savedActivty.name + "-CUSTOM", {
+        window.map.addSource(savedActivty.name + "-CUSTOM", {
           type: "geojson",
           data: savedActivty.areaPoly[0].geometry,
         });
-        map.addLayer({
+        window.map.addLayer({
           id: savedActivty.name + "-CUSTOM-frames-fill",
           type: "fill",
           source: savedActivty.name + "-CUSTOM",
@@ -517,7 +560,7 @@ function displaySavedActivty(savedActivty) {
             "fill-opacity": 0.2,
           },
         });
-        map.addLayer({
+        window.map.addLayer({
           id: savedActivty.name + "-CUSTOM-frames-outline",
           type: "line",
           source: savedActivty.name + "-CUSTOM",
@@ -541,7 +584,6 @@ function displaySavedActivty(savedActivty) {
           window.map.setLayoutProperty(savedActivty.name + "-CUSTOM-frames-outline", "visibility", "none");
         }
       }
-      
       let infoCloseButton = document.getElementById("area-selection-info-close-button");
       infoCloseButton.addEventListener("click", closeInfoListener);
 
@@ -560,8 +602,6 @@ function displaySavedActivty(savedActivty) {
           arrCount++;
           yCoords += savedActivty.areaPoly[0].geometry.coordinates[0][a][1];
         }
-        var xAverage = xCoords / arrCount;
-        var yAverage = yCoords / arrCount;
         
         var savedActivtyAsFC = {
         type: "FeatureCollection",
@@ -581,7 +621,8 @@ function displaySavedActivty(savedActivty) {
         activitySetDateContainerEle.textContent = savedActivty.createdDate;
         activityDeadLineContainerEle.textContent = savedActivty.deadline;
         activityAuthorContainerEle.textContent = savedActivty.author;
-        activityCommentsContainerEle.textContent = savedActivties.comments;
+        activityCommentsContainerEle.textContent = savedActivty.comments;
+        currentActivity = savedActivty;
         updateActivty(allProducts, savedActivtyAsFC);
         //var centerOfActity = turf.center(savedActivty.areaPoly[0]);
         //var dist = getDistance(centerOfActity[0][0], centerOfActity[0][1]); //use savedActivty's center 
@@ -630,7 +671,7 @@ function displaySavedActivty(savedActivty) {
     }
 
     if (confirm(message) == true) {
-      selectedActivties.push(savedArea);
+      selectedActivties.push(savedActivty);
       selectedActivties.forEach((Activty) => {
         selectedActivties.splice(selectedActivties.indexOf(Activty), 1);
       });
@@ -885,6 +926,17 @@ function saveNewPolygon() {
   }
 }
 
+function saveNewActivity() {
+  let namingBox = document.getElementById("activity-creator-container");
+  if(namingBox.classList.contains("hidden")){
+    namingBox.classList.remove("hidden");
+    document.getElementById("name-activity-textbox").textContent = "";
+    document.getElementById("author-activity-textbox").textContent = "";
+    document.getElementById("date-activity-textbox").textContent = "";
+    document.getElementById("comments-activity-textbox").textContent = "";
+  }
+}
+
 function createNewPoly(nameStr, coords) {
   if(nameStr.length != 0 && coords != ""){
     var tempNum = 0;
@@ -920,8 +972,18 @@ function closeNameBox(){
   text.value = "";
 }
 
+function closeNameBoxActivity(){
+  let box = document.getElementById("activity-creator-container");
+  box.classList.add("hidden");
+  document.getElementById("name-activity-textbox").value = "";
+  document.getElementById("author-activity-textbox").value = "";
+  document.getElementById("date-activity-textbox").value = "";
+  document.getElementById("comments-activity-textbox").value = "";
+}
+
 const refreshSavedScreen = () => {
   saveSavedAreas();
+  updateActivties();
   openSavedAreas();
 };
 
