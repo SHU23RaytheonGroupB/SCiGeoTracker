@@ -645,7 +645,7 @@
     </div>
 
     <div
-      id="saved-areas-container"
+      id="file-container"
       class="absolute z-30 w-96 h-3/5 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-0 bottom-0 right-0 left-0 m-auto"
       style="display: none"
     >
@@ -661,22 +661,46 @@
         <input type="file" name="file-upload" id="saved-areas-upload" multiple hidden />
         <button
           type="button"
-          id="saved-areas-import-button"
-          class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+          id="files-all-display-button"
+          class="px-4 py-1 w-full 
+          rounded-md 
+          overflow-hidden 
+          dark:bg-neutral-900/90 
+          dark:hover:bg-neutral-800/70 
+          bg-neutral-100/90 
+          hover:bg-neutral-100/60 
+          ring-1 
+          ring-neutral-600/50"
         >
           All
         </button>
         <button
           type="button"
-          id="saved-areas-export-button"
-          class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+          id="files-activities-display-button"
+          class="px-4 py-1 w-full 
+          rounded-md 
+          overflow-hidden 
+          dark:bg-neutral-900/90 
+          dark:hover:bg-neutral-800/70 
+          bg-neutral-100/90 
+          hover:bg-neutral-100/60 
+          ring-1 
+          ring-neutral-600/50"
         >
           Activities
         </button>
         <button
           type="button"
-          id="saved-areas-export-button"
-          class="px-4 py-1 w-full rounded-md overflow-hidden bg-neutral-800 ring-1 ring-neutral-600/50"
+          id="files-geojson-display-button"
+          class="px-4 py-1 w-full 
+          rounded-md 
+          overflow-hidden 
+          dark:bg-neutral-900/90 
+          dark:hover:bg-neutral-800/70 
+          bg-neutral-100/90 
+          hover:bg-neutral-100/60 
+          ring-1 
+          ring-neutral-600/50"
         >
           GeoJSONs
         </button>
@@ -684,13 +708,13 @@
       <div class="my-2 px-1 flex flex-col">
         <input
           type="text"
-          name="saved-areas-search"
-          id="saved-areas-search"
+          name="file-search"
+          id="file-search"
           class="block #w-full rounded-xl py-1.5 px-3 #border-0 text-sm my-2 #ring-inset shadow-sm dark:bg-neutral-600/90 bg-neutral-100/90 dark:focus:bg-neutral-650/80 focus:bg-white dark:placeholder:text-neutral-400 placeholder:text-neutral-500 dark:ring-neutral-700/50 ring-neutral-400/50"
           placeholder="Search"
         />
         <div
-          id="saved-areas-list"
+          id="file-list"
           class="h-52 overflow-y-scroll text-gray-500 dark:text-gray-400 flex flex-col gap-2"
         ></div>
         <div class="flex flex-row gap-2 text-xs text-neutral-400 pt-2">
