@@ -15,7 +15,6 @@ window.map = new mapboxgl.Map({
   maxZoom: maxZoom,
   attributionControl: false,
 });
-
 let loaded = false;
 
 var popup = new mapboxgl.Popup({

@@ -380,16 +380,6 @@ function setTimelineVisibility(enabled) {
   }
 }
 
-const button = document.getElementById("timeline-button");
-document.getElementById("timeline-container").style.display = "none";
-
-button.addEventListener("click", () => {
-  const chart = document.getElementById("timeline-container");
-  chart.style.display = chart.style.display === "none" ? "block" : "none";
-});
-
-const button2 = document.getElementById("histogram-popout-close-button");
-
 function toggleTimelineVisiblity() {
   setTimelineVisibility(!timelineVisible);
 }
@@ -398,7 +388,6 @@ setTimelineVisibility(true);
 
 document.getElementById("timeline-button").addEventListener("click", toggleTimelineVisiblity);
 document.getElementById("timeline-popout-close-button").addEventListener("click", () => setTimelineVisibility(false));
-
 let viewMissionButton = document.getElementById("flyto-mission-info-view-button");
 //viewMissionButton.addEventListener("click", async () => viewSelectedMission(missionID));
 
