@@ -20,6 +20,11 @@ import { createHistogramChart } from "./histogram-popout.js";
 
 let loaded = false;
 
+var popup = new mapboxgl.Popup({
+  closeButton: false,
+  closeOnClick: false
+});
+
 map.on("load", async () => {
   renderOverlaysZoom();
   updateScaleBar();
@@ -93,8 +98,30 @@ export async function circleLinkZoom(d) {
     circle.style.fill = "blue";
   });
   displayMissionMenu(currentProduct);
-
-  // allProducts.forEach((product) => {
-
-  // });
 }
+
+map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
+  map.getCanvas().style.cursor = 'pointer';
+  const coordinates = e.features[0].geometry.coordinates[0].slice();
+  console.log(e);
+
+  var description = "No description found";
+
+  var lng = 0;
+  var lat = coordinates[0][1];
+  coordinates.forEach(c => {
+    lng += c[0];
+    if(c[1] > lat){
+      lat = c[1];
+    }
+  });
+  lng = lng / coordinates.length;
+  const newCoords = [lng, lat];
+
+  popup.setLngLat(newCoords).setHTML(description).addTo(map);
+});
+
+map.on('mouseleave', 'product-polygons-frames-fill', () => {
+  map.getCanvas().style.cursor = '';
+  popup.remove();
+});
