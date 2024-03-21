@@ -103,4 +103,5 @@ export async function viewSelectedMission(missionID) {
   } catch (error) {
     console.error("Error:", error);
   }
+
 }

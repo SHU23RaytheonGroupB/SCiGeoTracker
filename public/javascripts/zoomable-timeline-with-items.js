@@ -16,13 +16,13 @@ export function Timeline(options) {
   myData = Array.from({ length: myData.length }, (x, i) => ({
     title:
       "Mission: " +
-      myData[i].attributes.title.split(" ")[0] +
+      myData[i].properties.title.split(" ")[0] +
       "\n" +
       "Scene: " +
-      myData[i].attributes.title.split(" ")[1] +
+      myData[i].properties.title.split(" ")[1] +
       "\n" +
       "Publisher: " +
-      myData[i].attributes.pub +
+      myData[i].properties.pub +
       "\n",
     id: myData[i].attributes.id,
     start: new Date(myData[i].attributes.date_start),
@@ -311,6 +311,7 @@ export function Timeline(options) {
               .attr("scene", (d) => d.sceneName)
               .attr("cx", (d, i) => X[i])
               .attr("cy", (d, i) => Y[i] + 100)
+              .attr("mission", (d) => d.missionGroup)
               .append("title")
               .text((d) => d.title),
           (update) => update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 100)
@@ -367,6 +368,17 @@ export function Timeline(options) {
 
   return setup();
 }
+const timelineContainerEle = document.getElementById("timeline-container");
+let timelineVisible = false;
+
+function setTimelineVisibility(enabled) {
+  timelineVisible = enabled;
+  if (enabled) {
+    timelineContainerEle.classList.remove("hidden");
+  } else {
+    timelineContainerEle.classList.add("hidden");
+  }
+}
 
 const button = document.getElementById("timeline-button");
 document.getElementById("timeline-container").style.display = "none";
@@ -378,10 +390,14 @@ button.addEventListener("click", () => {
 
 const button2 = document.getElementById("histogram-popout-close-button");
 
-button2.addEventListener("click", () => {
-  const chart = document.getElementById("histogram-popout-container");
-  chart.style.display = chart.style.display === "none" ? "block" : "none";
-});
+function toggleTimelineVisiblity() {
+  setTimelineVisibility(!timelineVisible);
+}
+
+setTimelineVisibility(true);
+
+document.getElementById("timeline-button").addEventListener("click", toggleTimelineVisiblity);
+document.getElementById("timeline-popout-close-button").addEventListener("click", () => setTimelineVisibility(false));
 
 let viewMissionButton = document.getElementById("flyto-mission-info-view-button");
 //viewMissionButton.addEventListener("click", async () => viewSelectedMission(missionID));
