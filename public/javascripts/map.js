@@ -76,14 +76,6 @@ map.on("zoom", (ev) => {
   updateScaleBar();
 });
 
-export function mapFlyTo(product) {
-  map.flyTo({
-    center: product.centre.split(",").reverse(),
-    zoom: 11,
-    essential: true,
-  });
-}
-
 export async function circleLinkZoom(d) {
   let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {

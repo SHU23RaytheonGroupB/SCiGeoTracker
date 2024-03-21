@@ -352,6 +352,7 @@ if (savedActivties.length == 0) {
   var FCfeatureHallam = [];
   FCfeatureHallam.push(featureHallam);
   console.log(FCfeatureHallam[0]);
+  console.log(0);
 
   savedActivties.push(new Activity("Mission over Sheff Hallam Uni",new Date("2024-03-22"), FCfeatureHallam, "Hello"));
 
@@ -498,7 +499,7 @@ function displaySavedActivty(savedActivty) {
     } 
     else {
       var mapSource = map.getSource(savedActivty.name + "-CUSTOM");
-      if (mapSource == undefined) {
+      if(mapSource == undefined){
         console.log(savedActivty);
         map.addSource(savedActivty.name + "-CUSTOM", {
           type: "geojson",
@@ -702,7 +703,7 @@ function displaySavedArea(savedArea) {
     } 
     else {
       var mapSource = map.getSource(savedArea.properties.name + "-CUSTOM");
-      if (mapSource == undefined) {
+      if(mapSource == undefined){
         map.addSource(savedArea.properties.name + "-CUSTOM", {
           type: "geojson",
           data: savedArea.features[0].geometry,
