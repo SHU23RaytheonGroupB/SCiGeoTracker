@@ -172,8 +172,8 @@
               class="block px-4 py-2 text-sm dark:hover:bg-neutral-800/40 hover:bg-neutral-200/70"
               role="menuitem"
               tabindex="-1"
-              id="scenes-item"
-              >Scenes</a
+              id="frames-item"
+              >Frames</a
             >
             <a
               href="#"
@@ -650,77 +650,70 @@
         </button>
       </div>
     </div>
+
     <div
       id="flyto-mission-info-container"
       class="absolute z-20 w-100 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-20 start-20 hidden"
     >
-      <div class="flex flex-row gap-2 px-1">
-        <h2 id="flyto-mission-title" class="dark:text-neutral-300 text-neutral-500 grow font-bold"></h2>
-        <button type="button" id="flyto-mission-info-close-button" class="ml-auto">
-          <img class="h-3 w-3" src="images/icons8-close-90.png" />
+      <div id="flyto-mission-info-header" class="absolute w-full h-4 cursor-move flex #bg-neutral-200">
+        <button type="button" id="flyto-mission-info-close-button" class="absolute top-2 right-2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-3 w-3 hover:fill-black dark:hover:fill-white">
+            <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z"></path>
+          </svg>
         </button>
       </div>
-      <div class="my-2 px-1">
-        <table class="table-auto border-separate border-spacing-1.5 w-full">
-          <tbody>
-            <tr>
-              <td id="flyto-mission-scene-title" class="font-light dark:text-neutral-400 text-neutral-500">
-                Scene Name
-              </td>
-              <td
-                id="flyto-mission-scene-name"
-                class="font-medium text-right dark:text-neutral-200 text-neutral-500"
-              ></td>
-            </tr>
-            <tr>
-              <td id="flyto-mission-id-title" class="font-light dark:text-neutral-400 text-neutral-500">Mission ID</td>
-              <td
-                id="flyto-mission-mission-id"
-                class="font-medium text-right dark:text-neutral-200 text-neutral-500"
-              ></td>
-            </tr>
-            <tr>
-              <td id="flyto-mission-creator-title" class="font-light dark:text-neutral-400 text-neutral-500">
-                Creator
-              </td>
-              <td id="flyto-mission-creator" class="font-medium text-right dark:text-neutral-200 text-neutral-500"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="mb-2">
-        <div class="relative inline-block w-full">
-          <select
-            id="flyto-mission-scene-select"
-            class="block appearance-none w-full bg-neutral-800 border border-neutral-600 hover:border-neutral-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+      <div class="px-2 py-2" id="flyto-mission-info">
+        <div class="flex flex-row gap-2 px-1">
+          <h2 id="flyto-mission-title" class="dark:text-neutral-300 text-neutral-500 grow font-bold">Mission Data</h2>
+        </div>
+        <div class="my-2 px-1">
+          <table class="table-auto border-separate border-spacing-y-1.5 w-full">
+            <tbody>
+              <tr>
+                <td id="flyto-mission-scene-title" class="font-light dark:text-neutral-400 text-neutral-500">
+                  Scene Name
+                </td>
+                <td
+                  id="flyto-mission-scene-name"
+                  class="font-medium text-right dark:text-neutral-200 text-neutral-500"
+                ></td>
+              </tr>
+              <tr>
+                <td id="flyto-mission-mission-title" class="font-light dark:text-neutral-400 text-neutral-500">
+                  Mission Name
+                </td>
+                <td
+                  id="flyto-mission-mission-name"
+                  class="font-medium text-right dark:text-neutral-200 text-neutral-500"
+                ></td>
+              </tr>
+              <tr>
+                <td id="flyto-mission-id-title" class="font-light dark:text-neutral-400 text-neutral-500">Mission ID</td>
+                <td
+                  id="flyto-mission-mission-id"
+                  class="font-medium text-right dark:text-neutral-200 text-neutral-500"
+                ></td>
+              </tr>
+              <tr>
+                <td id="flyto-mission-creator-title" class="font-light dark:text-neutral-400 text-neutral-500">
+                  Creator
+                </td>
+                <td id="flyto-mission-creator" class="font-medium text-right dark:text-neutral-200 text-neutral-500"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <button
+            type="button"
+            id="flyto-mission-info-view-button"
+            class="px-4 py-1 w-full rounded-md overflow-hidden dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90"
           >
-            <option value="" disabled selected hidden>Select Scene</option>
-          </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
-            <img
-              class="h-4 w-4 ml-auto my-auto"
-              src="images/icons8-dropdown-stroke-1px-90.png"
-              alt="Dropdown list for selecting a scene"
-            />
-          </div>
+            View
+          </button>
         </div>
       </div>
-      <div>
-        <div class="relative inline-block w-full">
-          <select
-            id="flyto-mission-frame-select"
-            class="block appearance-none w-full bg-neutral-800 border border-neutral-600 hover:border-neutral-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option value="" disabled selected hidden>Select Frame within Scene</option>
-          </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
-            <img
-              class="h-4 w-4 ml-auto my-auto"
-              src="images/icons8-dropdown-stroke-1px-90.png"
-              alt="Dropdown list for selecting a frame"
-            />
-          </div>
-        </div>
+    </div>
 
     <div
       id="timeline-container"
@@ -736,6 +729,7 @@
       <div class="px-2 py-2" id="timeline">
       </div>
     </div>
+
     <div
       id="file-container"
       class="absolute z-30 w-96 h-3/5 px-2 py-2 rounded-xl overflow-hidden text-sm dark:bg-neutral-900/90 ring-1 ring-neutral-700/50 bg-neutral-100/90 ring-neutral-200/50 top-0 bottom-0 right-0 left-0 hidden"
