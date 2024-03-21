@@ -274,18 +274,6 @@ function addSelectedFrameLayer(title) {
 
 function addScenesLayers(title) {
   map.addLayer({
-    id: `${title}-frames-fill`,
-    type: "fill",
-    source: title,
-    layout: {
-      visibility: "none",
-    },
-    paint: {
-      "fill-color": productFillColours[mapStyle.currentStyle]["SCENE"],
-      "fill-opacity": 0.2,
-    },
-  });
-  map.addLayer({
     id: `${title}-scenes-fill`,
     type: "fill",
     source: title,
