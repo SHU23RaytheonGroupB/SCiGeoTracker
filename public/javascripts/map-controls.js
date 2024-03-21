@@ -159,7 +159,7 @@ function setZoomByPercentage(percentage) {
 }
 
 function dragMouseDown(e) {
-  e.preventDefault();
+  // e.preventDefault();
   const boundingRect = zoomScrollButtonEle.parentElement.getBoundingClientRect();
   barTop = boundingRect.top + 12;
   barBottom = boundingRect.bottom - 12;
