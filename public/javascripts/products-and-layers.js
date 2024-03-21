@@ -14,7 +14,7 @@ const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text")
 const colors = ["#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c"];
 
 export const LayerMode = {
-  Frames: "Frames",
+  Scenes: "Scenes",
   Heatmap: "Heatmap",
   Choropleth: "Choropleth",
   Cluster: "Cluster",
@@ -25,11 +25,11 @@ export async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
   await addProductsToMap();
-  framesMode();
+  scenesMode();
 }
 
 export function initialiseLayerMenu() {
-  document.querySelector("#frames-item").onclick = framesMode;
+  document.querySelector("#scenes-item").onclick = scenesMode;
   document.querySelector("#heatmap-item").onclick = heatmapMode;
   document.querySelector("#choropleth-item").onclick = choroplethMode;
   document.querySelector("#cluster-density-item").onclick = clusterMode;
@@ -132,8 +132,8 @@ async function addProductsToMap() {
   addSource("region-boundaries", boundariesByRegion);
   addSource("uk-land", UKlandBorder);
   updateChoroplethSource();
-  // FRAMES LAYER
-  addFramesLayers("product-polygons");
+  // SCENES LAYER
+  addScenesLayers("product-polygons");
   // HEATMAP LAYER
   addHeatmapLayer("product-points");
   // CHOROPLETH LAYER
@@ -145,10 +145,10 @@ async function addProductsToMap() {
 }
 
 export const layerNames = [
-  "product-polygons-frames-fill",
-  "product-polygons-frames-outline",
+  "product-polygons-scenes-fill",
+  "product-polygons-scenes-outline",
   "country-boundaries-borders",
-  "country-boundaries-choropleth",
+  //"country-boundaries-choropleth",
   "region-boundaries-borders",
   "region-boundaries-choropleth",
   "product-cluster-unclustered-label",
@@ -177,22 +177,20 @@ function addClusterSource(title, data) {
     clusterRadius: 50,
   });
 }
-
-// function addFramesLayers(title) {
-//   map.addLayer({
-
-//     id: `${title}-outline`,
-//     type: "line",
-//     source: title,
-//     layout: {
-//       visibility: "visible",
-//     },
-//     paint: {
-//       "line-color": productOutlineColours["SCENE"],
-//       "line-width": 1,
-//     },
-//   });
-// }
+function addFramesLayers(title) {
+  map.addLayer({
+    id: `${title}-outline`,
+    type: "line",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "line-color": productOutlineColours["SCENE"],
+      "line-width": 1,
+    },
+  });
+}
 
 function addSelectedFrameLayer(title) {
   map.addLayer({
@@ -209,10 +207,9 @@ function addSelectedFrameLayer(title) {
   });
 }
 
-function addFramesLayers(title) {
+function addScenesLayers(title) {
   map.addLayer({
-    id: `${title}-frames-fill`,
-
+    id: `${title}-scenes-fill`,
     type: "fill",
     source: title,
     layout: {
@@ -224,8 +221,7 @@ function addFramesLayers(title) {
     },
   });
   map.addLayer({
-    id: `${title}-frames-outline`,
-
+    id: `${title}-scenes-outline`,
     type: "line",
     source: title,
     layout: {
@@ -415,13 +411,78 @@ function updateChoroplethSource() {
   regionBoundariesSource.setData(data);
 }
 
-const framesMode = () => {
+export function highlightSelectedFrame(frame) {
+  let selectedMissionFrames = window.map.getSource("selected-mission-frames");
+
+  let singleFrameFeature = {
+    type: "FeatureCollection",
+    features: [],
+  };
+
+  for (let i = 0; i < selectedMissionFrames.length; i++) {
+    let product = selectedMissionFrames[i];
+    if (product.identifier === frame.identifier) {
+      singleFrameFeature.features.push({
+        type: "Feature",
+        geometry: product.footprint,
+        attributes: {
+          id: product.identifier,
+          type: product.type,
+          title: product.title,
+          mission_id: product.missionid,
+          date_created: product.datecreated,
+          date_start: product.objectstartdate,
+          date_end: product.objectenddate,
+          pub: product.publisher,
+        },
+      });
+      break; // Exit the loop after finding the matching frame
+    }
+  }
+
+  addSelectedFrameLayer(singleFrameFeature);
+}
+
+export async function addSelectedMissionFramesToMap(framesData) {
+  let framesFeatureCollection = {
+    type: "FeatureCollection",
+    features: framesData.map((product) => ({
+      type: "Feature",
+      geometry: product.footprint,
+      attributes: {
+        id: product.identifier,
+        type: product.type,
+        title: product.title,
+        mission_id: product.missionid,
+        date_created: product.datecreated,
+        date_start: product.objectstartdate,
+        date_end: product.objectenddate,
+        pub: product.publisher,
+      },
+    })),
+  };
+  if (!window.map.getSource("selected-mission-frames")) {
+    addSource("selected-mission-frames", framesFeatureCollection);
+    addFramesLayers("selected-mission-frames");
+  } else {
+    window.map.getSource("selected-mission-frames").setData(framesFeatureCollection);
+    window.map.setLayoutProperty("selected-mission-frames-outline", "visibility", "visible");
+  }
+}
+
+export function hideFrames() {
+  if (window.map.getSource("selected-mission-frames")) {
+    window.map.setLayoutProperty("selected-mission-frames-outline", "visibility", "none");
+  }
+}
+
+const scenesMode = () => {
   layerMode = LayerMode.Frames;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "visible");
-  window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "visible");
+  window.map.setLayoutProperty("product-polygons-scenes-fill", "visibility", "visible");
+  window.map.setLayoutProperty("product-polygons-scenes-outline", "visibility", "visible");
 };
 
 const heatmapMode = () => {
@@ -443,13 +504,6 @@ const choroplethMode = () => {
   //window.map.setLayoutProperty("country-boundaries-choropleth", "visibility", "visible");
 };
 
-const isarithmicMode = () => {
-  layerMode = LayerMode.Isarithmic;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-};
-
 const clusterMode = () => {
   layerMode = LayerMode.Cluster;
   layerMenuButtonTextEle.textContent = layerMode;
@@ -459,13 +513,6 @@ const clusterMode = () => {
   window.map.setLayoutProperty("product-cluster-label", "visibility", "visible");
   window.map.setLayoutProperty("product-cluster-unclustered", "visibility", "visible");
   window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "visible");
-};
-
-const frameOverlapsMode = () => {
-  layerMode = LayerMode.FrameOverlaps;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
 };
 
 const borderSelectionMode = () => {
@@ -479,8 +526,8 @@ const borderSelectionMode = () => {
 };
 
 const hideAllLayers = () => {
-  window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "none");
-  window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
+  window.map.setLayoutProperty("product-polygons-scenes-fill", "visibility", "none");
+  window.map.setLayoutProperty("product-polygons-scenes-outline", "visibility", "none");
   window.map.setLayoutProperty("product-points-heatmap", "visibility", "none");
   window.map.setLayoutProperty("product-cluster-density", "visibility", "none");
   window.map.setLayoutProperty("product-cluster-label", "visibility", "none");
@@ -496,6 +543,7 @@ const hideAllLayers = () => {
   if (map.getLayer("mission-area-within-polyfill") != undefined) {
     window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
   }
+  hideFrames();
   //window.map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 };
 

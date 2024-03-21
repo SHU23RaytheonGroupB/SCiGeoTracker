@@ -1,7 +1,11 @@
 // ATTRIBUTION: Julien Colot
 // https://observablehq.com/@jcolot/zoomable-timeline-with-items@955
 
-import { circleLinkZoom } from "./map.js";
+import { allProducts } from "./products-and-layers.js";
+import { displayMissionMenu, viewSelectedMission } from "./mission-popout-menu.js";
+import { mapFlyTo } from "./map.js";
+
+let scenes = [];
 
 export function Timeline(options) {
   const axis = {};
@@ -22,7 +26,9 @@ export function Timeline(options) {
     id: myData[i].properties.id,
     start: new Date(myData[i].properties.date_start),
     end: new Date(myData[i].properties.date_end),
-    missionGroup: myData[i].properties.title.split(" ")[0],
+    missionName: myData[i].properties.title.split(" ")[0],
+    missionID: myData[i].properties.missionid,
+    sceneName: myData[i].properties.title.split(" ")[1],
   }));
 
   const { from, until, margin, width, height, onClickItem, onZoomEnd, zoomFilter } = {
@@ -297,12 +303,13 @@ export function Timeline(options) {
               .style("fill-opacity", 0.4)
               .style("cursor", "pointer")
               .on("click", function (event, d) {
-                circleLinkZoom(d.id);
+                circleLinkZoom(d.id, d.missionID);
               })
               .attr("r", 4)
               .attr("cx", (d, i) => X[i])
               .attr("cy", (d, i) => Y[i] + 100)
-              .attr("mission", (d) => d.missionGroup)
+              .attr("mission", (d) => d.missionName)
+              .attr("scene", (d) => d.sceneName)
               .append("title")
               .text((d) => d.title),
           (update) => update.attr("cx", (d, i) => X[i]).attr("cy", (d, i) => Y[i] + 100)
@@ -380,3 +387,31 @@ setTimelineVisibility(true);
 document.getElementById("timeline-button").addEventListener("click", toggleTimelineVisiblity);
 document.getElementById("timeline-popout-close-button").addEventListener("click", () => setTimelineVisibility(false));
 
+async function circleLinkZoom(productID, missionID) {
+  let reset = document.querySelectorAll("circle");
+  reset.forEach((reset) => {
+    reset.style.fill = "red";
+  });
+  let missionName;
+  let currentProduct;
+  allProducts.forEach((product) => {
+    if (product.identifier === productID) {
+      missionName = product.title.split(" ")[0];
+      missionID = product.missionid;
+      currentProduct = product;
+      mapFlyTo(product);
+    }
+    if (product.missionid === missionID) {
+      scenes.push(product);
+    }
+  });
+  let circleGroup = document.querySelectorAll('circle[mission="' + missionName + '"]');
+  circleGroup.forEach((circle) => {
+    circle.style.fill = "blue";
+  });
+  console.log("scenes");
+  console.log(scenes);
+  const frames = await viewSelectedMission(missionID);
+  //console.log(frames);
+  displayMissionMenu(currentProduct, scenes, frames);
+}

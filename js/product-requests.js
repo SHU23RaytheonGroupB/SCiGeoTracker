@@ -72,6 +72,75 @@ class ProductService {
       console.error(error);
     }
   }
+
+  async getAllFrameProductIDs(missionID) {
+    let result = [];
+    const selectedMissionInfo = await this.getMissionInfo(missionID);
+    const { scenes } = selectedMissionInfo;
+    for (let scene of scenes) {
+      result.push(await this.getFrameData(missionID, scene.id));
+    }
+
+    return result.flatMap((r) =>
+      r.scenes.flatMap((scene) => scene.bands.flatMap((band) => band.frames.map((frame) => frame.productId)))
+    );
+  }
+
+  async getAllFrameProducts(missionID) {
+    const frameIDs = await this.getAllFrameProductIDs(missionID);
+    let results = [];
+    results = await this.getProducts(frameIDs);
+    return results.map((r) => r.product.result);
+  }
+
+  async getFrameData(missionId, sceneId) {
+    try {
+      const response = await fetch(`${API_ORIGIN}/v1/missionfeed/missions/${missionId}/scene/${sceneId}/frames`, {
+        method: "GET",
+        headers: this.headers,
+      });
+      if (!response.ok) {
+        console.log(response);
+        throw new Error("Error fetching scene frames");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getMissionInfo(missionID) {
+    try {
+      const response = await fetch(`${API_ORIGIN}/v1/missionfeed/missions/${missionID}`, {
+        method: "GET",
+        headers: this.headers,
+      });
+      if (!response.ok) {
+        console.log("response:");
+        console.log(response);
+        throw new Error("Error fetching mission info");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  async getMissionFootprint(missionID) {
+    try {
+      const response = await fetch(`${API_ORIGIN}/v1/missionfeed/missions/${missionID}/footprint`, {
+        method: "GET",
+        headers: this.headers,
+      });
+      if (!response.ok) {
+        console.log("response:");
+        console.log(response);
+        throw new Error("Error fetching mission footprint");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 module.exports = ProductService;

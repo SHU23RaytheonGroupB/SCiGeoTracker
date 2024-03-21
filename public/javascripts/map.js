@@ -1,10 +1,8 @@
-import { displayMissionMenu } from "./mission-popout-menu.js";
-import { initialiseProducts, allProducts } from "./products-and-layers.js";
+import { initialiseProducts } from "./products-and-layers.js";
 import { mapStyle, minZoom, maxZoom } from "./config.js";
 import { getRoundNum, getDistance } from "./utils.js";
 import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
 import { Timeline } from "./zoomable-timeline-with-items.js";
-import { createHistogramChart } from "./histogram-popout.js";
 import { calculateMissionCoverage } from "./area-calculations.js";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
@@ -17,7 +15,6 @@ window.map = new mapboxgl.Map({
   maxZoom: maxZoom,
   attributionControl: false,
 });
-
 
 var mostRecentHover;
 let loaded = false;
@@ -76,34 +73,16 @@ map.on("zoom", (ev) => {
   updateScaleBar();
 });
 
-export async function circleLinkZoom(d) {
-  let reset = document.querySelectorAll("circle");
-  reset.forEach((reset) => {
-    reset.style.fill = "red";
+export function mapFlyTo(product) {
+  map.flyTo({
+    center: product.centre.split(",").reverse(),
+    zoom: 11,
+    essential: true,
   });
-
-  let misGroup;
-  let currentProduct;
-  allProducts.forEach((product) => {
-    if (product.identifier === d) {
-      misGroup = product.title.split(" ")[0];
-      currentProduct = product;
-      map.flyTo({
-        center: product.centre.split(",").reverse(),
-        zoom: 12,
-        essential: true,
-      });
-    }
-  });
-  let circleGroup = document.querySelectorAll('circle[mission="' + misGroup + '"]');
-  circleGroup.forEach((circle) => {
-    circle.style.fill = "blue";
-  });
-  displayMissionMenu(currentProduct);
 }
 
-map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
-  map.getCanvas().style.cursor = 'pointer';
+map.on("mouseenter", "product-polygons-frames-fill", (e) => {
+  map.getCanvas().style.cursor = "pointer";
   mostRecentHover = e;
   const coordinates = e.features[0].geometry.coordinates[0].slice();
   var eProps = e.features[0].properties;
@@ -112,11 +91,11 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   var newE = {
     footprint: {
       type: "Polygon",
-      coordinates: [coordinates]
+      coordinates: [coordinates],
     },
   };
- 
-  var multis = calculateMissionCoverage([newE], window.map.getSource("uk-land")._data.features[0].geometry.coordinates) 
+
+  var multis = calculateMissionCoverage([newE], window.map.getSource("uk-land")._data.features[0].geometry.coordinates);
   const totalArea = turf.area(window.map.getSource("uk-land")._data) / 1000000; //divide by 1000 to get square km
   const coveragePercentage = Math.round((multis / totalArea) * 10000) / 1000;
 
@@ -144,9 +123,9 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
 
   var lng = 0;
   var lat = coordinates[0][1];
-  coordinates.forEach(c => {
+  coordinates.forEach((c) => {
     lng += c[0];
-    if(c[1] > lat){
+    if (c[1] > lat) {
       lat = c[1];
     }
   });
@@ -156,23 +135,22 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   popup.setLngLat(newCoords).setHTML(description).addTo(map);
 });
 
-map.on('mouseleave', 'product-polygons-frames-fill', () => {
-  map.getCanvas().style.cursor = '';
+map.on("mouseleave", "product-polygons-frames-fill", () => {
+  map.getCanvas().style.cursor = "";
   popup.remove();
-  if (window.map.getSource('mission-area-within-poly') != undefined) {
-    window.map.removeLayer('mission-area-within-polyfill');
-    window.map.removeSource('mission-area-within-poly');
-  } 
+  if (window.map.getSource("mission-area-within-poly") != undefined) {
+    window.map.removeLayer("mission-area-within-polyfill");
+    window.map.removeSource("mission-area-within-poly");
+  }
 });
 
-
-map.on('click', 'product-polygons-frames-fill', (e) => {
+map.on("click", "product-polygons-frames-fill", (e) => {
   var cent = e.lngLat;
   var item = mostRecentHover.features[0]._geometry.coordinates[0];
-  if(item.length > 0){
+  if (item.length > 0) {
     var lg = 0;
     var lt = 0;
-    for(var x = 0; x < item.length; x++){
+    for (var x = 0; x < item.length; x++) {
       lg += item[x][0];
       lt += item[x][1];
     }
@@ -188,25 +166,23 @@ map.on('click', 'product-polygons-frames-fill', (e) => {
   //JOBY PUT CODE HERE
 });
 
-map.on('mouseenter', 'product-cluster-density', () => {
-  map.getCanvas().style.cursor = 'pointer';
+map.on("mouseenter", "product-cluster-density", () => {
+  map.getCanvas().style.cursor = "pointer";
 });
 
-
-map.on('mouseleave', 'product-cluster-density', () => {
-  map.getCanvas().style.cursor = '';
+map.on("mouseleave", "product-cluster-density", () => {
+  map.getCanvas().style.cursor = "";
 });
 
-
-map.on('click', 'product-cluster-density', (e) => {
-  var features = map.queryRenderedFeatures(e.point, { layers: ['product-cluster-density'] });
+map.on("click", "product-cluster-density", (e) => {
+  var features = map.queryRenderedFeatures(e.point, { layers: ["product-cluster-density"] });
   var points = 14 - features[0].properties.point_count;
-  if(points < 5) points = 5;
-  if (points != 1){
-  map.easeTo({
-    center: features[0].geometry.coordinates,
-    zoom: points,
-    essential: true
-  });
+  if (points < 5) points = 5;
+  if (points != 1) {
+    map.easeTo({
+      center: features[0].geometry.coordinates,
+      zoom: points,
+      essential: true,
+    });
   }
 });
