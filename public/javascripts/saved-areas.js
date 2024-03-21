@@ -715,6 +715,7 @@ function displaySavedArea(savedArea) {
   filesContainerEle.append(savedAreaCheckboxEle);
   const fileNameEle = document.createElement("span");
   fileNameEle.className = "grow my-auto";
+  console.log(savedArea);
   fileNameEle.textContent = savedArea.properties.name;
   filesContainerEle.append(fileNameEle);
   const savedAreaViewButtonEle = document.createElement("button");
@@ -755,8 +756,14 @@ function displaySavedArea(savedArea) {
   savedAreaViewButtonEle.onclick = () => {
     if (fileNameEle.contentEditable == "true") {
       fileNameEle.contentEditable = "false";
-      savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
-      savedAreaViewButtonImageEle.src = "images/icons8-map-90.png";
+      savedAreaViewButtonEle.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+      <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
+      </svg>`;
+      savedAreaEditButtonEle.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+      <path d="M 22.828125 3 C 22.316375 3 21.804562 3.1954375 21.414062 3.5859375 L 19 6 L 24 11 L 26.414062 8.5859375 C 27.195062 7.8049375 27.195062 6.5388125 26.414062 5.7578125 L 24.242188 3.5859375 C 23.851688 3.1954375 23.339875 3 22.828125 3 z M 17 8 L 5.2597656 19.740234 C 5.2597656 19.740234 6.1775313 19.658 6.5195312 20 C 6.8615312 20.342 6.58 22.58 7 23 C 7.42 23.42 9.6438906 23.124359 9.9628906 23.443359 C 10.281891 23.762359 10.259766 24.740234 10.259766 24.740234 L 22 13 L 17 8 z M 4 23 L 3.0566406 25.671875 A 1 1 0 0 0 3 26 A 1 1 0 0 0 4 27 A 1 1 0 0 0 4.328125 26.943359 A 1 1 0 0 0 4.3378906 26.939453 L 4.3632812 26.931641 A 1 1 0 0 0 4.3691406 26.927734 L 7 26 L 5.5 24.5 L 4 23 z"></path>
+      </svg>`;
       fileNameEle.textContent = tempContent;
     } else {
       var mapSource = map.getSource(savedArea.properties.name + "-CUSTOM");
@@ -790,8 +797,10 @@ function displaySavedArea(savedArea) {
             "line-width": 1,
           },
         });
+
       } else {
         if (map.getLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility") == "none") {
+
           window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility", "visible");
           window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-outline", "visibility", "visible");
         } else {
@@ -840,17 +849,32 @@ function displaySavedArea(savedArea) {
     }
   };
   savedAreaEditButtonEle.onclick = () => {
+    console.log(fileNameEle.contentEditable);
     if (fileNameEle.contentEditable == "false" || fileNameEle.contentEditable == "inherit") {
       tempContent = fileNameEle.textContent;
       fileNameEle.contentEditable = "true";
       fileNameEle.focus();
       //fileNameEle.select(); either highlight or put cursor at end
-      savedAreaEditButtonEle.src = "images/icons8-tick-30.png";
-      savedAreaEditButtonEle.src = "images/icons8-cross-30.png";
+      savedAreaViewButtonEle.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+      <path d="M 7.9785156 5.9804688 A 2.0002 2.0002 0 0 0 6.5859375 9.4140625 L 12.171875 15 L 6.5859375 20.585938 A 2.0002 2.0002 0 1 0 9.4140625 23.414062 L 15 17.828125 L 20.585938 23.414062 A 2.0002 2.0002 0 1 0 23.414062 20.585938 L 17.828125 15 L 23.414062 9.4140625 A 2.0002 2.0002 0 0 0 21.960938 5.9804688 A 2.0002 2.0002 0 0 0 20.585938 6.5859375 L 15 12.171875 L 9.4140625 6.5859375 A 2.0002 2.0002 0 0 0 7.9785156 5.9804688 z"></path>
+      </svg>`;
+      
+      savedAreaEditButtonEle.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+      <path d="M 26.980469 5.9902344 A 1.0001 1.0001 0 0 0 26.292969 6.2929688 L 11 21.585938 L 4.7070312 15.292969 A 1.0001 1.0001 0 1 0 3.2929688 16.707031 L 10.292969 23.707031 A 1.0001 1.0001 0 0 0 11.707031 23.707031 L 27.707031 7.7070312 A 1.0001 1.0001 0 0 0 26.980469 5.9902344 z"></path>
+      </svg>`;
+      
     } else {
       fileNameEle.contentEditable = "false";
-      savedAreaEditButtonEle.src = "images/icons8-edit-90.png";
-      savedAreaEditButtonEle.src = "images/icons8-map-90.png";
+      savedAreaViewButtonEle.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+      <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
+      </svg>`;
+      savedAreaEditButtonEle.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+      <path d="M 22.828125 3 C 22.316375 3 21.804562 3.1954375 21.414062 3.5859375 L 19 6 L 24 11 L 26.414062 8.5859375 C 27.195062 7.8049375 27.195062 6.5388125 26.414062 5.7578125 L 24.242188 3.5859375 C 23.851688 3.1954375 23.339875 3 22.828125 3 z M 17 8 L 5.2597656 19.740234 C 5.2597656 19.740234 6.1775313 19.658 6.5195312 20 C 6.8615312 20.342 6.58 22.58 7 23 C 7.42 23.42 9.6438906 23.124359 9.9628906 23.443359 C 10.281891 23.762359 10.259766 24.740234 10.259766 24.740234 L 22 13 L 17 8 z M 4 23 L 3.0566406 25.671875 A 1 1 0 0 0 3 26 A 1 1 0 0 0 4 27 A 1 1 0 0 0 4.328125 26.943359 A 1 1 0 0 0 4.3378906 26.939453 L 4.3632812 26.931641 A 1 1 0 0 0 4.3691406 26.927734 L 7 26 L 5.5 24.5 L 4 23 z"></path>
+      </svg>`;
       fileNameEle.textContent = fileNameEle.textContent.trim();
       if (fileNameEle.textContent.length != 0) {
         savedArea.properties.name = fileNameEle.textContent;
@@ -904,7 +928,9 @@ const importFiles = () => {
             }
           }
           savedAreas.push({
-            name: tempName,
+            properties: {
+              name: tempName 
+            },
             type: "geojson",
             geometry: JSON.parse(reader.result),
           });
@@ -924,10 +950,11 @@ const exportFiles = () => {
   if (selectedAreas.length == 0) {
     alert("No areas selected"); //maybe change this for something less intrusive
   } else {
+    console.log(selectedAreas);
     selectedAreas.forEach((area) => {
-      var file = new File([JSON.stringify(area.features[0].geometry)], area.properties.name + ".geojson", {
-        type: "geojson",
-      });
+
+      var file = new File([JSON.stringify(area.features[0].geometry)], area.properties.name + ".geojson", { type: "geojson" });
+
       window.saveAs(file);
     });
   }

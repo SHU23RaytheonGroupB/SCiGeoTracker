@@ -19,7 +19,7 @@ window.map = new mapboxgl.Map({
 });
 
 
-
+var mostRecentHover;
 let loaded = false;
 
 var popup = new mapboxgl.Popup({
@@ -104,6 +104,7 @@ export async function circleLinkZoom(d) {
 
 map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
   map.getCanvas().style.cursor = 'pointer';
+  mostRecentHover = e;
   const coordinates = e.features[0].geometry.coordinates[0].slice();
   var eProps = e.features[0].properties;
   console.log(e.features[0].properties.date_start);
@@ -167,9 +168,46 @@ map.on('mouseleave', 'product-polygons-frames-fill', () => {
 
 
 map.on('click', 'product-polygons-frames-fill', (e) => {
+  var cent = e.lngLat;
+  var item = mostRecentHover.features[0]._geometry.coordinates[0];
+  if(item.length > 0){
+    var lg = 0;
+    var lt = 0;
+    for(var x = 0; x < item.length; x++){
+      lg += item[x][0];
+      lt += item[x][1];
+    }
+    lg = lg / item.length;
+    lt = lt / item.length;
+    cent = [lg, lt];
+  }
   map.flyTo({
-    center: e.lngLat,
+    center: cent,
     zoom: 10.5,
     essential: true,
   });
+});
+
+map.on('mouseenter', 'product-cluster-density', () => {
+  map.getCanvas().style.cursor = 'pointer';
+});
+
+
+map.on('mouseleave', 'product-cluster-density', () => {
+  map.getCanvas().style.cursor = '';
+});
+
+
+map.on('click', 'product-cluster-density', (e) => {
+  var features = map.queryRenderedFeatures(e.point, { layers: ['product-cluster-density'] });
+  console.log(features[0].properties);  
+  var points = 14 - features[0].properties.point_count;
+  if(points < 5) points = 5;
+  if (points != 1){
+  map.easeTo({
+    center: features[0].geometry.coordinates,
+    zoom: points,
+    essential: true
+  });
+  }
 });
