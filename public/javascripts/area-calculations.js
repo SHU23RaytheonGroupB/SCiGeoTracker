@@ -62,14 +62,14 @@ export function updateArea(allProducts, data) {
     const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
     const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
     const missionCount = containedMissions.length;
-    areaSelectionInfoContainerEle.style.display = "inline";
-    totalAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${totalAreaRounded}</td>`;
-    coveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${coveredArea}</td>`;
-    uncoveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${uncoveredArea}</td>`;
-    coveragePercentageContainerEle.innerHTML = `<td class="font-light text-neutral-400">${coveragePercentage}</td>`;
-    missionCountContainerEle.innerHTML = `<td class="font-light text-neutral-400">${missionCount}</td>`;
+    areaSelectionInfoContainerEle.classList.remove("hidden");
+    totalAreaContainerEle.textContent = totalAreaRounded.toLocaleString();
+    coveredAreaContainerEle.textContent = coveredArea.toLocaleString();
+    uncoveredAreaContainerEle.textContent = uncoveredArea.toLocaleString();
+    coveragePercentageContainerEle.textContent = coveragePercentage.toLocaleString();
+    missionCountContainerEle.textContent = missionCount.toLocaleString();
   } else {
-    areaSelectionInfoContainerEle.style.display = "none";
+    areaSelectionInfoContainerEle.classList.add("hidden");
     areaSaveContainerEle.classList.add("hidden");
 
   }
@@ -159,19 +159,20 @@ export function updateUkArea() {
   let containedMissionsWithinBoundingBox = missionsWithinBoundingBox(allProducts, boundingBox);
   let containedMissions = missionsWithinPolygon(containedMissionsWithinBoundingBox, data.features[0].geometry.coordinates);
 
-  const area = turf.area(data) / 1000000; //divide by 1000 to get square km
-  const rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
-  const Covered_area = calculateMissionCoverage(containedMissions, data.features[0].geometry.coordinates);
-  const Uncovered_area = Math.round((area - Covered_area) * 100) / 100;
-  const Coverage_percentage = Math.round((Covered_area / (Covered_area + Uncovered_area)) * 10000) / 100; //area as a % to 2 d.p.
-  const Mission_count = containedMissions.length;
+  const totalArea = turf.area(data) / 1000000; //divide by 1000 to get square km
+  const totalAreaRounded = Math.round(totalArea * 100) / 100; //convert area to 2 d.p.
+  const coveredArea = calculateMissionCoverage(containedMissions, data.features[0].geometry.coordinates);
+  const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
+  const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
+  const missionCount = containedMissions.length;
 
-  areaSelectionInfoContainerEle.style.display = "inline";
-  totalAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${rounded_area}</td>`;
-  coveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Covered_area}</td>`;
-  uncoveredAreaContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Uncovered_area}</td>`;
-  coveragePercentageContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Coverage_percentage}</td>`;
-  missionCountContainerEle.innerHTML = `<td class="font-light text-neutral-400">${Mission_count}</td>`;
+  areaSelectionInfoContainerEle.classList.remove("hidden");
+
+  totalAreaContainerEle.textContent = totalAreaRounded.toLocaleString();
+  coveredAreaContainerEle.textContent = coveredArea.toLocaleString();
+  uncoveredAreaContainerEle.textContent = uncoveredArea.toLocaleString();
+  coveragePercentageContainerEle.textContent = coveragePercentage.toLocaleString();
+  missionCountContainerEle.textContent = missionCount.toLocaleString();
 }
 
 function missionsWithinBoundingBox(allMissons, polygon) {
@@ -233,7 +234,7 @@ function missionsWithinPolygon(boundingBoxMissions, polygon) {
   return containedMissions;
 }
 
-function calculateMissionCoverage(allMissons, polygon) {
+export function calculateMissionCoverage(allMissons, polygon) {
   if (allMissons.length == 0) {
     return 0;
   }
@@ -284,7 +285,8 @@ function calculateMissionCoverage(allMissons, polygon) {
   var fcMissionsWithinPoly = [];
   //console.log("abc");
   for (let i = 0; i < fcMissions.length; i++) {
-    var intersection = turf.intersect(turf.polygon(fcMissions[i].geometry.coordinates), turfpolygon);
+    var polygon2 = turf.polygon(fcMissions[i].geometry.coordinates);
+    var intersection = turf.intersect(polygon2, turfpolygon);
     if (intersection) {
         if (intersection.geometry.type === 'MultiPolygon') {
             // If the intersection is a MultiPolygon, loop through each polygon
@@ -426,6 +428,7 @@ function calculateMissionCoverage(allMissons, polygon) {
 
   var areaCoveredWithOverlaps = 0;
   for (let i = 0; i < fcMissionsWithinPoly.length; i++) {
+
     if (fcMissionsWithinPoly[i].geometry.coordinates[0].length == 1) {
       areaCoveredWithOverlaps += turf.area(turf.polygon(fcMissionsWithinPoly[i].geometry.coordinates[0]));
     } else {
@@ -443,10 +446,9 @@ function calculateMissionCoverage(allMissons, polygon) {
   area /= 1000000; //divide by 1000 to get square km
   //console.log(area);
 
-  var rounded_area = Math.round(area * 100) / 100; //convert area to 2 d.p.
+  var roundedArea = Math.round(area * 100) / 100; //convert area to 2 d.p.
 
-  //console.log(rounded_area);
-  return rounded_area;
+  return roundedArea;
 }
 
 function savePolygon(){

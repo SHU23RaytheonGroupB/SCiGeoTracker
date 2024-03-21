@@ -45,13 +45,16 @@ export function displaygeojsonFiles() {
   console.log("geoJSON");
 }
 
+const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
+const savedAreasUpload = document.querySelector("#saved-areas-upload");
+
 export function initialiseSavedAreas(draw) {
 
   const filesSearch = document.querySelector("#file-search");
 
   filesSearch.addEventListener("change", savedSearchChanged);
 
-  document.querySelector("#saved-areas-upload").oninput = importFiles;
+  savedAreasUpload.oninput = importFiles;
   document.querySelector("#saved-areas-export-button").onclick = exportFiles;
 
   document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
@@ -66,8 +69,23 @@ export function initialiseSavedAreas(draw) {
   let createPoly = document.getElementById("confirm-name-button");
   createPoly.addEventListener("click", () => createNewPoly(nameTextBox.value, polygonData));
   
-  const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
-  areaSelectionInfoCloseButtonEle.onclick = draw.deleteAll;
+  document.querySelector("#saved-areas-import-button").onclick = openFile;
+
+  areaSelectionInfoCloseButtonEle.onclick = () => closeSelectionInfo(draw);
+}
+
+function closeSelectionInfo(draw) {
+  console.log("fjf");
+  draw.deleteAll();
+  document.getElementById("area-selection-info-container").classList.add("hidden");
+  console.log("fjfdasd");
+  document.getElementById("name-area-container").classList.add("hidden");
+  // let text = document.getElementById("name-area-textbox");
+  // text.value = "";
+  //document.getElementById("area-selection-info-save-button").classList.add("hidden");
+  if (map.getLayer("mission-area-within-polyfill") != undefined) {
+    window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
+  }
 }
 
 if (savedAreas.length == 0) {
@@ -514,7 +532,7 @@ const openSavedAreas = () => {
     filesListEle.append(filesContainerEle);
   });
   savedAreasOpen = true;
-  filesContainerEle.style.display = null;
+  filesContainerEle.classList.remove("hidden");
   filesContainerEle.focus();
 };
 
@@ -619,5 +637,9 @@ const refreshSavedScreen = () => {
 
 const closeSavedAreas = () => {
   savedAreasOpen = false;
-  filesContainerEle.style.display = "none";
+  filesContainerEle.classList.add("hidden");
 };
+
+function openFile() {
+  savedAreasUpload.click();
+}
