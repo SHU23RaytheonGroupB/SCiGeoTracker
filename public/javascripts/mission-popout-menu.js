@@ -103,7 +103,7 @@ export async function viewSelectedMission(missionID) {
   } catch (error) {
     console.error("Error:", error);
   }
-
+}
 function closeMissionInfo() {
   missionMenu.classList.add("hidden");
 }

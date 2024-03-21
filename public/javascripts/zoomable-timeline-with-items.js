@@ -7,7 +7,6 @@ import { mapFlyTo } from "./map.js";
 
 let missionID;
 let scenes = [];
-import { circleLinkZoom } from "./map.js";
 
 export function Timeline(options) {
   const axis = {};
@@ -382,10 +381,11 @@ function setTimelineVisibility(enabled) {
 }
 
 const button = document.getElementById("timeline-button");
-document.getElementById("timeline-container").style.display = "none";
+document.getElementById("timeline-container").style.display = "block";
 
 button.addEventListener("click", () => {
-  const chart = document.getElementById("timeline-container");
+  const chart = document.getElementById("timeline-container");  
+  console.log(chart.style.display);
   chart.style.display = chart.style.display === "none" ? "block" : "none";
 });
 
