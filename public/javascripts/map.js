@@ -140,4 +140,8 @@ map.on('mouseenter', 'product-polygons-frames-fill', (e) => {
 map.on('mouseleave', 'product-polygons-frames-fill', () => {
   map.getCanvas().style.cursor = '';
   popup.remove();
+  if (window.map.getSource('mission-area-within-poly') != undefined) {
+    window.map.removeLayer('mission-area-within-polyfill');
+    window.map.removeSource('mission-area-within-poly');
+  } 
 });
