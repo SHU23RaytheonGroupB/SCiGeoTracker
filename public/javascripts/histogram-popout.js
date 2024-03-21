@@ -61,7 +61,10 @@ export function createHistogramChart() {
     }
   }
 
-  
+  if (window.map.getSource('mission-area-within-poly') != undefined) {
+    window.map.removeLayer('mission-area-within-polyfill');
+    window.map.removeSource('mission-area-within-poly');
+  } 
 
   for (let i = 1; i < percentageCoverage.length; i++) {
     percentageCoverage[i] = percentageCoverage[i-1] + percentageCoverage[i];
