@@ -30,12 +30,6 @@ const cursorSelectedClasses = [
   "hover:bg-neutral-200/30",
 ];
 
-document.querySelector("#area-selection-info-save-button").onclick = () => activitieCreation;
-
-function activitieCreation() {
-  
-}
-
 const zoomScrollButtonEle = document.querySelector("#zoom-scroll-button");
 var barTop = 0,
   barBottom = 0;
