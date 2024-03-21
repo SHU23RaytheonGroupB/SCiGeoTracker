@@ -145,3 +145,12 @@ map.on('mouseleave', 'product-polygons-frames-fill', () => {
     window.map.removeSource('mission-area-within-poly');
   } 
 });
+
+
+map.on('click', 'product-polygons-frames-fill', (e) => {
+  map.flyTo({
+    center: e.lngLat,
+    zoom: 10.5,
+    essential: true,
+  });
+});
