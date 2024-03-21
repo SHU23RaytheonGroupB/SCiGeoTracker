@@ -4,11 +4,11 @@ import { allProducts } from "./products-and-layers.js";
 import { fileDisplayMode } from "./map-controls.js";
 
 class Activity {
-  constructor(Name, Deadline, Polygon) {
+  constructor(Name, Deadline, PolygonArr) {
     //user generated
     this.name = Name;
     this.deadline = Deadline;
-    this.areaPoly = Polygon;
+    this.areaPoly = PolygonArr;
     //auto generated
     this.createdDate = (new Date()).toString();
     this.relatedMissions = [];
@@ -16,8 +16,11 @@ class Activity {
   }
 }
 
+//very temp
+sessionStorage.removeItem("savedActivties");
 
 let selectedAreas = [];
+let selectedActivties = [];
 
 let savedAreas = JSON.parse(sessionStorage.getItem("savedAreas") ?? "[]");
 let savedActivties = JSON.parse(sessionStorage.getItem("savedActivties") ?? "[]");
@@ -31,18 +34,28 @@ const updateActivties = () => {
 };
 
 export function displayAllFiles() {
+  saveSavedAreas();
+  updateActivties();
+  if (savedAreasOpen) {
+    openSavedAreas();
+   } 
   document.querySelector("#files-all-display-button");
-  console.log("All");
 }
 
 export function displayActivitiesFiles() {
+  updateActivties();
+  if (savedAreasOpen) {
+    openSavedAreas();
+   } 
   document.querySelector("#files-all-display-button");
-  console.log("Activities");
 }
 
 export function displaygeojsonFiles() {
+  saveSavedAreas();
+  if (savedAreasOpen) {
+   openSavedAreas();
+  } 
   document.querySelector("#files-all-display-button");
-  console.log("geoJSON");
 }
 
 const areaSelectionInfoCloseButtonEle = document.querySelector("#area-selection-info-close-button");
@@ -59,7 +72,7 @@ export function initialiseSavedAreas(draw) {
 
   document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
   document.querySelector("#folder-button").onclick = () => {
-    console.log(savedAreasOpen);
+    //console.log(savedAreasOpen);
     if (!savedAreasOpen) openSavedAreas();
     else closeSavedAreas();
   };
@@ -76,10 +89,10 @@ export function initialiseSavedAreas(draw) {
 }
 
 function closeSelectionInfo(draw) {
-  console.log("fjf");
+  //console.log("fjf");
   draw.deleteAll();
   document.getElementById("area-selection-info-container").classList.add("hidden");
-  console.log("fjfdasd");
+  //console.log("fjfdasd");
   document.getElementById("name-area-container").classList.add("hidden");
   // let text = document.getElementById("name-area-textbox");
   // text.value = "";
@@ -89,6 +102,7 @@ function closeSelectionInfo(draw) {
   }
 }
 
+//if no saved areas make some temp ones for demo
 if (savedAreas.length == 0) {
   var coordCol = [[
     [-5.976526999921077, 55.056598000097665],
@@ -320,9 +334,46 @@ if (savedAreas.length == 0) {
 
 //if no activites make some temp ones for demo
 if (savedActivties.length == 0) {
-  savedActivties.push(new Activity("Mission over Sheff Hallam Uni",new Date("2024-03-22"), ));
-  savedActivties.push(new Activity("Incident in London",new Date("2025-12-04"), ));
-  saveSavedAreas();
+  var featureHallam = {
+    type: "Feature",
+    properties: { name: "hallam" },
+    geometry: {
+      type: "Polygon",
+      coordinates: [[
+        [-1.479, 53.374],
+        [-1.466, 53.383],
+        [-1.460, 53.379],
+        [-1.470, 53.371],
+        [-1.479, 53.374],
+      ]],
+    },
+  };
+  var FCfeatureHallam = [];
+  FCfeatureHallam.push(featureHallam);
+  console.log(FCfeatureHallam[0]);
+  console.log(0);
+
+  savedActivties.push(new Activity("Mission over Sheff Hallam Uni",new Date("2024-03-22"), FCfeatureHallam));
+
+  var featureLondon = {
+    type: "Feature",
+    properties: { name: "london" },
+    geometry: {
+      type: "Polygon",
+      coordinates: [[
+        [-1.479, 53.374],
+        [-1.466, 53.383],
+        [-1.460, 53.379],
+        [-1.470, 53.371],
+        [-1.479, 53.374],
+      ]],
+    },
+  };
+  var FCfeatureLondon = [];
+  FCfeatureLondon.push(featureLondon);
+  savedActivties.push(new Activity("Incident in London",new Date("2025-12-04"), FCfeatureLondon));
+
+  updateActivties();
 }
 
 const filesContainerEle = document.querySelector("#file-container");
@@ -351,191 +402,393 @@ const savedSearchChanged = () => {
 
 let savedAreasOpen = false;
 const openSavedAreas = () => {
+  savedAreasOpen = true;
+  filesListEle.replaceChildren(); //remove everything
+  //console.log(fileDisplayMode);
   if (fileDisplayMode == 1) { //Activities
-
+    savedActivties.forEach((savedActivty) => {
+      displaySavedActivty(savedActivty)
+    });
   } else if (fileDisplayMode == 2) { //GeoJSONS
-
+    searchedAreas.forEach((savedArea) => {
+      displaySavedArea(savedArea)
+    });
   } else { //All
-
+    savedActivties.forEach((savedActivty) => {
+      displaySavedActivty(savedActivty)
+    });
+    searchedAreas.forEach((savedArea) => {
+      displaySavedArea(savedArea)
+    });
   }
-  filesListEle.replaceChildren();
-  searchedAreas.forEach((savedArea) => {
-    var tempContent = "";
-    const filesContainerEle = document.createElement("div");
-    filesContainerEle.className =
-      "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
-    const savedAreaCheckboxEle = document.createElement("input");
-    savedAreaCheckboxEle.type = "checkbox";
-    savedAreaCheckboxEle.name = "saved-area-checkbox";
-    savedAreaCheckboxEle.className =
-      "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
-    filesContainerEle.append(savedAreaCheckboxEle);
-    const fileNameEle = document.createElement("span");
-    fileNameEle.className = "grow my-auto";
-    fileNameEle.textContent = savedArea.properties.name;
-    filesContainerEle.append(fileNameEle);
-    const savedAreaViewButtonEle = document.createElement("button");
-    const savedAreaEditButtonEle = document.createElement("button");
-    const savedAreaDeleteButtonEle = document.createElement("button");
-    savedAreaViewButtonEle.name = "saved-area-view-button";
-    savedAreaEditButtonEle.name = "saved-area-edit-button";
-    savedAreaDeleteButtonEle.name = "saved-area-delete-button";
-    const buttonClasses = "ml-auto my-auto p-1 rounded-md bg-neutral-100/90 hover:bg-neutral-100 dark:bg-neutral-700/70 dark:hover:bg-neutral-700 ring-1 ring-neutral-600/50";
-    savedAreaViewButtonEle.className = buttonClasses;
-    savedAreaEditButtonEle.className = buttonClasses;
-    savedAreaDeleteButtonEle.className = buttonClasses;
-    savedAreaViewButtonEle.innerHTML = `
+  filesContainerEle.classList.remove("hidden");
+  filesContainerEle.focus();
+}
+
+function displaySavedActivty(savedActivty) {
+  var tempContent = "";
+  const filesContainerEle = document.createElement("div");
+  filesContainerEle.className =
+    "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
+  const savedAreaCheckboxEle = document.createElement("input");
+  savedAreaCheckboxEle.type = "checkbox";
+  savedAreaCheckboxEle.name = "saved-area-checkbox";
+  savedAreaCheckboxEle.className =
+    "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
+  filesContainerEle.append(savedAreaCheckboxEle);
+  const fileNameEle = document.createElement("span");
+  fileNameEle.className = "grow my-auto";
+  fileNameEle.textContent = savedActivty.name;
+  filesContainerEle.append(fileNameEle);
+
+  //create all buttons
+  const activityMarkEle = document.createElement("button");
+  const savedAreaViewButtonEle = document.createElement("button");
+  const savedAreaEditButtonEle = document.createElement("button");
+  const savedAreaDeleteButtonEle = document.createElement("button");
+
+  //name all buttons
+  activityMarkEle.name = "activity-mark-Ele";
+  savedAreaViewButtonEle.name = "saved-area-view-button";
+  savedAreaEditButtonEle.name = "saved-area-edit-button";
+  savedAreaDeleteButtonEle.name = "saved-area-delete-button";
+
+  //style all buttons
+  const buttonClasses = "ml-auto my-auto p-1 rounded-md bg-neutral-100/90 hover:bg-neutral-100 dark:bg-neutral-700/70 dark:hover:bg-neutral-700 ring-1 ring-neutral-600/50";
+  activityMarkEle.className = buttonClasses;
+  savedAreaViewButtonEle.className = buttonClasses;
+  savedAreaEditButtonEle.className = buttonClasses;
+  savedAreaDeleteButtonEle.className = buttonClasses;
+
+  //add images to all buttons
+  activityMarkEle.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+  <text x="4" y="25" font-size="30" fill="white">A</text>
+  </svg> `;
+  savedAreaViewButtonEle.innerHTML = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
-  <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
+<path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
 </svg>`;
-    savedAreaEditButtonEle.innerHTML = `
+  savedAreaEditButtonEle.innerHTML = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
-  <path d="M 22.828125 3 C 22.316375 3 21.804562 3.1954375 21.414062 3.5859375 L 19 6 L 24 11 L 26.414062 8.5859375 C 27.195062 7.8049375 27.195062 6.5388125 26.414062 5.7578125 L 24.242188 3.5859375 C 23.851688 3.1954375 23.339875 3 22.828125 3 z M 17 8 L 5.2597656 19.740234 C 5.2597656 19.740234 6.1775313 19.658 6.5195312 20 C 6.8615312 20.342 6.58 22.58 7 23 C 7.42 23.42 9.6438906 23.124359 9.9628906 23.443359 C 10.281891 23.762359 10.259766 24.740234 10.259766 24.740234 L 22 13 L 17 8 z M 4 23 L 3.0566406 25.671875 A 1 1 0 0 0 3 26 A 1 1 0 0 0 4 27 A 1 1 0 0 0 4.328125 26.943359 A 1 1 0 0 0 4.3378906 26.939453 L 4.3632812 26.931641 A 1 1 0 0 0 4.3691406 26.927734 L 7 26 L 5.5 24.5 L 4 23 z"></path>
+<path d="M 22.828125 3 C 22.316375 3 21.804562 3.1954375 21.414062 3.5859375 L 19 6 L 24 11 L 26.414062 8.5859375 C 27.195062 7.8049375 27.195062 6.5388125 26.414062 5.7578125 L 24.242188 3.5859375 C 23.851688 3.1954375 23.339875 3 22.828125 3 z M 17 8 L 5.2597656 19.740234 C 5.2597656 19.740234 6.1775313 19.658 6.5195312 20 C 6.8615312 20.342 6.58 22.58 7 23 C 7.42 23.42 9.6438906 23.124359 9.9628906 23.443359 C 10.281891 23.762359 10.259766 24.740234 10.259766 24.740234 L 22 13 L 17 8 z M 4 23 L 3.0566406 25.671875 A 1 1 0 0 0 3 26 A 1 1 0 0 0 4 27 A 1 1 0 0 0 4.328125 26.943359 A 1 1 0 0 0 4.3378906 26.939453 L 4.3632812 26.931641 A 1 1 0 0 0 4.3691406 26.927734 L 7 26 L 5.5 24.5 L 4 23 z"></path>
 </svg>`;
-    savedAreaDeleteButtonEle.innerHTML = `
+  savedAreaDeleteButtonEle.innerHTML = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4 fill-red-600">
-  <path d="M 13 3 A 1.0001 1.0001 0 0 0 11.986328 4 L 6 4 A 1.0001 1.0001 0 1 0 6 6 L 24 6 A 1.0001 1.0001 0 1 0 24 4 L 18.013672 4 A 1.0001 1.0001 0 0 0 17 3 L 13 3 z M 6 8 L 6 24 C 6 25.105 6.895 26 8 26 L 22 26 C 23.105 26 24 25.105 24 24 L 24 8 L 6 8 z M 12 13 C 12.25575 13 12.511531 13.097469 12.707031 13.292969 L 15 15.585938 L 17.292969 13.292969 C 17.683969 12.901969 18.316031 12.901969 18.707031 13.292969 C 19.098031 13.683969 19.098031 14.316031 18.707031 14.707031 L 16.414062 17 L 18.707031 19.292969 C 19.098031 19.683969 19.098031 20.316031 18.707031 20.707031 C 18.512031 20.902031 18.256 21 18 21 C 17.744 21 17.487969 20.902031 17.292969 20.707031 L 15 18.414062 L 12.707031 20.707031 C 12.512031 20.902031 12.256 21 12 21 C 11.744 21 11.487969 20.902031 11.292969 20.707031 C 10.901969 20.316031 10.901969 19.683969 11.292969 19.292969 L 13.585938 17 L 11.292969 14.707031 C 10.901969 14.316031 10.901969 13.683969 11.292969 13.292969 C 11.488469 13.097469 11.74425 13 12 13 z"></path>
+<path d="M 13 3 A 1.0001 1.0001 0 0 0 11.986328 4 L 6 4 A 1.0001 1.0001 0 1 0 6 6 L 24 6 A 1.0001 1.0001 0 1 0 24 4 L 18.013672 4 A 1.0001 1.0001 0 0 0 17 3 L 13 3 z M 6 8 L 6 24 C 6 25.105 6.895 26 8 26 L 22 26 C 23.105 26 24 25.105 24 24 L 24 8 L 6 8 z M 12 13 C 12.25575 13 12.511531 13.097469 12.707031 13.292969 L 15 15.585938 L 17.292969 13.292969 C 17.683969 12.901969 18.316031 12.901969 18.707031 13.292969 C 19.098031 13.683969 19.098031 14.316031 18.707031 14.707031 L 16.414062 17 L 18.707031 19.292969 C 19.098031 19.683969 19.098031 20.316031 18.707031 20.707031 C 18.512031 20.902031 18.256 21 18 21 C 17.744 21 17.487969 20.902031 17.292969 20.707031 L 15 18.414062 L 12.707031 20.707031 C 12.512031 20.902031 12.256 21 12 21 C 11.744 21 11.487969 20.902031 11.292969 20.707031 C 10.901969 20.316031 10.901969 19.683969 11.292969 19.292969 L 13.585938 17 L 11.292969 14.707031 C 10.901969 14.316031 10.901969 13.683969 11.292969 13.292969 C 11.488469 13.097469 11.74425 13 12 13 z"></path>
 </svg>`;
 //     savedAreaDeleteButtonEle.innerHTML = `
 // <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4 fill-red-600">
 //   <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"></path>
 // </svg>`;
 
-    savedAreaCheckboxEle.onclick = () => {
-      if (selectedAreas.includes(savedArea)) {
-        selectedAreas.splice(selectedAreas.indexOf(savedArea), 1);
-      } else {
-        selectedAreas.push(savedArea);
+  savedAreaCheckboxEle.onclick = () => {
+    if (selectedActivties.includes(savedActivty)) {
+      selectedActivties.splice(selectedAreas.indexOf(savedActivty), 1);
+    } else {
+      selectedActivties.push(savedActivty);
+    }
+  };
+  savedAreaViewButtonEle.onclick = () => {
+    if (fileNameEle.contentEditable == "true") {
+      fileNameEle.contentEditable = "false";
+      savedAreaViewButtonEle.src = "images/icons8-edit-90.png";
+      savedAreaViewButtonEle.src = "images/icons8-map-90.png";
+      fileNameEle.textContent = tempContent;
+    } 
+    else {
+      var mapSource = map.getSource(savedActivty.name + "-CUSTOM");
+      if(mapSource == undefined){
+        console.log(savedActivty);
+        map.addSource(savedActivty.name + "-CUSTOM", {
+          type: "geojson",
+          data: savedActivty.areaPoly[0].geometry,
+        });
+        map.addLayer({
+          id: savedActivty.name + "-CUSTOM-frames-fill",
+          type: "fill",
+          source: savedActivty.name + "-CUSTOM",
+          layout: {
+            visibility: "visible",
+          },
+          paint: {
+            "fill-color": productFillColours[mapStyle.currentStyle]["SCENE"],
+            "fill-opacity": 0.2,
+          },
+        });
+        map.addLayer({
+          id: savedActivty.name + "-CUSTOM-frames-outline",
+          type: "line",
+          source: savedActivty.name + "-CUSTOM",
+          layout: {
+            visibility: "visible",
+          },
+          paint: {
+            "line-color": productOutlineColours["SCENE"],
+            "line-width": 1,
+          },
+        });
       }
-    };
-    savedAreaViewButtonEle.onclick = () => {
-      if (savedAreaNameEle.contentEditable == "true") {
-        savedAreaNameEle.contentEditable = "false";
-        savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
-        savedAreaViewButtonImageEle.src = "images/icons8-map-90.png";
-        savedAreaNameEle.textContent = tempContent;
-      } 
-      else {
-        var mapSource = map.getSource(savedArea.properties.name + "-CUSTOM");
-        if(mapSource == undefined){
-          map.addSource(savedArea.properties.name + "-CUSTOM", {
-            type: "geojson",
-            data: savedArea.features[0].geometry,
-          });
-          map.addLayer({
-            id: savedArea.properties.name + "-CUSTOM-frames-fill",
-            type: "fill",
-            source: savedArea.properties.name + "-CUSTOM",
-            layout: {
-              visibility: "visible",
-            },
-            paint: {
-              "fill-color": productFillColours[mapStyle.currentStyle]["SCENE"],
-              "fill-opacity": 0.2,
-            },
-          });
-          map.addLayer({
-            id: savedArea.properties.name + "-CUSTOM-frames-outline",
-            type: "line",
-            source: savedArea.properties.name + "-CUSTOM",
-            layout: {
-              visibility: "visible",
-            },
-            paint: {
-              "line-color": productOutlineColours["SCENE"],
-              "line-width": 1,
-            },
-          });
+      else{
+        
+        if(map.getLayoutProperty(savedActivty.name + "-CUSTOM-frames-fill", "visibility") == "none"){
+          window.map.setLayoutProperty(savedActivty.name + "-CUSTOM-frames-fill", "visibility", "visible");
+          window.map.setLayoutProperty(savedActivty.name + "-CUSTOM-frames-outline", "visibility", "visible");
         }
         else{
-          
-          if(map.getLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility") == "none"){
-            window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility", "visible");
-            window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-outline", "visibility", "visible");
-          }
-          else{
-            window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility", "none");
-            window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-outline", "visibility", "none");
-          }
+          window.map.setLayoutProperty(savedActivty.name + "-CUSTOM-frames-fill", "visibility", "none");
+          window.map.setLayoutProperty(savedActivty.name + "-CUSTOM-frames-outline", "visibility", "none");
         }
-        
-        let infoCloseButton = document.getElementById("area-selection-info-close-button");
-        infoCloseButton.addEventListener("click", closeInfoListener);
+      }
+      
+      let infoCloseButton = document.getElementById("area-selection-info-close-button");
+      infoCloseButton.addEventListener("click", closeInfoListener);
 
-        function closeInfoListener(){
+      function closeInfoListener(){
+        window.map.setLayoutProperty(savedActivty.name + "-CUSTOM-frames-fill", "visibility", "none");
+        window.map.setLayoutProperty(savedActivty.name + "-CUSTOM-frames-outline", "visibility", "none");
+      }
+      
+      closeSavedAreas();
+      //try{
+        var xCoords = 0;
+        var arrCount = 0;
+        var yCoords = 0;
+        for(var a = 0; a < savedActivty.areaPoly[0].geometry.coordinates[0].length; a++){
+          xCoords += savedActivty.areaPoly[0].geometry.coordinates[0][a][0];
+          arrCount++;
+          yCoords += savedActivty.areaPoly[0].geometry.coordinates[0][a][1];
+        }
+        var xAverage = xCoords / arrCount;
+        var yAverage = yCoords / arrCount;
+        
+        savedArea.type = "FeatureCollection";
+        updateArea(allProducts, savedArea);
+        map.flyTo({
+          center: [xAverage, yAverage],
+          zoom: 7.5,
+          essential: true,
+        });
+      //}
+      //catch{}
+    }
+  };
+  savedAreaEditButtonEle.onclick = () => {
+    if (fileNameEle.contentEditable == "false" || fileNameEle.contentEditable == "inherit") {
+      tempContent = fileNameEle.textContent;
+      fileNameEle.contentEditable = "true";
+      fileNameEle.focus();
+      //fileNameEle.select(); either highlight or put cursor at end
+      savedAreaEditButtonEle.src = "images/icons8-tick-30.png";
+      savedAreaEditButtonEle.src = "images/icons8-cross-30.png";
+    } else {
+      fileNameEle.contentEditable = "false";
+      savedAreaEditButtonEle.src = "images/icons8-edit-90.png";
+      savedAreaEditButtonEle.src = "images/icons8-map-90.png";
+      fileNameEle.textContent = fileNameEle.textContent.trim();
+      if (fileNameEle.textContent.length != 0) {
+        savedActivty.name = fileNameEle.textContent;
+        saveSavedAreas();
+      } else {
+        fileNameEle.textContent = tempContent;
+      }
+    }
+  };
+  savedAreaDeleteButtonEle.onclick = () => {
+    var message = "Confirm deletion?";
+    if (selectedActivties.length != 0) {
+      message += " Multiple items selected.";
+    }
+
+    if (confirm(message) == true) {
+      selectedActivties.push(savedArea);
+      selectedActivties.forEach((Activty) => {
+        selectedActivties.splice(selectedActivties.indexOf(Activty), 1);
+      });
+      selectedActivties = [];
+      refreshSavedScreen();
+    }
+  };
+  filesContainerEle.append(activityMarkEle);
+  filesContainerEle.append(savedAreaViewButtonEle);
+  filesContainerEle.append(savedAreaEditButtonEle);
+  filesContainerEle.append(savedAreaDeleteButtonEle);
+  filesListEle.append(filesContainerEle);
+};
+
+function displaySavedArea(savedArea) {
+  var tempContent = "";
+  const filesContainerEle = document.createElement("div");
+  filesContainerEle.className =
+    "p-1.5 rounded-md dark:bg-neutral-800 ring-1 ring-neutral-600/50 ring-neutral-700/50 bg-neutral-300/90 flex flex-row gap-1 flex";
+  const savedAreaCheckboxEle = document.createElement("input");
+  savedAreaCheckboxEle.type = "checkbox";
+  savedAreaCheckboxEle.name = "saved-area-checkbox";
+  savedAreaCheckboxEle.className =
+    "w-4 h-4 my-auto text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600";
+  filesContainerEle.append(savedAreaCheckboxEle);
+  const fileNameEle = document.createElement("span");
+  fileNameEle.className = "grow my-auto";
+  fileNameEle.textContent = savedArea.properties.name;
+  filesContainerEle.append(fileNameEle);
+  const savedAreaViewButtonEle = document.createElement("button");
+  const savedAreaEditButtonEle = document.createElement("button");
+  const savedAreaDeleteButtonEle = document.createElement("button");
+  savedAreaViewButtonEle.name = "saved-area-view-button";
+  savedAreaEditButtonEle.name = "saved-area-edit-button";
+  savedAreaDeleteButtonEle.name = "saved-area-delete-button";
+  const buttonClasses = "ml-auto my-auto p-1 rounded-md bg-neutral-100/90 hover:bg-neutral-100 dark:bg-neutral-700/70 dark:hover:bg-neutral-700 ring-1 ring-neutral-600/50";
+  savedAreaViewButtonEle.className = buttonClasses;
+  savedAreaEditButtonEle.className = buttonClasses;
+  savedAreaDeleteButtonEle.className = buttonClasses;
+  savedAreaViewButtonEle.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+<path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"></path>
+</svg>`;
+  savedAreaEditButtonEle.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
+<path d="M 22.828125 3 C 22.316375 3 21.804562 3.1954375 21.414062 3.5859375 L 19 6 L 24 11 L 26.414062 8.5859375 C 27.195062 7.8049375 27.195062 6.5388125 26.414062 5.7578125 L 24.242188 3.5859375 C 23.851688 3.1954375 23.339875 3 22.828125 3 z M 17 8 L 5.2597656 19.740234 C 5.2597656 19.740234 6.1775313 19.658 6.5195312 20 C 6.8615312 20.342 6.58 22.58 7 23 C 7.42 23.42 9.6438906 23.124359 9.9628906 23.443359 C 10.281891 23.762359 10.259766 24.740234 10.259766 24.740234 L 22 13 L 17 8 z M 4 23 L 3.0566406 25.671875 A 1 1 0 0 0 3 26 A 1 1 0 0 0 4 27 A 1 1 0 0 0 4.328125 26.943359 A 1 1 0 0 0 4.3378906 26.939453 L 4.3632812 26.931641 A 1 1 0 0 0 4.3691406 26.927734 L 7 26 L 5.5 24.5 L 4 23 z"></path>
+</svg>`;
+  savedAreaDeleteButtonEle.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4 fill-red-600">
+<path d="M 13 3 A 1.0001 1.0001 0 0 0 11.986328 4 L 6 4 A 1.0001 1.0001 0 1 0 6 6 L 24 6 A 1.0001 1.0001 0 1 0 24 4 L 18.013672 4 A 1.0001 1.0001 0 0 0 17 3 L 13 3 z M 6 8 L 6 24 C 6 25.105 6.895 26 8 26 L 22 26 C 23.105 26 24 25.105 24 24 L 24 8 L 6 8 z M 12 13 C 12.25575 13 12.511531 13.097469 12.707031 13.292969 L 15 15.585938 L 17.292969 13.292969 C 17.683969 12.901969 18.316031 12.901969 18.707031 13.292969 C 19.098031 13.683969 19.098031 14.316031 18.707031 14.707031 L 16.414062 17 L 18.707031 19.292969 C 19.098031 19.683969 19.098031 20.316031 18.707031 20.707031 C 18.512031 20.902031 18.256 21 18 21 C 17.744 21 17.487969 20.902031 17.292969 20.707031 L 15 18.414062 L 12.707031 20.707031 C 12.512031 20.902031 12.256 21 12 21 C 11.744 21 11.487969 20.902031 11.292969 20.707031 C 10.901969 20.316031 10.901969 19.683969 11.292969 19.292969 L 13.585938 17 L 11.292969 14.707031 C 10.901969 14.316031 10.901969 13.683969 11.292969 13.292969 C 11.488469 13.097469 11.74425 13 12 13 z"></path>
+</svg>`;
+//     savedAreaDeleteButtonEle.innerHTML = `
+// <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4 fill-red-600">
+//   <path d="M 14.984375 2.4863281 A 1.0001 1.0001 0 0 0 14 3.5 L 14 4 L 8.5 4 A 1.0001 1.0001 0 0 0 7.4863281 5 L 6 5 A 1.0001 1.0001 0 1 0 6 7 L 24 7 A 1.0001 1.0001 0 1 0 24 5 L 22.513672 5 A 1.0001 1.0001 0 0 0 21.5 4 L 16 4 L 16 3.5 A 1.0001 1.0001 0 0 0 14.984375 2.4863281 z M 6 9 L 7.7929688 24.234375 C 7.9109687 25.241375 8.7633438 26 9.7773438 26 L 20.222656 26 C 21.236656 26 22.088031 25.241375 22.207031 24.234375 L 24 9 L 6 9 z"></path>
+// </svg>`;
+
+  savedAreaCheckboxEle.onclick = () => {
+    if (selectedAreas.includes(savedArea)) {
+      selectedAreas.splice(selectedAreas.indexOf(savedArea), 1);
+    } else {
+      selectedAreas.push(savedArea);
+    }
+  };
+  savedAreaViewButtonEle.onclick = () => {
+    if (fileNameEle.contentEditable == "true") {
+      fileNameEle.contentEditable = "false";
+      savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
+      savedAreaViewButtonImageEle.src = "images/icons8-map-90.png";
+      fileNameEle.textContent = tempContent;
+    } 
+    else {
+      var mapSource = map.getSource(savedArea.properties.name + "-CUSTOM");
+      if(mapSource == undefined){
+        map.addSource(savedArea.properties.name + "-CUSTOM", {
+          type: "geojson",
+          data: savedArea.features[0].geometry,
+        });
+        map.addLayer({
+          id: savedArea.properties.name + "-CUSTOM-frames-fill",
+          type: "fill",
+          source: savedArea.properties.name + "-CUSTOM",
+          layout: {
+            visibility: "visible",
+          },
+          paint: {
+            "fill-color": productFillColours[mapStyle.currentStyle]["SCENE"],
+            "fill-opacity": 0.2,
+          },
+        });
+        map.addLayer({
+          id: savedArea.properties.name + "-CUSTOM-frames-outline",
+          type: "line",
+          source: savedArea.properties.name + "-CUSTOM",
+          layout: {
+            visibility: "visible",
+          },
+          paint: {
+            "line-color": productOutlineColours["SCENE"],
+            "line-width": 1,
+          },
+        });
+      }
+      else{
+        
+        if(map.getLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility") == "none"){
+          window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility", "visible");
+          window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-outline", "visibility", "visible");
+        }
+        else{
           window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility", "none");
           window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-outline", "visibility", "none");
         }
-        
-        closeSavedAreas();
-        //try{
-          var xCoords = 0;
-          var arrCount = 0;
-          var yCoords = 0;
-          for(var a = 0; a < savedArea.features[0].geometry.coordinates[0].length; a++){
-            xCoords += savedArea.features[0].geometry.coordinates[0][a][0];
-            arrCount++;
-            yCoords += savedArea.features[0].geometry.coordinates[0][a][1];
-          }
-          var xAverage = xCoords / arrCount;
-          var yAverage = yCoords / arrCount;
-          
-          savedArea.type = "FeatureCollection";
-          updateArea(allProducts, savedArea);
-          map.flyTo({
-            center: [xAverage, yAverage],
-            zoom: 7.5,
-            essential: true,
-          });
-        //}
-        //catch{}
       }
-    };
-    savedAreaEditButtonEle.onclick = () => {
-      if (savedAreaNameEle.contentEditable == "false" || savedAreaNameEle.contentEditable == "inherit") {
-        tempContent = savedAreaNameEle.textContent;
-        savedAreaNameEle.contentEditable = "true";
-        savedAreaNameEle.focus();
-        //savedAreaNameEle.select(); either highlight or put cursor at end
-        savedAreaEditButtonImageEle.src = "images/icons8-tick-30.png";
-        savedAreaViewButtonImageEle.src = "images/icons8-cross-30.png";
-      } else {
-        savedAreaNameEle.contentEditable = "false";
-        savedAreaEditButtonImageEle.src = "images/icons8-edit-90.png";
-        savedAreaViewButtonImageEle.src = "images/icons8-map-90.png";
-        savedAreaNameEle.textContent = savedAreaNameEle.textContent.trim();
-        if (savedAreaNameEle.textContent.length != 0) {
-          savedArea.properties.name = savedAreaNameEle.textContent;
-          saveSavedAreas();
-        } else {
-          savedAreaNameEle.textContent = tempContent;
-        }
-      }
-    };
-    savedAreaDeleteButtonEle.onclick = () => {
-      var message = "Confirm deletion?";
-      if (selectedAreas.length != 0) {
-        message += " Multiple items selected.";
-      }
+      
+      let infoCloseButton = document.getElementById("area-selection-info-close-button");
+      infoCloseButton.addEventListener("click", closeInfoListener);
 
-      if (confirm(message) == true) {
-        selectedAreas.push(savedArea);
-        selectedAreas.forEach((area) => {
-          savedAreas.splice(savedAreas.indexOf(area), 1);
-        });
-        selectedAreas = [];
-        refreshSavedScreen();
+      function closeInfoListener(){
+        window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility", "none");
+        window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-outline", "visibility", "none");
       }
-    };
-    filesContainerEle.append(savedAreaViewButtonEle);
-    filesContainerEle.append(savedAreaEditButtonEle);
-    filesContainerEle.append(savedAreaDeleteButtonEle);
-    filesListEle.append(filesContainerEle);
-  });
-  savedAreasOpen = true;
-  filesContainerEle.classList.remove("hidden");
-  filesContainerEle.focus();
-};
+      
+      closeSavedAreas();
+      //try{
+        var xCoords = 0;
+        var arrCount = 0;
+        var yCoords = 0;
+        for(var a = 0; a < savedArea.features[0].geometry.coordinates[0].length; a++){
+          xCoords += savedArea.features[0].geometry.coordinates[0][a][0];
+          arrCount++;
+          yCoords += savedArea.features[0].geometry.coordinates[0][a][1];
+        }
+        var xAverage = xCoords / arrCount;
+        var yAverage = yCoords / arrCount;
+        
+        savedArea.type = "FeatureCollection";
+        updateArea(allProducts, savedArea);
+        map.flyTo({
+          center: [xAverage, yAverage],
+          zoom: 7.5,
+          essential: true,
+        });
+      //}
+      //catch{}
+    }
+  };
+  savedAreaEditButtonEle.onclick = () => {
+    if (fileNameEle.contentEditable == "false" || fileNameEle.contentEditable == "inherit") {
+      tempContent = fileNameEle.textContent;
+      fileNameEle.contentEditable = "true";
+      fileNameEle.focus();
+      //fileNameEle.select(); either highlight or put cursor at end
+      savedAreaEditButtonEle.src = "images/icons8-tick-30.png";
+      savedAreaEditButtonEle.src = "images/icons8-cross-30.png";
+    } else {
+      fileNameEle.contentEditable = "false";
+      savedAreaEditButtonEle.src = "images/icons8-edit-90.png";
+      savedAreaEditButtonEle.src = "images/icons8-map-90.png";
+      fileNameEle.textContent = fileNameEle.textContent.trim();
+      if (fileNameEle.textContent.length != 0) {
+        savedArea.properties.name = fileNameEle.textContent;
+        saveSavedAreas();
+      } else {
+        fileNameEle.textContent = tempContent;
+      }
+    }
+  };
+  savedAreaDeleteButtonEle.onclick = () => {
+    var message = "Confirm deletion?";
+    if (selectedAreas.length != 0) {
+      message += " Multiple items selected.";
+    }
+
+    if (confirm(message) == true) {
+      selectedAreas.push(savedArea);
+      selectedAreas.forEach((area) => {
+        savedAreas.splice(savedAreas.indexOf(area), 1);
+      });
+      selectedAreas = [];
+      refreshSavedScreen();
+    }
+  };
+  filesContainerEle.append(savedAreaViewButtonEle);
+  filesContainerEle.append(savedAreaEditButtonEle);
+  filesContainerEle.append(savedAreaDeleteButtonEle);
+  filesListEle.append(filesContainerEle);
+}
 
 const importFiles = () => {
   var files = [];

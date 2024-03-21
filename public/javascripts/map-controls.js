@@ -289,24 +289,24 @@ function initialiseZoomButtons() {
 
 function initialiseFileDisplayButtons() {
   const selectAllDisplay = () => {
+    fileDisplayMode = 0;
     displayAllFiles();
     deselectAllFileButtons();
     displayAllButtonEle.classList.add(...cursorSelectedClasses);
-    fileDisplayMode = 0;
   };
 
   const selectActivitesDisplay = () => {
+    fileDisplayMode = 1;
     displayActivitiesFiles();
     deselectAllFileButtons();
     displayActivitiesButtonEle.classList.add(...cursorSelectedClasses);
-    fileDisplayMode = 1;
   };
 
   const selectgeojsonDisplay = () => {
+    fileDisplayMode = 2;
     displaygeojsonFiles();
     deselectAllFileButtons();
     displayGeojsonButtonEle.classList.add(...cursorSelectedClasses);
-    fileDisplayMode = 2;
   };
   
   displayAllButtonEle.onclick = selectAllDisplay;

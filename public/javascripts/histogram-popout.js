@@ -1,6 +1,8 @@
 import { allProducts } from "./products-and-layers.js";
 import { calculateMissionCoverage } from "./area-calculations.js";
 
+var HistCreated = false;
+
 export function createHistogramChart() {
 
   let data =  allProducts.map((feature) => {
@@ -116,6 +118,7 @@ export function createHistogramChart() {
       },
     },
   });
+  HistCreated = true;
 }
 
 let histogramOpen = false;
@@ -134,6 +137,9 @@ function closeHistogram() {
 
 closeButton.addEventListener("click", closeHistogram);
 document.getElementById("histogram-button").addEventListener("click", () => {
+  if (!HistCreated) {
+    createHistogramChart();
+  }
   if (histogramOpen) {
     closeHistogram();
   } else {
