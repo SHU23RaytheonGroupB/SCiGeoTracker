@@ -61,7 +61,7 @@ export function createHistogramChart() {
     }
   }
 
-
+  
 
   for (let i = 1; i < percentageCoverage.length; i++) {
     percentageCoverage[i] = percentageCoverage[i-1] + percentageCoverage[i];

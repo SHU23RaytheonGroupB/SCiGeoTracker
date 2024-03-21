@@ -59,6 +59,7 @@ export function initialiseSavedAreas(draw) {
 
   document.querySelector("#saved-areas-close-button").onclick = closeSavedAreas;
   document.querySelector("#folder-button").onclick = () => {
+    console.log(savedAreasOpen);
     if (!savedAreasOpen) openSavedAreas();
     else closeSavedAreas();
   };
