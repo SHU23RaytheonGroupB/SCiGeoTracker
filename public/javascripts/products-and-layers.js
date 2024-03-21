@@ -14,7 +14,7 @@ const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text")
 const colors = ['#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c'];
 
 export const LayerMode = {
-  Frames: "Frames",
+  Scenes: "Scenes",
   Heatmap: "Heatmap",
   Choropleth: "Choropleth",
   Cluster: "Cluster",
@@ -25,11 +25,11 @@ export async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
   await addProductsToMap();
-  framesMode();
+  scenesMode();
 }
 
 export function initialiseLayerMenu() {
-  document.querySelector("#frames-item").onclick = framesMode;
+  document.querySelector("#scenes-item").onclick = scenesMode;
   document.querySelector("#heatmap-item").onclick = heatmapMode;
   document.querySelector("#choropleth-item").onclick = choroplethMode;
   document.querySelector("#cluster-density-item").onclick = clusterMode;
@@ -133,8 +133,8 @@ async function addProductsToMap() {
   addSource("region-boundaries", boundariesByRegion);
   addSource("uk-land", UKlandBorder);
   updateChoroplethSource();
-  // FRAMES LAYER
-  addFramesLayers("product-polygons");
+  // SCENES LAYER
+  addScenesLayers("product-polygons");
   // HEATMAP LAYER
   addHeatmapLayer("product-points");
   // CHOROPLETH LAYER
@@ -160,6 +160,32 @@ export const layerNames = [
   "uk-land-border-outline",
 ];
 
+export async function addSelectedMissionFramesToMap(framesData) {
+  let framesFeatureCollection = {
+    type: "FeatureCollection",
+    features: framesData.map((product) => ({
+      type: "Feature",
+      geometry: product.footprint,
+      attributes: {
+        id: product.identifier,
+        type: product.type,
+        title: product.title,
+        mission_id: product.missionid,
+        date_created: product.datecreated,
+        date_start: product.objectstartdate,
+        date_end: product.objectenddate,
+        pub: product.publisher,
+      },
+    })),
+  };
+  if (!window.map.getSource("selected-mission-frames")) {
+    addSource("selected-mission-frames", framesFeatureCollection);
+    addFramesLayers("selected-mission-frames");
+  } else {
+    window.map.getSource("selected-mission-frames").setData(framesFeatureCollection);
+    window.map.setLayoutProperty("selected-mission-frames-outline", "visibility", "visible");
+  }
+}
 export function addSource(title, data) {
   map.addSource(title, {
     type: "geojson",
@@ -169,6 +195,43 @@ export function addSource(title, data) {
   });
 }
 
+export function highlightSelectedFrame(frame) {
+  let selectedMissionFrames = window.map.getSource("selected-mission-frames");
+
+  let singleFrameFeature = {
+    type: "FeatureCollection",
+    features: [],
+  };
+
+  for (let i = 0; i < selectedMissionFrames.length; i++) {
+    let product = selectedMissionFrames[i];
+    if (product.identifier === frame.identifier) {
+      singleFrameFeature.features.push({
+        type: "Feature",
+        geometry: product.footprint,
+        attributes: {
+          id: product.identifier,
+          type: product.type,
+          title: product.title,
+          mission_id: product.missionid,
+          date_created: product.datecreated,
+          date_start: product.objectstartdate,
+          date_end: product.objectenddate,
+          pub: product.publisher,
+        },
+      });
+      break; // Exit the loop after finding the matching frame
+    }
+  }
+
+  addSelectedFrameLayer(singleFrameFeature);
+}
+
+export function hideFrames() {
+  if (window.map.getSource("selected-mission-frames")) {
+    window.map.setLayoutProperty("selected-mission-frames-outline", "visibility", "none");
+  }
+
 function addClusterSource(title, data) {
   map.addSource(title, {
     type: "geojson",
@@ -177,9 +240,40 @@ function addClusterSource(title, data) {
     clusterMaxZoom: 14,
     clusterRadius: 50,
   });
+
 }
 
 function addFramesLayers(title) {
+  map.addLayer({
+    id: `${title}-outline`,
+    type: "line",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "line-color": productOutlineColours["SCENE"],
+      "line-width": 1,
+    },
+  });
+}
+
+function addSelectedFrameLayer(title) {
+  map.addLayer({
+    id: `${title}-highlight`,
+    type: "line",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours[mapStyle.currentStyle]["FRAME"],
+      "fill-opacity": 0.2,
+    },
+  });
+}
+
+function addScenesLayers(title) {
   map.addLayer({
     id: `${title}-frames-fill`,
     type: "fill",
@@ -193,7 +287,19 @@ function addFramesLayers(title) {
     },
   });
   map.addLayer({
-    id: `${title}-frames-outline`,
+    id: `${title}-scenes-fill`,
+    type: "fill",
+    source: title,
+    layout: {
+      visibility: "none",
+    },
+    paint: {
+      "fill-color": productFillColours[mapStyle.currentStyle]["SCENE"],
+      "fill-opacity": 0.2,
+    },
+  });
+  map.addLayer({
+    id: `${title}-scenes-outline`,
     type: "line",
     source: title,
     layout: {
@@ -373,13 +479,13 @@ function updateChoroplethSource() {
   regionBoundariesSource.setData(data);
 }
 
-const framesMode = () => {
-  layerMode = LayerMode.Frames;
+const scenesMode = () => {
+  layerMode = LayerMode.Scenes;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "visible");
-  window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "visible");
+  window.map.setLayoutProperty("product-polygons-scenes-fill", "visibility", "visible");
+  window.map.setLayoutProperty("product-polygons-scenes-outline", "visibility", "visible");
 };
 
 const heatmapMode = () => {
@@ -437,8 +543,8 @@ const borderSelectionMode = () => {
 };
 
 const hideAllLayers = () => {
-  window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "none");
-  window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
+  window.map.setLayoutProperty("product-polygons-scenes-fill", "visibility", "none");
+  window.map.setLayoutProperty("product-polygons-scenes-outline", "visibility", "none");
   window.map.setLayoutProperty("product-points-heatmap", "visibility", "none");
   window.map.setLayoutProperty("product-cluster-density", "visibility", "none");
   window.map.setLayoutProperty("product-cluster-label", "visibility", "none");
@@ -448,12 +554,16 @@ const hideAllLayers = () => {
   window.map.setLayoutProperty("region-boundaries-choropleth", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-fill", "visibility", "none");
   window.map.setLayoutProperty("uk-land-border-outline", "visibility", "none");
+
+  hideFrames();
+
   if (map.getLayer("UkLandBorder-border-outline") != undefined) {
     window.map.setLayoutProperty("UkLandBorder-border-outline", "visibility", "none");
   }
   if (map.getLayer("mission-area-within-polyfill") != undefined) {
     window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
   }
+
   //window.map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 };
 

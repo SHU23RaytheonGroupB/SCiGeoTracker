@@ -12,6 +12,7 @@ setDarkMode(darkMode);
 const styleMenuButtonEle = document.querySelector("#style-menu-button");
 const styleMenuItemsContainerEle = document.querySelector("#style-menu-items-container");
 const styleMenuButtonTextEle = document.querySelector("#style-menu-button-text");
+
 let styleMenuOpen = false;
 
 const moveButtonEle = document.querySelector("#move-button");

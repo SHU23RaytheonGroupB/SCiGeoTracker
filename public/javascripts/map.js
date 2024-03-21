@@ -1,5 +1,4 @@
-import { displayMissionMenu } from "./mission-popout-menu.js";
-import { initialiseProducts, allProducts } from "./products-and-layers.js";
+import { initialiseProducts } from "./products-and-layers.js";
 import { mapStyle, minZoom, maxZoom } from "./config.js";
 import { getRoundNum, getDistance } from "./utils.js";
 import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
@@ -17,8 +16,6 @@ window.map = new mapboxgl.Map({
   maxZoom: maxZoom,
   attributionControl: false,
 });
-
-
 
 let loaded = false;
 
@@ -75,6 +72,16 @@ map.on("zoom", (ev) => {
   updateScaleBar();
 });
 
+export function mapFlyTo(product) {
+  map.flyTo({
+    center: product.centre.split(",").reverse(),
+    zoom: 11,
+    essential: true,
+  });
+
+};
+
+  
 export async function circleLinkZoom(d) {
   let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {
@@ -152,3 +159,4 @@ map.on('click', 'product-polygons-frames-fill', (e) => {
     essential: true,
   });
 });
+

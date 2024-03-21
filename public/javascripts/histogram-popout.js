@@ -25,7 +25,7 @@ export function createHistogramChart() {
   const startTime = Math.min(...objectstartdate);
   const endTime = Math.max(...objectstartdate);
 
-  const binSize = 24*60*60*1000; // 1 day in milliseconds
+  const binSize = 24 * 60 * 60 * 1000; // 1 day in milliseconds
   const bins = Math.ceil((endTime - startTime) / binSize);
 
 
@@ -82,7 +82,7 @@ export function createHistogramChart() {
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: new Array(bins).fill().map((_, i) => new Date( startTime + i * binSize)),
+      labels: new Array(bins).fill().map((_, i) => new Date(startTime + i * binSize)),
       datasets: [
         {
           label: "Uk Coverage %",
@@ -146,7 +146,3 @@ document.getElementById("histogram-button").addEventListener("click", () => {
     openHistogram();
   }
 });
-
-
-
-
