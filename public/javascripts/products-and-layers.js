@@ -11,7 +11,7 @@ const layerMenuButtonEle = document.querySelector("#layer-menu-button");
 const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
 const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text");
 
-const colors = ['#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c'];
+const colors = ["#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c"];
 
 export const LayerMode = {
   Frames: "Frames",
@@ -121,9 +121,8 @@ async function addProductsToMap() {
       cluster: true,
       clusterMaxZoom: 9,
       clusterRadius: 50,
-    })),    
+    })),
   };
-
 
   // SOURCES
   addSource("product-polygons", polygonFeatureCollection);
@@ -143,7 +142,7 @@ async function addProductsToMap() {
   addClusterLayer("product-cluster");
   // BORDER LAYER - TEMP
   addBorderLayer("uk-land");
-};
+}
 
 export const layerNames = [
   "product-polygons-frames-fill",
@@ -179,21 +178,21 @@ function addClusterSource(title, data) {
   });
 }
 
-function addFramesLayers(title) {
-  map.addLayer({
+// function addFramesLayers(title) {
+//   map.addLayer({
 
-    id: `${title}-outline`,
-    type: "line",
-    source: title,
-    layout: {
-      visibility: "visible",
-    },
-    paint: {
-      "line-color": productOutlineColours["SCENE"],
-      "line-width": 1,
-    },
-  });
-}
+//     id: `${title}-outline`,
+//     type: "line",
+//     source: title,
+//     layout: {
+//       visibility: "visible",
+//     },
+//     paint: {
+//       "line-color": productOutlineColours["SCENE"],
+//       "line-width": 1,
+//     },
+//   });
+// }
 
 function addSelectedFrameLayer(title) {
   map.addLayer({
@@ -210,9 +209,9 @@ function addSelectedFrameLayer(title) {
   });
 }
 
-function addScenesLayers(title) {
+function addFramesLayers(title) {
   map.addLayer({
-    id: `${title}-scenes-fill`,
+    id: `${title}-frames-fill`,
 
     type: "fill",
     source: title,
@@ -225,8 +224,7 @@ function addScenesLayers(title) {
     },
   });
   map.addLayer({
-
-    id: `${title}-scenes-outline`,
+    id: `${title}-frames-outline`,
 
     type: "line",
     source: title,
@@ -284,81 +282,91 @@ function addBorderLayer(title) {
 
 function addClusterLayer(title) {
   map.addLayer({
-    'id': `${title}-density`,
-    'type': 'circle',
-    'source': title,
-    filter: ['has', 'point_count'],
+    id: `${title}-density`,
+    type: "circle",
+    source: title,
+    filter: ["has", "point_count"],
     layout: {
       visibility: "none",
     },
-    'paint': {
-        'circle-color': [
-          'step',
-          ['get', 'point_count_abbreviated'],
-          '#ffffff',
-          2,
-          colors[0],
-          4,
-          colors[1],
-          7,
-          colors[2],
-          10,
-          colors[3],
-          15,
-          colors[4]
+    paint: {
+      "circle-color": [
+        "step",
+        ["get", "point_count_abbreviated"],
+        "#ffffff",
+        2,
+        colors[0],
+        4,
+        colors[1],
+        7,
+        colors[2],
+        10,
+        colors[3],
+        15,
+        colors[4],
       ],
-        'circle-opacity': 0.6,
-        'circle-radius': 12
-    }
+      "circle-opacity": 0.6,
+      "circle-radius": 12,
+    },
   });
   map.addLayer({
-    'id': `${title}-label`,
-    'type': 'symbol',
-    'source': title,
-    filter: ['has', 'point_count'],
-    'layout': {
-        'text-opacity': { "stops": [[12.9, 0], [13, 1]] },
-        'visibility': "none",
-        "text-field": "{point_count_abbreviated}",
-        "text-font": ["Arial Unicode MS Bold"],
-        "text-size": 12,
-        "text-allow-overlap" : true
+    id: `${title}-label`,
+    type: "symbol",
+    source: title,
+    filter: ["has", "point_count"],
+    layout: {
+      "text-opacity": {
+        stops: [
+          [12.9, 0],
+          [13, 1],
+        ],
+      },
+      visibility: "none",
+      "text-field": "{point_count_abbreviated}",
+      "text-font": ["Arial Unicode MS Bold"],
+      "text-size": 12,
+      "text-allow-overlap": true,
     },
-    'paint': {
-        'text-color': 'black'
-    }
-});
-map.addLayer({
-  id: title+ '-unclustered',
-  type: 'circle',
-  source: title,
-  filter: ['!', ['has', 'point_count']],
-  'layout': {
-    'visibility': "none"
-  },
-  paint: {
-      'circle-color': productFillColours[mapStyle.currentStyle]["CLUSTER"],
-      'circle-opacity': 0.6,
-      'circle-radius': 12
-  }
-});
-map.addLayer({
-  'id': `${title}-unclustered-label`,
-  'type': 'symbol',
-  'source': title,
-  filter: ["!=", "cluster", true],
-  'layout': {
-      'text-opacity': { "stops": [[12.9, 0], [13, 1]] },
-      'visibility': "none",
+    paint: {
+      "text-color": "black",
+    },
+  });
+  map.addLayer({
+    id: title + "-unclustered",
+    type: "circle",
+    source: title,
+    filter: ["!", ["has", "point_count"]],
+    layout: {
+      visibility: "none",
+    },
+    paint: {
+      "circle-color": productFillColours[mapStyle.currentStyle]["CLUSTER"],
+      "circle-opacity": 0.6,
+      "circle-radius": 12,
+    },
+  });
+  map.addLayer({
+    id: `${title}-unclustered-label`,
+    type: "symbol",
+    source: title,
+    filter: ["!=", "cluster", true],
+    layout: {
+      "text-opacity": {
+        stops: [
+          [12.9, 0],
+          [13, 1],
+        ],
+      },
+      visibility: "none",
       "text-field": "1",
       "text-font": ["Arial Unicode MS Bold"],
       "text-size": 12,
-      "text-allow-overlap" : true
-  },
-  'paint': {
-      'text-color': 'black'
-  }
-});
+      "text-allow-overlap": true,
+    },
+    paint: {
+      "text-color": "black",
+    },
+  });
 }
 
 function addChoroplethLayers(countryPolygons, regionPolygons) {
@@ -450,7 +458,7 @@ const clusterMode = () => {
   window.map.setLayoutProperty("product-cluster-density", "visibility", "visible");
   window.map.setLayoutProperty("product-cluster-label", "visibility", "visible");
   window.map.setLayoutProperty("product-cluster-unclustered", "visibility", "visible");
-  window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "visible");  
+  window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "visible");
 };
 
 const frameOverlapsMode = () => {
