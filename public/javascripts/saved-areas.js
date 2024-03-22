@@ -533,7 +533,6 @@ function displaySavedActivty(savedActivty) {
   savedAreaViewButtonEle.className = buttonClasses;
   savedAreaEditButtonEle.className = buttonClasses;
   savedAreaDeleteButtonEle.className = buttonClasses;
-
   //add images to all buttons
   activityMarkEle.innerHTML = `
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
@@ -774,7 +773,7 @@ function displaySavedArea(savedArea) {
       fileNameEle.textContent = tempContent;
     } else {
       var mapSource = map.getSource(savedArea.properties.name + "-CUSTOM");
-      
+
       if (mapSource == undefined) {
         map.addSource(savedArea.properties.name + "-CUSTOM", {
           type: "geojson",
@@ -804,10 +803,8 @@ function displaySavedArea(savedArea) {
             "line-width": 1,
           },
         });
-
       } else {
         if (map.getLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility") == "none") {
-
           window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-fill", "visibility", "visible");
           window.map.setLayoutProperty(savedArea.properties.name + "-CUSTOM-frames-outline", "visibility", "visible");
         } else {
@@ -865,12 +862,11 @@ function displaySavedArea(savedArea) {
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
       <path d="M 7.9785156 5.9804688 A 2.0002 2.0002 0 0 0 6.5859375 9.4140625 L 12.171875 15 L 6.5859375 20.585938 A 2.0002 2.0002 0 1 0 9.4140625 23.414062 L 15 17.828125 L 20.585938 23.414062 A 2.0002 2.0002 0 1 0 23.414062 20.585938 L 17.828125 15 L 23.414062 9.4140625 A 2.0002 2.0002 0 0 0 21.960938 5.9804688 A 2.0002 2.0002 0 0 0 20.585938 6.5859375 L 15 12.171875 L 9.4140625 6.5859375 A 2.0002 2.0002 0 0 0 7.9785156 5.9804688 z"></path>
       </svg>`;
-      
+
       savedAreaEditButtonEle.innerHTML = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" class="h-4 w-4">
       <path d="M 26.980469 5.9902344 A 1.0001 1.0001 0 0 0 26.292969 6.2929688 L 11 21.585938 L 4.7070312 15.292969 A 1.0001 1.0001 0 1 0 3.2929688 16.707031 L 10.292969 23.707031 A 1.0001 1.0001 0 0 0 11.707031 23.707031 L 27.707031 7.7070312 A 1.0001 1.0001 0 0 0 26.980469 5.9902344 z"></path>
       </svg>`;
-      
     } else {
       fileNameEle.contentEditable = "false";
       savedAreaViewButtonEle.innerHTML = `
@@ -935,7 +931,7 @@ const importFiles = () => {
           }
           savedAreas.push({
             properties: {
-              name: tempName 
+              name: tempName,
             },
             type: "geojson",
             geometry: JSON.parse(reader.result),
@@ -957,8 +953,9 @@ const exportFiles = () => {
     alert("No areas selected"); //maybe change this for something less intrusive
   } else {
     selectedAreas.forEach((area) => {
-
-      var file = new File([JSON.stringify(area.features[0].geometry)], area.properties.name + ".geojson", { type: "geojson" });
+      var file = new File([JSON.stringify(area.features[0].geometry)], area.properties.name + ".geojson", {
+        type: "geojson",
+      });
 
       window.saveAs(file);
     });

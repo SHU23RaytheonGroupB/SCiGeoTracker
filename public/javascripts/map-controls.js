@@ -7,7 +7,6 @@ import { initialiseFilterMenu } from "./filter-menu.js";
 import { initializeHistogram } from "./histogram-popout.js";
 
 export let fileDisplayMode = 0;
-let cursorMode;
 let darkMode = sessionStorage.getItem("dark") == "true" ?? true;
 setDarkMode(darkMode);
 const styleMenuButtonEle = document.querySelector("#style-menu-button");
