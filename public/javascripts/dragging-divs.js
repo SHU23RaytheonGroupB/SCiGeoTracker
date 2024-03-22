@@ -36,7 +36,7 @@ function dragElement(ele) {
     });
 
     // Set selected div class property to 'z-40'
-    console.log(e.target.parentElement);
+    //console.log(e.target.parentElement);
     e.target.parentElement.classList.add("z-40");
     e.target.parentElement.classList.replace("z-30", "z-40");
 

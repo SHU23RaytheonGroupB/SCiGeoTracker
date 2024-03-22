@@ -387,7 +387,8 @@ setTimelineVisibility(true);
 document.getElementById("timeline-button").addEventListener("click", toggleTimelineVisiblity);
 document.getElementById("timeline-popout-close-button").addEventListener("click", () => setTimelineVisibility(false));
 
-async function circleLinkZoom(productID, missionID) {
+export async function circleLinkZoom(productID, missionID) {
+  scenes.length = 0;
   let reset = document.querySelectorAll("circle");
   reset.forEach((reset) => {
     reset.style.fill = "red";
@@ -401,6 +402,8 @@ async function circleLinkZoom(productID, missionID) {
       currentProduct = product;
       mapFlyTo(product);
     }
+  });
+  allProducts.forEach((product) => {
     if (product.missionid === missionID) {
       scenes.push(product);
     }
@@ -412,6 +415,6 @@ async function circleLinkZoom(productID, missionID) {
   console.log("scenes");
   console.log(scenes);
   const frames = await viewSelectedMission(missionID);
-  //console.log(frames);
+
   displayMissionMenu(currentProduct, scenes, frames);
 }

@@ -2,7 +2,7 @@ import { initialiseProducts } from "./products-and-layers.js";
 import { mapStyle, minZoom, maxZoom } from "./config.js";
 import { getRoundNum, getDistance } from "./utils.js";
 import { initialiseControls, renderOverlaysZoom } from "./map-controls.js";
-import { Timeline } from "./zoomable-timeline-with-items.js";
+import { Timeline, circleLinkZoom } from "./zoomable-timeline-with-items.js";
 import { calculateMissionCoverage } from "./area-calculations.js";
 
 mapboxgl.accessToken = "pk.eyJ1IjoiZ3JhY2VmcmFpbiIsImEiOiJjbHJxbTJrZmgwNDl6MmtuemszZWtjYWh5In0.KcHGIpkGHywtjTHsL5PQDQ";
@@ -81,7 +81,7 @@ export function mapFlyTo(product) {
   });
 }
 
-map.on("mouseenter", "product-polygons-frames-fill", (e) => {
+map.on("mouseenter", "product-polygons-scenes-fill", (e) => {
   map.getCanvas().style.cursor = "pointer";
   mostRecentHover = e;
   const coordinates = e.features[0].geometry.coordinates[0].slice();
@@ -135,7 +135,7 @@ map.on("mouseenter", "product-polygons-frames-fill", (e) => {
   popup.setLngLat(newCoords).setHTML(description).addTo(map);
 });
 
-map.on("mouseleave", "product-polygons-frames-fill", () => {
+map.on("mouseleave", "product-polygons-scenes-fill", () => {
   map.getCanvas().style.cursor = "";
   popup.remove();
   if (window.map.getSource("mission-area-within-poly") != undefined) {
@@ -144,9 +144,11 @@ map.on("mouseleave", "product-polygons-frames-fill", () => {
   }
 });
 
-map.on("click", "product-polygons-frames-fill", (e) => {
+map.on("click", "product-polygons-scenes-fill", (e) => {
   var cent = e.lngLat;
   var item = mostRecentHover.features[0]._geometry.coordinates[0];
+  let productID = mostRecentHover.features[0].properties.id;
+  let missionID = mostRecentHover.features[0].properties.mission_id;
   if (item.length > 0) {
     var lg = 0;
     var lt = 0;
@@ -163,7 +165,7 @@ map.on("click", "product-polygons-frames-fill", (e) => {
     zoom: 10.5,
     essential: true,
   });
-  //JOBY PUT CODE HERE
+  circleLinkZoom(productID, missionID);
 });
 
 map.on("mouseenter", "product-cluster-density", () => {

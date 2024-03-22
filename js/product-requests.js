@@ -100,7 +100,6 @@ class ProductService {
         headers: this.headers,
       });
       if (!response.ok) {
-        console.log(response);
         throw new Error("Error fetching scene frames");
       }
       return await response.json();
@@ -116,8 +115,6 @@ class ProductService {
         headers: this.headers,
       });
       if (!response.ok) {
-        console.log("response:");
-        console.log(response);
         throw new Error("Error fetching mission info");
       }
       return await response.json();
@@ -132,8 +129,6 @@ class ProductService {
         headers: this.headers,
       });
       if (!response.ok) {
-        console.log("response:");
-        console.log(response);
         throw new Error("Error fetching mission footprint");
       }
       return await response.json();

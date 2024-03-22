@@ -12,8 +12,6 @@ export function displayMissionMenu(currentProduct, scenes, frames) {
   document.getElementById("flyto-mission-creator").innerHTML = currentProduct.creator;
   let button = document.getElementById("flyto-mission-info-close-button");
   button.addEventListener("click", closeMissionInfo);
-  console.log("frames");
-  console.log(frames);
   const sceneSelect = document.getElementById("flyto-mission-scene-select");
   const frameSelect = document.getElementById("flyto-mission-frame-select");
 
@@ -59,7 +57,7 @@ export function displayMissionMenu(currentProduct, scenes, frames) {
   // Event listener for frame selection
   frameSelect.addEventListener("change", () => {
     const selectedFrameId = frameSelect.value;
-    highlightSelectedFrame(selectedFrameId);
+    //highlightSelectedFrame(selectedFrameId);
   });
 }
 

@@ -147,7 +147,7 @@ async function addProductsToMap() {
 export const layerNames = [
   "product-polygons-scenes-fill",
   "product-polygons-scenes-outline",
-  "country-boundaries-borders",
+  //"country-boundaries-borders",
   //"country-boundaries-choropleth",
   "region-boundaries-borders",
   "region-boundaries-choropleth",
