@@ -4,6 +4,7 @@ import { mapStyle, MapStyle, minZoom, maxZoom, CursorMode } from "./config.js";
 import { initialiseSavedAreas, displayAllFiles, displayActivitiesFiles, displaygeojsonFiles } from "./saved-areas.js";
 import { initialiseSearchBar } from "./search-bar.js";
 import { initialiseFilterMenu } from "./filter-menu.js";
+import { initializeHistogram } from "./histogram-popout.js";
 
 export let fileDisplayMode = 0;
 let cursorMode;
@@ -146,6 +147,7 @@ export function initialiseControls() {
   initialiseSearchBar();
   initialiseSavedAreas(draw);
   initialiseFilterMenu();
+  initializeHistogram();
 }
 
 export function renderOverlaysZoom() {
@@ -304,7 +306,7 @@ function initialiseFileDisplayButtons() {
     deselectAllFileButtons();
     displayGeojsonButtonEle.classList.add(...cursorSelectedClasses);
   };
-  
+
   displayAllButtonEle.onclick = selectAllDisplay;
   displayActivitiesButtonEle.onclick = selectActivitesDisplay;
   displayGeojsonButtonEle.onclick = selectgeojsonDisplay;

@@ -3,16 +3,14 @@ import { calculateMissionCoverage } from "./area-calculations.js";
 
 var HistCreated = false;
 
-export function createHistogramChart() {
-
-  let data =  allProducts.map((feature) => {
+function createHistogramChart() {
+  let data = allProducts.map((feature) => {
     return feature;
-  }); 
+  });
 
   let objectstartdate = data.map((feature) => {
     return feature.objectstartdate;
   });
-
 
   for (let i = 0; i < objectstartdate.length; i++) {
     if (typeof objectstartdate[i] === null) {
@@ -25,9 +23,8 @@ export function createHistogramChart() {
   const startTime = Math.min(...objectstartdate);
   const endTime = Math.max(...objectstartdate);
 
-  const binSize = 24*60*60*1000; // 1 day in milliseconds
+  const binSize = 24 * 60 * 60 * 1000; // 1 day in milliseconds
   const bins = Math.ceil((endTime - startTime) / binSize);
-
 
   const histogram = new Array(bins).fill(0);
 
@@ -42,9 +39,8 @@ export function createHistogramChart() {
     }
   }
 
-
   const UKmapdata = window.map.getSource("uk-land")._data;
-  let polyCoordinates = []; 
+  let polyCoordinates = [];
 
   for (let i = 0; i < UKmapdata.features[0].geometry.coordinates.length; i++) {
     //bcs the uk is a multigon we need to iterate through each island
@@ -58,23 +54,22 @@ export function createHistogramChart() {
   for (let i = 0; i < featureObjects.length; i++) {
     if (featureObjects[i].length != 0) {
       percentageCoverage[i] = calculateMissionCoverage(featureObjects[i], [polyCoordinates]);
-    }
-    else {
+    } else {
     }
   }
 
-  if (window.map.getSource('mission-area-within-poly') != undefined) {
-    window.map.removeLayer('mission-area-within-polyfill');
-    window.map.removeSource('mission-area-within-poly');
-  } 
+  if (window.map.getSource("mission-area-within-poly") != undefined) {
+    window.map.removeLayer("mission-area-within-polyfill");
+    window.map.removeSource("mission-area-within-poly");
+  }
 
   for (let i = 1; i < percentageCoverage.length; i++) {
-    percentageCoverage[i] = percentageCoverage[i-1] + percentageCoverage[i];
+    percentageCoverage[i] = percentageCoverage[i - 1] + percentageCoverage[i];
   }
 
   const ukArea = 244820;
   for (let i = 0; i < percentageCoverage.length; i++) {
-    percentageCoverage[i] = percentageCoverage[i] / ukArea * 100;
+    percentageCoverage[i] = (percentageCoverage[i] / ukArea) * 100;
   }
 
   const ctx = document.getElementById("histogram-chart");
@@ -82,7 +77,7 @@ export function createHistogramChart() {
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: new Array(bins).fill().map((_, i) => new Date( startTime + i * binSize)),
+      labels: new Array(bins).fill().map((_, i) => new Date(startTime + i * binSize)),
       datasets: [
         {
           label: "Uk Coverage %",
@@ -91,7 +86,7 @@ export function createHistogramChart() {
           borderColor: "rgba(0, 123, 255, 1)",
           borderWidth: 1,
           barPercentage: 1.0,
-        }
+        },
       ],
     },
     options: {
@@ -113,7 +108,7 @@ export function createHistogramChart() {
           title: {
             display: true,
             text: "Percentage (%) of UK Covered",
-          }
+          },
         },
       },
     },
@@ -135,18 +130,16 @@ function closeHistogram() {
   chartEle.classList.add("hidden");
 }
 
-closeButton.addEventListener("click", closeHistogram);
-document.getElementById("histogram-button").addEventListener("click", () => {
-  if (!HistCreated) {
-    createHistogramChart();
-  }
-  if (histogramOpen) {
-    closeHistogram();
-  } else {
-    openHistogram();
-  }
-});
-
-
-
-
+export function initializeHistogram() {
+  closeButton.addEventListener("click", closeHistogram);
+  document.getElementById("histogram-button").addEventListener("click", () => {
+    if (!HistCreated) {
+      createHistogramChart();
+    }
+    if (histogramOpen) {
+      closeHistogram();
+    } else {
+      openHistogram();
+    }
+  });
+}
