@@ -3,6 +3,8 @@ dragElement(document.getElementById("timeline-container"));
 dragElement(document.getElementById("histogram-popout-container"));
 //dragElement(document.getElementById("flyto-mission-info-container"));
 dragElement(document.getElementById("filter-menu-container"));
+dragElement(document.getElementById("area-selection-info-container"));
+dragElement(document.getElementById("area-view-info-container"));
 dragElement(document.getElementById("file-container"));
 dragElement(document.getElementById("saved-areas-container"));
 
