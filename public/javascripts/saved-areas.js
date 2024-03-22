@@ -775,6 +775,7 @@ function displaySavedArea(savedArea) {
       var mapSource = map.getSource(savedArea.properties.name + "-CUSTOM");
 
       if (mapSource == undefined) {
+        console.log(savedArea);
         map.addSource(savedArea.properties.name + "-CUSTOM", {
           type: "geojson",
           data: savedArea.features[0].geometry,
@@ -929,12 +930,20 @@ const importFiles = () => {
               x = 0;
             }
           }
+
+          var geo = JSON.parse(reader.result);
           savedAreas.push({
             properties: {
               name: tempName,
             },
-            type: "geojson",
-            geometry: JSON.parse(reader.result),
+            type: "FeatureCollection",
+            features: [
+              {
+                type: "Feature",
+                geometry: geo,
+              },
+            ],
+            //geometry: JSON.parse(reader.result),
           });
           refreshSavedScreen();
         };
