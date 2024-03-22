@@ -217,7 +217,7 @@ function addScenesLayers(title) {
     },
     paint: {
       "fill-color": productFillColours[mapStyle.currentStyle]["SCENE"],
-      "fill-opacity": 0.2,
+      "fill-opacity": 0.4,
     },
   });
   map.addLayer({

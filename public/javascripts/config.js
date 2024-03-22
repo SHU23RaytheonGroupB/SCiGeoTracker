@@ -1,5 +1,5 @@
 const darkTheme_ProductFillColours = {
-  SCENE: "#fc685d", //LIGHT RED
+  SCENE: "#ccff00", //YELLOW
   BORDER: "#cc0000", //DARK RED
   CLUSTER: "#f2f0df", //GREY/WHITE
   FRAME: "#ffffff", //WHITE
@@ -13,7 +13,7 @@ const outdoorsTheme_ProductFillColours = {
 };
 
 const satelliteTheme_ProductFillColours = {
-  SCENE: "#ffffff", //wHITE
+  SCENE: "#FF00CC", //MAGENTA
   BORDER: "#fc685d", //LIGHT RED
   CLUSTER: "#ffffff", //WHITE
   FRAME: "#6a329f", //PURPLE
