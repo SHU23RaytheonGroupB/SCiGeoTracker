@@ -142,4 +142,15 @@ export function initializeHistogram() {
       openHistogram();
     }
   });
+
+  document.getElementById("histogram-button-2").addEventListener("click", () => {
+    if (!HistCreated) {
+      createHistogramChart();
+    }
+    if (histogramOpen) {
+      closeHistogram();
+    } else {
+      openHistogram();
+    }
+  });
 }

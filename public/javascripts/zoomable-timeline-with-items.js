@@ -385,6 +385,7 @@ function toggleTimelineVisiblity() {
 setTimelineVisibility(true);
 
 document.getElementById("timeline-button").addEventListener("click", toggleTimelineVisiblity);
+document.getElementById("timeline-button-2").addEventListener("click", toggleTimelineVisiblity);
 document.getElementById("timeline-popout-close-button").addEventListener("click", () => setTimelineVisibility(false));
 
 export async function circleLinkZoom(productID, missionID) {

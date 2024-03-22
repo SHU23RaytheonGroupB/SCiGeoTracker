@@ -1,7 +1,7 @@
 //add elements here to drag divs, make sure tailwind margis are not set. 'm'
 dragElement(document.getElementById("timeline-container"));
 dragElement(document.getElementById("histogram-popout-container"));
-//dragElement(document.getElementById("flyto-mission-info-container"));
+dragElement(document.getElementById("flyto-mission-info-container"));
 dragElement(document.getElementById("filter-menu-container"));
 dragElement(document.getElementById("area-selection-info-container"));
 dragElement(document.getElementById("area-view-info-container"));
