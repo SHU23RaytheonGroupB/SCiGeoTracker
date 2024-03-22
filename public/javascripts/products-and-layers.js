@@ -477,7 +477,7 @@ export function hideFrames() {
 }
 
 const scenesMode = () => {
-  layerMode = LayerMode.Frames;
+  layerMode = LayerMode.Scenes;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
