@@ -62,15 +62,76 @@ export function updateArea(allProducts, data) {
     const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
     const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
     const missionCount = containedMissions.length;
-    areaSelectionInfoContainerEle.style.display = "inline";
+    areaSelectionInfoContainerEle.classList.remove("hidden");
     totalAreaContainerEle.textContent = totalAreaRounded.toLocaleString();
     coveredAreaContainerEle.textContent = coveredArea.toLocaleString();
     uncoveredAreaContainerEle.textContent = uncoveredArea.toLocaleString();
     coveragePercentageContainerEle.textContent = coveragePercentage.toLocaleString();
     missionCountContainerEle.textContent = missionCount.toLocaleString();
   } else {
-    areaSelectionInfoContainerEle.style.display = "none";
+    areaSelectionInfoContainerEle.classList.add("hidden");
     areaSaveContainerEle.classList.add("hidden");
+
+  }
+}
+
+const activityareaSelectionInfoContainerEle = document.querySelector("#activity-selection-info-container");
+const activitytotalAreaContainerEle = document.querySelector("#activity-selection-total-area-value");
+const activitycoveredAreaContainerEle = document.querySelector("#activity-selection-covered-area-value");
+const activityuncoveredAreaContainerEle = document.querySelector("#activity-selection-uncovered-area-value");
+const activitycoveragePercentageContainerEle = document.querySelector("#activity-selection-coverage-percentage-value");
+const activitymissionCountContainerEle = document.querySelector("#activity-selection-total-missions-value");
+
+export function updateActivty(allProducts, data) {
+  //USED FOR DRAW POLYGOn
+  //const data = draw.getAll();
+  if (data.features[0].geometry.coordinates[0].length <= 2) {
+    return;
+  }
+  
+  //console.log(1);
+  //console.log(data.features.length);
+  polygonData = data;
+  let polyCoordinates = [];
+  let polyCoordinatesLat = [];
+  let polyCoordinatesLog = [];
+  for (let i = 0; i < data.features[0].geometry.coordinates[0].length; i++) {
+    polyCoordinates.push(data.features[0].geometry.coordinates[0][i]);
+    polyCoordinatesLog.push(data.features[0].geometry.coordinates[0][i][1]);
+    polyCoordinatesLat.push(data.features[0].geometry.coordinates[0][i][0]);
+  }
+  //bounding box is (Latt, Long) and has a padding of (±0.8 and ±0.9)
+  let boundingBox = [
+    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
+    [Math.min(...polyCoordinatesLat) - 0.8, Math.max(...polyCoordinatesLog) + 0.5],
+    [Math.max(...polyCoordinatesLat) + 0.8, Math.max(...polyCoordinatesLog) + 0.5],
+    [Math.max(...polyCoordinatesLat) + 0.8, Math.min(...polyCoordinatesLog) - 0.5],
+    [Math.min(...polyCoordinatesLat) - 0.8, Math.min(...polyCoordinatesLog) - 0.5],
+  ];
+
+  let containedMissionsInBB = missionsWithinBoundingBox(allProducts, boundingBox);
+  //console.log(containedMissionsInBB);
+  let containedMissions = missionsWithinPolygon(containedMissionsInBB, [[polyCoordinates]]);
+  //console.log(containedMissions);
+  if (data.features.length > 0) {
+    //console.log("start for real");
+    //console.log(data);
+
+    const totalArea = turf.area(data) / 1000000; //divide by 1000 to get square km
+    const totalAreaRounded = Math.round(totalArea * 100) / 100; //convert area to 2 d.p.
+    const coveredArea = Math.min(calculateMissionCoverage(containedMissions, [[polyCoordinates]]), totalAreaRounded);
+    const uncoveredArea = Math.round((totalArea - coveredArea) * 100) / 100;
+    const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
+    const missionCount = containedMissions.length;
+    activityareaSelectionInfoContainerEle.classList.remove("hidden");
+    activitytotalAreaContainerEle.textContent = totalAreaRounded.toLocaleString();
+    activitycoveredAreaContainerEle.textContent = coveredArea.toLocaleString();
+    activityuncoveredAreaContainerEle.textContent = uncoveredArea.toLocaleString();
+    activitycoveragePercentageContainerEle.textContent = coveragePercentage.toLocaleString();
+    activitymissionCountContainerEle.textContent = missionCount.toLocaleString();
+  } else {
+    activityareaSelectionInfoContainerEle.classList.add("hidden");
+    //areaSaveContainerEle.classList.add("hidden");
 
   }
 }
@@ -166,7 +227,7 @@ export function updateUkArea() {
   const coveragePercentage = Math.round((coveredArea / (coveredArea + uncoveredArea)) * 10000) / 100; //area as a % to 2 d.p.
   const missionCount = containedMissions.length;
 
-  areaSelectionInfoContainerEle.style.display = "inline";
+  areaSelectionInfoContainerEle.classList.remove("hidden");
 
   totalAreaContainerEle.textContent = totalAreaRounded.toLocaleString();
   coveredAreaContainerEle.textContent = coveredArea.toLocaleString();

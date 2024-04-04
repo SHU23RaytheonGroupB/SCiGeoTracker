@@ -17,7 +17,6 @@
     "node-cache": "^5.1.2"
   },
   "devDependencies": {
-    "chartjs-adapter-moment": "^1.0.1",
     "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "moment": "^2.30.1",

@@ -1,12 +1,19 @@
-
 //add elements here to drag divs, make sure tailwind margis are not set. 'm'
-dragElement(document.getElementById("timeline-container"));  
+dragElement(document.getElementById("timeline-container"));
 dragElement(document.getElementById("histogram-popout-container"));
-dragElement(document.getElementById("saved-areas-container"));
 dragElement(document.getElementById("flyto-mission-info-container"));
+dragElement(document.getElementById("filter-menu-container"));
+dragElement(document.getElementById("area-selection-info-container"));
+dragElement(document.getElementById("area-view-info-container"));
+dragElement(document.getElementById("file-container"));
+dragElement(document.getElementById("saved-areas-container"));
 
 function dragElement(ele) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (ele == null) return;
+  var pos1 = 0,
+    pos2 = 0,
+    pos3 = 0,
+    pos4 = 0;
   const headerEle = document.getElementById(ele.id.replace("container", "header"));
   if (headerEle) {
     /* if present, the header is where you move the DIV from:*/
@@ -24,17 +31,17 @@ function dragElement(ele) {
     //console.log(divs);
 
     // Set all divs class property to 'z-30'
-    divs.forEach(div => {
-        //console.log(div);
-        div.parentElement.classList.replace('z-40', 'z-30');
-       // console.log(div.parentElement);
+    divs.forEach((div) => {
+      //console.log(div);
+      div.parentElement.classList.replace("z-40", "z-30");
+      // console.log(div.parentElement);
     });
 
     // Set selected div class property to 'z-40'
-    console.log(e.target.parentElement);
-    e.target.parentElement.classList.add('z-40');
-    e.target.parentElement.classList.replace('z-30', 'z-40');
-    
+    //console.log(e.target.parentElement);
+    e.target.parentElement.classList.add("z-40");
+    e.target.parentElement.classList.replace("z-30", "z-40");
+
     // get the mouse cursor position at startup:
     pos3 = e.clientX;
     pos4 = e.clientY;
@@ -52,8 +59,8 @@ function dragElement(ele) {
     pos3 = e.clientX;
     pos4 = e.clientY;
     // set the element's new position:
-    ele.style.top = (ele.offsetTop - pos2) + "px";
-    ele.style.left = (ele.offsetLeft - pos1) + "px";
+    ele.style.top = ele.offsetTop - pos2 + "px";
+    ele.style.left = ele.offsetLeft - pos1 + "px";
   }
 
   function closeDragElement() {

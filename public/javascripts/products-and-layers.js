@@ -11,10 +11,10 @@ const layerMenuButtonEle = document.querySelector("#layer-menu-button");
 const layerMenuItemsContainerEle = document.querySelector("#layer-menu-items-container");
 const layerMenuButtonTextEle = document.querySelector("#layer-menu-button-text");
 
-const colors = ['#fed976', '#feb24c', '#fd8d3c', '#fc4e2a', '#e31a1c'];
+const colors = ["#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c"];
 
 export const LayerMode = {
-  Frames: "Frames",
+  Scenes: "Scenes",
   Heatmap: "Heatmap",
   Choropleth: "Choropleth",
   Cluster: "Cluster",
@@ -25,11 +25,11 @@ export async function initialiseProducts() {
   const response = await fetch("/api/getProducts");
   allProducts = await response.json();
   await addProductsToMap();
-  framesMode();
+  scenesMode();
 }
 
 export function initialiseLayerMenu() {
-  document.querySelector("#frames-item").onclick = framesMode;
+  document.querySelector("#scenes-item").onclick = scenesMode;
   document.querySelector("#heatmap-item").onclick = heatmapMode;
   document.querySelector("#choropleth-item").onclick = choroplethMode;
   document.querySelector("#cluster-density-item").onclick = clusterMode;
@@ -83,15 +83,17 @@ async function addProductsToMap() {
     features: allProducts.map((product) => ({
       type: "Feature",
       geometry: product.footprint,
-      attributes: {
+      properties: {
         id: product.identifier,
         type: product.type,
         title: product.title,
         mission_id: product.missionid,
         date_created: product.datecreated,
+        date_modified: product.datemodified,
         date_start: product.objectstartdate,
         date_end: product.objectenddate,
         pub: product.publisher,
+        covered_area_km: turf.area(product.footprint) / 1000000 ?? 0,
       },
     })),
   };
@@ -103,23 +105,24 @@ async function addProductsToMap() {
         type: "Point",
         coordinates: product.centre != null ? product.centre.split(",").reverse() : [],
       },
-      attributes: {
+      properties: {
         id: product.identifier,
         type: product.type,
         title: product.title,
         mission_id: product.missionid,
         date_created: product.datecreated,
+        date_modified: product.datemodified,
         date_start: product.objectstartdate,
         date_end: product.objectenddate,
         mission_group: product.title.split(" ")[0],
         scene_name: product.title.split(" ")[1],
+        covered_area_km: turf.area(product.footprint) / 1000000 ?? 0,
       },
       cluster: true,
       clusterMaxZoom: 9,
       clusterRadius: 50,
-    })),    
+    })),
   };
-
 
   // SOURCES
   addSource("product-polygons", polygonFeatureCollection);
@@ -129,8 +132,8 @@ async function addProductsToMap() {
   addSource("region-boundaries", boundariesByRegion);
   addSource("uk-land", UKlandBorder);
   updateChoroplethSource();
-  // FRAMES LAYER
-  addFramesLayers("product-polygons");
+  // SCENES LAYER
+  addScenesLayers("product-polygons");
   // HEATMAP LAYER
   addHeatmapLayer("product-points");
   // CHOROPLETH LAYER
@@ -139,7 +142,22 @@ async function addProductsToMap() {
   addClusterLayer("product-cluster");
   // BORDER LAYER - TEMP
   addBorderLayer("uk-land");
-};
+}
+
+export const layerNames = [
+  "product-polygons-scenes-fill",
+  "product-polygons-scenes-outline",
+  //"country-boundaries-borders",
+  //"country-boundaries-choropleth",
+  "region-boundaries-borders",
+  "region-boundaries-choropleth",
+  "product-cluster-unclustered-label",
+  "product-cluster-unclustered",
+  "product-cluster-label",
+  "product-cluster-density",
+  "uk-land-border-fill",
+  "uk-land-border-outline",
+];
 
 export function addSource(title, data) {
   map.addSource(title, {
@@ -159,10 +177,39 @@ function addClusterSource(title, data) {
     clusterRadius: 50,
   });
 }
-
 function addFramesLayers(title) {
   map.addLayer({
-    id: `${title}-frames-fill`,
+    id: `${title}-outline`,
+    type: "line",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "line-color": productOutlineColours["SCENE"],
+      "line-width": 1,
+    },
+  });
+}
+
+function addSelectedFrameLayer(title) {
+  map.addLayer({
+    id: `${title}-highlight`,
+    type: "line",
+    source: title,
+    layout: {
+      visibility: "visible",
+    },
+    paint: {
+      "fill-color": productFillColours[mapStyle.currentStyle]["FRAME"],
+      "fill-opacity": 0.2,
+    },
+  });
+}
+
+function addScenesLayers(title) {
+  map.addLayer({
+    id: `${title}-scenes-fill`,
     type: "fill",
     source: title,
     layout: {
@@ -170,11 +217,11 @@ function addFramesLayers(title) {
     },
     paint: {
       "fill-color": productFillColours[mapStyle.currentStyle]["SCENE"],
-      "fill-opacity": 0.2,
+      "fill-opacity": 0.4,
     },
   });
   map.addLayer({
-    id: `${title}-frames-outline`,
+    id: `${title}-scenes-outline`,
     type: "line",
     source: title,
     layout: {
@@ -231,81 +278,91 @@ function addBorderLayer(title) {
 
 function addClusterLayer(title) {
   map.addLayer({
-    'id': `${title}-density`,
-    'type': 'circle',
-    'source': title,
-    filter: ['has', 'point_count'],
+    id: `${title}-density`,
+    type: "circle",
+    source: title,
+    filter: ["has", "point_count"],
     layout: {
       visibility: "none",
     },
-    'paint': {
-        'circle-color': [
-          'step',
-          ['get', 'point_count_abbreviated'],
-          '#ffffff',
-          2,
-          colors[0],
-          4,
-          colors[1],
-          7,
-          colors[2],
-          10,
-          colors[3],
-          15,
-          colors[4]
+    paint: {
+      "circle-color": [
+        "step",
+        ["get", "point_count_abbreviated"],
+        "#ffffff",
+        2,
+        colors[0],
+        4,
+        colors[1],
+        7,
+        colors[2],
+        10,
+        colors[3],
+        15,
+        colors[4],
       ],
-        'circle-opacity': 0.6,
-        'circle-radius': 12
-    }
+      "circle-opacity": 0.6,
+      "circle-radius": 12,
+    },
   });
   map.addLayer({
-    'id': `${title}-label`,
-    'type': 'symbol',
-    'source': title,
-    filter: ['has', 'point_count'],
-    'layout': {
-        'text-opacity': { "stops": [[12.9, 0], [13, 1]] },
-        'visibility': "none",
-        "text-field": "{point_count_abbreviated}",
-        "text-font": ["Arial Unicode MS Bold"],
-        "text-size": 12,
-        "text-allow-overlap" : true
+    id: `${title}-label`,
+    type: "symbol",
+    source: title,
+    filter: ["has", "point_count"],
+    layout: {
+      "text-opacity": {
+        stops: [
+          [12.9, 0],
+          [13, 1],
+        ],
+      },
+      visibility: "none",
+      "text-field": "{point_count_abbreviated}",
+      "text-font": ["Arial Unicode MS Bold"],
+      "text-size": 12,
+      "text-allow-overlap": true,
     },
-    'paint': {
-        'text-color': 'black'
-    }
-});
-map.addLayer({
-  id: title+ '-unclustered',
-  type: 'circle',
-  source: title,
-  filter: ['!', ['has', 'point_count']],
-  'layout': {
-    'visibility': "none"
-  },
-  paint: {
-      'circle-color': productFillColours[mapStyle.currentStyle]["CLUSTER"],
-      'circle-opacity': 0.6,
-      'circle-radius': 12
-  }
-});
-map.addLayer({
-  'id': `${title}-unclustered-label`,
-  'type': 'symbol',
-  'source': title,
-  filter: ["!=", "cluster", true],
-  'layout': {
-      'text-opacity': { "stops": [[12.9, 0], [13, 1]] },
-      'visibility': "none",
+    paint: {
+      "text-color": "black",
+    },
+  });
+  map.addLayer({
+    id: title + "-unclustered",
+    type: "circle",
+    source: title,
+    filter: ["!", ["has", "point_count"]],
+    layout: {
+      visibility: "none",
+    },
+    paint: {
+      "circle-color": productFillColours[mapStyle.currentStyle]["CLUSTER"],
+      "circle-opacity": 0.6,
+      "circle-radius": 12,
+    },
+  });
+  map.addLayer({
+    id: `${title}-unclustered-label`,
+    type: "symbol",
+    source: title,
+    filter: ["!=", "cluster", true],
+    layout: {
+      "text-opacity": {
+        stops: [
+          [12.9, 0],
+          [13, 1],
+        ],
+      },
+      visibility: "none",
       "text-field": "1",
       "text-font": ["Arial Unicode MS Bold"],
       "text-size": 12,
-      "text-allow-overlap" : true
-  },
-  'paint': {
-      'text-color': 'black'
-  }
-});
+      "text-allow-overlap": true,
+    },
+    paint: {
+      "text-color": "black",
+    },
+  });
 }
 
 function addChoroplethLayers(countryPolygons, regionPolygons) {
@@ -354,13 +411,78 @@ function updateChoroplethSource() {
   regionBoundariesSource.setData(data);
 }
 
-const framesMode = () => {
-  layerMode = LayerMode.Frames;
+export function highlightSelectedFrame(frame) {
+  let selectedMissionFrames = window.map.getSource("selected-mission-frames");
+
+  let singleFrameFeature = {
+    type: "FeatureCollection",
+    features: [],
+  };
+
+  for (let i = 0; i < selectedMissionFrames.length; i++) {
+    let product = selectedMissionFrames[i];
+    if (product.identifier === frame.identifier) {
+      singleFrameFeature.features.push({
+        type: "Feature",
+        geometry: product.footprint,
+        attributes: {
+          id: product.identifier,
+          type: product.type,
+          title: product.title,
+          mission_id: product.missionid,
+          date_created: product.datecreated,
+          date_start: product.objectstartdate,
+          date_end: product.objectenddate,
+          pub: product.publisher,
+        },
+      });
+      break; // Exit the loop after finding the matching frame
+    }
+  }
+
+  addSelectedFrameLayer(singleFrameFeature);
+}
+
+export async function addSelectedMissionFramesToMap(framesData) {
+  let framesFeatureCollection = {
+    type: "FeatureCollection",
+    features: framesData.map((product) => ({
+      type: "Feature",
+      geometry: product.footprint,
+      attributes: {
+        id: product.identifier,
+        type: product.type,
+        title: product.title,
+        mission_id: product.missionid,
+        date_created: product.datecreated,
+        date_start: product.objectstartdate,
+        date_end: product.objectenddate,
+        pub: product.publisher,
+      },
+    })),
+  };
+  if (!window.map.getSource("selected-mission-frames")) {
+    addSource("selected-mission-frames", framesFeatureCollection);
+    addFramesLayers("selected-mission-frames");
+  } else {
+    window.map.getSource("selected-mission-frames").setData(framesFeatureCollection);
+    window.map.setLayoutProperty("selected-mission-frames-outline", "visibility", "visible");
+  }
+}
+
+export function hideFrames() {
+  if (window.map.getSource("selected-mission-frames")) {
+    window.map.setLayoutProperty("selected-mission-frames-outline", "visibility", "none");
+  }
+}
+
+const scenesMode = () => {
+  layerMode = LayerMode.Scenes;
   layerMenuButtonTextEle.textContent = layerMode;
   closeLayerMenu();
   hideAllLayers();
-  window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "visible");
-  window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "visible");
+  window.map.setLayoutProperty("product-polygons-scenes-fill", "visibility", "visible");
+  window.map.setLayoutProperty("product-polygons-scenes-outline", "visibility", "visible");
 };
 
 const heatmapMode = () => {
@@ -382,13 +504,6 @@ const choroplethMode = () => {
   //window.map.setLayoutProperty("country-boundaries-choropleth", "visibility", "visible");
 };
 
-const isarithmicMode = () => {
-  layerMode = LayerMode.Isarithmic;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
-};
-
 const clusterMode = () => {
   layerMode = LayerMode.Cluster;
   layerMenuButtonTextEle.textContent = layerMode;
@@ -397,14 +512,7 @@ const clusterMode = () => {
   window.map.setLayoutProperty("product-cluster-density", "visibility", "visible");
   window.map.setLayoutProperty("product-cluster-label", "visibility", "visible");
   window.map.setLayoutProperty("product-cluster-unclustered", "visibility", "visible");
-  window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "visible");  
-};
-
-const frameOverlapsMode = () => {
-  layerMode = LayerMode.FrameOverlaps;
-  layerMenuButtonTextEle.textContent = layerMode;
-  closeLayerMenu();
-  hideAllLayers();
+  window.map.setLayoutProperty("product-cluster-unclustered-label", "visibility", "visible");
 };
 
 const borderSelectionMode = () => {
@@ -418,8 +526,8 @@ const borderSelectionMode = () => {
 };
 
 const hideAllLayers = () => {
-  window.map.setLayoutProperty("product-polygons-frames-fill", "visibility", "none");
-  window.map.setLayoutProperty("product-polygons-frames-outline", "visibility", "none");
+  window.map.setLayoutProperty("product-polygons-scenes-fill", "visibility", "none");
+  window.map.setLayoutProperty("product-polygons-scenes-outline", "visibility", "none");
   window.map.setLayoutProperty("product-points-heatmap", "visibility", "none");
   window.map.setLayoutProperty("product-cluster-density", "visibility", "none");
   window.map.setLayoutProperty("product-cluster-label", "visibility", "none");
@@ -435,6 +543,7 @@ const hideAllLayers = () => {
   if (map.getLayer("mission-area-within-polyfill") != undefined) {
     window.map.setLayoutProperty("mission-area-within-polyfill", "visibility", "none");
   }
+  hideFrames();
   //window.map.setLayoutProperty("country-boundaries-choropleth", "visibility", "none");
 };
 
